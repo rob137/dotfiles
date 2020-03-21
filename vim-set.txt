@@ -1,0 +1,1 @@
+set number relativenumber filetype=javascript smartindent shiftwidth=2 expandtab colorcolumn=80 hlsearch: incsearch | filetype indent on | highlight ColorColumn guibg=LightRed
