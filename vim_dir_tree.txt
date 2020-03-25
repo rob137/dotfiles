@@ -1,0 +1,16 @@
+To give an idea of my setup, here is the output of `tree ~/.vim/ -L 2`:
+
+.
+├── autoload
+│   └── plug.vim
+├── bundle
+│   └── typescript-vim
+├── colors
+│   └── monokai.vim
+└── plugged
+    ├── ale
+    ├── scss-syntax.vim
+    ├── typescript-vim
+    └── vim-jsx-typescript
+
+9 directories, 2 files
