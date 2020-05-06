@@ -3,8 +3,15 @@ au BufReadPost *.ts set syntax=javascript
 let g:netrw_preview   = 1
 let g:netrw_winsize   = 15
 syntax on
+
 set background=dark
 colorscheme monokai
+
+set foldmethod=syntax
+" https://vim.fandom.com/wiki/All_folds_open_when_opening_a_file
+set foldlevelstart=20
+
+set history=1000
 
 call plug#begin('~/.vim/plugged')
 Plug 'dense-analysis/ale',
@@ -18,4 +25,3 @@ let g:ale_fixers = {
 \   '*': ['prettier'],
 \}
 
-set history=1000
