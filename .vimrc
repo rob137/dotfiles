@@ -23,7 +23,9 @@ set wildignore=*/.git/*,*/node_modules/*,*/dist/*,*/build/*
 au BufReadPost *.tsx set syntax=javascript
 au BufReadPost *.ts set syntax=javascript
 
-" Ale and additional syntax
+" This states plugins for Plug to install
+" Requires separate install of plug from here:
+" https://github.com/junegunn/vim-plug
 call plug#begin('~/.vim/plugged')
 Plug 'dense-analysis/ale',
 Plug 'leafgarland/typescript-vim',
