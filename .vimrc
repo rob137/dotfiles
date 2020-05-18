@@ -34,8 +34,9 @@ set foldmethod=syntax
 " https://vim.fandom.com/wiki/All_folds_open_when_opening_a_file
 set foldlevelstart=20
 
-" Longer :q command history
+" Longer q: and undo histories
 set history=1000
+set undolevels=1000
 
 " To prevent searching irrelevant directories when searching with **/ 
 " https://www.reddit.com/r/vim/comments/7fzn9a/how_to_ignore_files_and_directories_from_edit/
