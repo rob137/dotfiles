@@ -1,6 +1,25 @@
 " Automatic reloading of .vimrc
 autocmd! bufwritepost .vimrc source %
 
+" Line numbers
+set number relativenumber 
+
+" Indentation - currently 2 spaces when tab is pressed
+set smartindent shiftwidth=2 expandtab
+
+" Vertical column to show 80 chars
+set colorcolumn=80
+highlight ColorColumn guibg=LightRed
+
+" Highlight and jump to search results as you type
+set hlsearch incsearch
+
+" Enable syntax highlighting
+syntax on
+
+" https://vi.stackexchange.com/a/10125/25047
+filetype plugin indent on 
+
 " Make file explorer smaller by default
 let g:netrw_preview   = 1
 let g:netrw_winsize   = 15
@@ -10,7 +29,7 @@ let g:netrw_winsize   = 15
 colorscheme monokai
 set background=dark
 
-syntax on
+" For folding functions etc
 set foldmethod=syntax
 " https://vim.fandom.com/wiki/All_folds_open_when_opening_a_file
 set foldlevelstart=20
