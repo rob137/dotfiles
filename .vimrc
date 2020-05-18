@@ -18,6 +18,9 @@ let g:netrw_winsize   = 15
 colorscheme monokai
 set background=dark
 
+" Open vertical splits to right and horizontal splits below
+set splitright splitbelow
+
 " For folding functions etc.  Note it requires 'syntax on' to be set.
 set foldmethod=syntax
 " https://vim.fandom.com/wiki/All_folds_open_when_opening_a_file
