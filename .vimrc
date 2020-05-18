@@ -23,6 +23,9 @@ syntax on
 " https://vi.stackexchange.com/a/10125/25047
 filetype plugin indent on 
 
+" Make file explorer default to tree view (i to cycle between views)
+let g:netrw_liststyle = 3
+
 " Make file explorer smaller by default
 let g:netrw_preview   = 1
 let g:netrw_winsize   = 15
@@ -32,7 +35,7 @@ let g:netrw_winsize   = 15
 colorscheme monokai
 set background=dark
 
-" For folding functions etc
+" For folding functions etc.  Note it requires 'syntax on' to be set.
 set foldmethod=syntax
 " https://vim.fandom.com/wiki/All_folds_open_when_opening_a_file
 set foldlevelstart=20
