@@ -1,3 +1,6 @@
+" Automatic reloading of .vimrc
+autocmd! bufwritepost .vimrc source %
+
 " Make file explorer smaller by default
 let g:netrw_preview   = 1
 let g:netrw_winsize   = 15
