@@ -1,26 +1,12 @@
 " Automatic reloading of .vimrc
 autocmd! bufwritepost .vimrc source %
 
+" Autoload file changes (press u to undo)
+set autoread
+
 " Line numbers
 set number relativenumber 
 
-" Indentation - currently 2 spaces when tab is pressed
-set smartindent shiftwidth=2 expandtab
-
-" Vertical column to show 80 chars
-set colorcolumn=80
-highlight ColorColumn guibg=LightRed
-
-" Highlight and jump to search results as you type
-set hlsearch incsearch
-
-" Ignore case of search query unless a capital letter is used
-set ignorecase smartcase
-
-" Enable syntax highlighting
-syntax on
-
-" https://vi.stackexchange.com/a/10125/25047
 filetype plugin indent on 
 
 " Make file explorer default to tree view (i to cycle between views)
@@ -44,6 +30,9 @@ set foldlevelstart=20
 set history=1000
 set undolevels=1000
 
+" Content of yank goes to system clipboard
+set clipboard=unnamed
+
 " To prevent searching irrelevant directories when searching with **/ 
 " https://www.reddit.com/r/vim/comments/7fzn9a/how_to_ignore_files_and_directories_from_edit/
 set wildignore=*/.git/*,*/node_modules/*,*/dist/*,*/build/*,*/coverage/*
@@ -51,9 +40,6 @@ set wildignore=*/.git/*,*/node_modules/*,*/dist/*,*/build/*,*/coverage/*
 " To play nice with TypeScript
 au BufReadPost *.tsx set syntax=javascript
 au BufReadPost *.ts set syntax=javascript
-
-" Autoload file changes (press u to undo)
-set autoread
 
 " Git commit messsages
 " From https://csswizardry.com/2017/03/configuring-git-and-vim/
