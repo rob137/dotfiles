@@ -49,6 +49,9 @@ set wildignore=*/.git/*,*/node_modules/*,*/dist/*,*/build/*
 au BufReadPost *.tsx set syntax=javascript
 au BufReadPost *.ts set syntax=javascript
 
+" Autoload file changes (press u to undo)
+set autoread
+
 " This states plugins for Plug to install
 " Requires separate install of plug from here:
 " https://github.com/junegunn/vim-plug
