@@ -1,9 +1,6 @@
 " Automatic reloading of .vimrc
 autocmd! bufwritepost .vimrc source %
 
-" Autoload file changes (press u to undo)
-set autoread
-
 " Line numbers
 set number relativenumber 
 
