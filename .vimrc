@@ -14,6 +14,9 @@ highlight ColorColumn guibg=LightRed
 " Highlight and jump to search results as you type
 set hlsearch incsearch
 
+" Ignore case of search query unless a capital letter is used
+set ignorecase smartcase
+
 " Enable syntax highlighting
 syntax on
 
