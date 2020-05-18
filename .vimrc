@@ -52,6 +52,15 @@ au BufReadPost *.ts set syntax=javascript
 " Autoload file changes (press u to undo)
 set autoread
 
+" Git commit messsages
+" From https://csswizardry.com/2017/03/configuring-git-and-vim/
+" Break to new line at 72 characters
+autocmd FileType gitcommit set textwidth=72
+" Colour the 81st (or 73rd) column so that we don’t type over our limit
+set colorcolumn=+1
+" Also colour the 51st column (for titles)
+autocmd FileType gitcommit set colorcolumn+=51
+
 " This states plugins for Plug to install
 " Requires separate install of plug from here:
 " https://github.com/junegunn/vim-plug
