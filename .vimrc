@@ -34,8 +34,14 @@ Plug 'cakebaker/scss-syntax.vim'
 call plug#end()
 
 " Ale prettier autofix on save
-let g:ale_fix_on_save = 1
-let g:ale_fixers = {
-\   '*': ['prettier'],
-\}
+" Not using this in current role.
+" let g:ale_fix_on_save = 1
+" let g:ale_fixers = {
+" \   '*': ['prettier'],
+" \}
 
+" Open URL under cursor in Chrome when 'gx' is typed
+" Note that for \"google-chrome\" on MacOS I use the alias 'open -a \"Google Chrome\"'
+" Currently broken:
+" https://github.com/vim/vim/issues/4738#issuecomment-612354457
+" let g:netrw_browsex_viewer="google-chrome"
