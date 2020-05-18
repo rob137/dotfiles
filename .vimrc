@@ -19,8 +19,12 @@ set smartindent
 " Make file explorer default to tree view (i to cycle between views)
 let g:netrw_liststyle = 3
 
-" Make file explorer smaller by default
+" Ensure file explorer preview pane is vertical and to right of screen
+" (netrw_alto=0 is required to keep it on right while splitright is set)
 let g:netrw_preview   = 1
+let g:netrw_alto      = 0
+
+" Make file explorer smaller by default
 let g:netrw_winsize   = 15
 
 " Color scheme using https://github.com/crusoexia/vim-monokai
@@ -36,7 +40,7 @@ syntax on
 
 " For folding functions etc.
 set foldmethod=indent
-" https://vim.fandom.com/wiki/All_folds_open_when_opening_a_file
+" Ensure all folds are unfolded when a file is opened
 " set foldlevelstart=20
 
 " Longer q: and undo histories
