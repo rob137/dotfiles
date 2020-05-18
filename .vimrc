@@ -1,5 +1,8 @@
+" Having trouble getting these to work; may be a vanilla Vim issue.
 " Automatic reloading of .vimrc
-autocmd! bufwritepost .vimrc source %
+" autocmd! bufwritepost .vimrc source %
+" Update buffer when file is saved elsewhere
+" set autoread
 
 " Line numbers
 set number relativenumber 
