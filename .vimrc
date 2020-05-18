@@ -43,7 +43,7 @@ set undolevels=1000
 
 " To prevent searching irrelevant directories when searching with **/ 
 " https://www.reddit.com/r/vim/comments/7fzn9a/how_to_ignore_files_and_directories_from_edit/
-set wildignore=*/.git/*,*/node_modules/*,*/dist/*,*/build/*
+set wildignore=*/.git/*,*/node_modules/*,*/dist/*,*/build/*,*/coverage/*
 
 " To play nice with TypeScript
 au BufReadPost *.tsx set syntax=javascript
@@ -72,7 +72,7 @@ Plug 'cakebaker/scss-syntax.vim'
 call plug#end()
 
 " Ale prettier autofix on save
-" Not using this in current role.
+" Not using this in curfent job.
 " let g:ale_fix_on_save = 1
 " let g:ale_fixers = {
 " \   '*': ['prettier'],
