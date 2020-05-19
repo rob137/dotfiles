@@ -1,29 +1,52 @@
-" Having trouble getting these to work; may be a vanilla Vim issue.
-" Automatic reloading of .vimrc
-" autocmd! bufwritepost .vimrc source %
-" Update buffer when file is saved elsewhere
-" set autoread
-
-" Line numbers
-set number relativenumber 
-
 " https://vi.stackexchange.com/a/10125/25047
 filetype plugin indent on 
 
-" Figure out the correct indentation when creating a new line
-set smartindent
+" Syntax
+" Enable highlighting
+syntax on
+" To play nice with TypeScript
+au BufReadPost *.tsx set syntax=javascript
+au BufReadPost *.ts set syntax=javascript
 
+" Fold
+" For folding functions etc.
+set foldmethod=indent
+" Ensure all folds are unfolded when a file is opened
+" set foldlevelstart=20
+
+" Search
+" Provides tab-completion for all file-related tasks
+set wildmenu
+" Display all matching files when we tab complete
+set path+=**
+" To prevent searching irrelevant directories when searching with **/ 
+" https://www.reddit.com/r/vim/comments/7fzn9a/how_to_ignore_files_and_directories_from_edit/
+set wildignore=*/.git/*,*/node_modules/*,*/dist/*,*/build/*,*/coverage/*
+" Highlight search results, and jump to them as you type
+set hlsearch incsearch
+" Ignore case of search query unless a capital letter is used
+set ignorecase smartcase
+
+" Line numbers
+set number relativenumber 
+" Vertical column to show 80 chars
+set colorcolumn=80
+
+" Indentation
+" Figure out the correct indentation when creating a new line
+" set smartindent
 " Convert tab to 2x spaces - work projects prefer standard tab indents
 " set shiftwidth=2 expandtab
+" Display tabs as 2 spaces wide
+set tabstop=2
 
+" File Explorer
 " Make file explorer default to tree view (i to cycle between views)
 let g:netrw_liststyle = 3
-
 " Ensure file explorer preview pane is vertical and to right of screen
 " (netrw_alto=0 is required to keep it on right while splitright is set)
 let g:netrw_preview   = 1
 let g:netrw_alto      = 0
-
 " Make file explorer smaller by default
 let g:netrw_winsize   = 15
 
@@ -35,35 +58,16 @@ set background=dark
 " Open vertical splits to right and horizontal splits below
 set splitright splitbelow
 
-" Enable syntax highlighting
-syntax on
-
-" For folding functions etc.
-set foldmethod=indent
-" Ensure all folds are unfolded when a file is opened
-" set foldlevelstart=20
-
 " Longer q: and undo histories
-set history=1000
-set undolevels=1000
+set history=1000 undolevels=1000
 
 " Content of yank goes to system clipboard
 set clipboard=unnamed
-
-" To prevent searching irrelevant directories when searching with **/ 
-" https://www.reddit.com/r/vim/comments/7fzn9a/how_to_ignore_files_and_directories_from_edit/
-set wildignore=*/.git/*,*/node_modules/*,*/dist/*,*/build/*,*/coverage/*
-
-" To play nice with TypeScript
-au BufReadPost *.tsx set syntax=javascript
-au BufReadPost *.ts set syntax=javascript
 
 " Git commit messsages
 " From https://csswizardry.com/2017/03/configuring-git-and-vim/
 " Break to new line at 72 characters
 autocmd FileType gitcommit set textwidth=72
-" Colour the 81st (or 73rd) column so that we don’t type over our limit
-set colorcolumn=+1
 " Also colour the 51st column (for titles)
 autocmd FileType gitcommit set colorcolumn+=51
 
@@ -77,15 +81,28 @@ Plug 'peitalin/vim-jsx-typescript'
 Plug 'cakebaker/scss-syntax.vim'
 call plug#end()
 
-" Ale prettier autofix on save
-" Not using this in curfent job.
-" let g:ale_fix_on_save = 1
-" let g:ale_fixers = {
-" \   '*': ['prettier'],
-" \}
+" Autofix with Ale 
+" I've previously just used '*': ['prettier'] and left it at that.
+let g:ale_fix_on_save = 1
+let g:ale_fixers = {
+\   'css': ['prettier'],
+\   'less': ['prettier'],
+\   'json': ['eslint'],
+\   'javascript': ['eslint'],
+\}
+
+" Settings I would like to use, but can't get working:
 
 " Open URL under cursor in Chrome when 'gx' is typed
 " Note that for \"google-chrome\" on MacOS I use the alias 'open -a \"Google Chrome\"'
 " Currently broken:
 " https://github.com/vim/vim/issues/4738#issuecomment-612354457
 " let g:netrw_browsex_viewer="google-chrome"
+
+" Appears to be a vanilla Vim issue - these work in gvim / neovim, but not vim.
+" Automatic reloading of .vimrc
+" autocmd! bufwritepost .vimrc source %
+" Update buffer when file is saved elsewhere
+" set autoread
+
+
