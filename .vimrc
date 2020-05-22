@@ -14,6 +14,9 @@ set foldmethod=indent
 " Ensure all folds are unfolded when a file is opened
 " set foldlevelstart=20
 
+" Highlight current line of cursor
+set cursorline
+
 " Search
 " Provides tab-completion for all file-related tasks
 set wildmenu
