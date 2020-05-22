@@ -94,6 +94,10 @@ let g:ale_fixers = {
 \   'javascript': ['eslint'],
 \}
 
+" $HOME/.vimrc
+" must first run 'mkdir ~/.vim/swapfiles'
+:set directory=$HOME/.vim/swapfiles//
+
 " Settings I would like to use, but can't get working:
 
 " Open URL under cursor in Chrome when 'gx' is typed
