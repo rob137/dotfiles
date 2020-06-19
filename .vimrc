@@ -1,3 +1,6 @@
+" Usually on by default, but just in case
+set nocompatible
+
 " https://vi.stackexchange.com/a/10125/25047
 filetype plugin indent on 
 
@@ -7,6 +10,10 @@ syntax on
 " To play nice with TypeScript
 au BufReadPost *.tsx set syntax=javascript
 au BufReadPost *.ts set syntax=javascript
+
+" Hide buffers instead of closing them - preserves undo history and allows you
+" to switch buffers without saving
+set hidden
 
 " Fold
 " For folding functions etc.
@@ -37,11 +44,17 @@ set colorcolumn=80
 
 " Indentation
 " Figure out the correct indentation when creating a new line
-" set smartindent
-" Convert tab to 2x spaces - work projects prefer standard tab indents
-" set shiftwidth=2 expandtab
+set autoindent
+" Number of spaces used for indentation
+set shiftwidth=2
+" Convert tab to spaces - disabled since work projects prefer standard tab indents
+" set expandtab
 " Display tabs as 2 spaces wide
 set tabstop=2
+" Show tabs as characters (as opposed to whitespace, which is still used for spaces)
+highlight SpecialKey ctermfg=1
+set list
+set listchars=tab:··
 
 " File Explorer
 " Make file explorer default to tree view (i to cycle between views)
@@ -52,6 +65,17 @@ let g:netrw_preview   = 1
 let g:netrw_alto      = 0
 " Make file explorer smaller by default
 let g:netrw_winsize   = 15
+" Prevent bug where netrw persists in buffer list even after :bdelete
+" Doesn't seem to work...  This is a long-term issue with netrw. See:
+" https://github.com/tpope/vim-vinegar/issues/13
+let g:netrw_fastbrowse = 0
+
+" Prevent window changing position when switching buffers
+" From https://stackoverflow.com/a/4255960/8741502
+if v:version >= 700
+  au BufLeave * let b:winview = winsaveview()
+  au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
+endif
 
 " Color scheme using https://github.com/crusoexia/vim-monokai
 " ~/.vim/colors/monokai.vim
@@ -98,6 +122,9 @@ let g:ale_fixers = {
 " must first run 'mkdir ~/.vim/swapfiles'
 :set directory=$HOME/.vim/swapfiles//
 
+" Allows language-specific autocompletion in insert mode with CTRL-X CTRL-O
+set omnifunc=syntaxcomplete#Complete
+
 " Settings I would like to use, but can't get working:
 
 " Open URL under cursor in Chrome when 'gx' is typed
@@ -111,5 +138,4 @@ let g:ale_fixers = {
 " autocmd! bufwritepost .vimrc source %
 " Update buffer when file is saved elsewhere
 " set autoread
-
 
