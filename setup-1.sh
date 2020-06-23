@@ -11,7 +11,7 @@ path=$(dirname "$(readlink -f "$0")")
 sudo apt-get update -y
 
 # Install tools other than zsh
-sudo apt-get install -y git curl wget tmux vim ack fonts-powerline tree htop gnome-terminal firefox xclip locate 
+sudo apt-get install -y git curl wget tmux vim ack-grep fonts-powerline tree htop gnome-terminal firefox xclip locate 
 # Populate paths db for locate command
 sudo updatedb
 
