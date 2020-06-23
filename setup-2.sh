@@ -25,6 +25,9 @@ rm ~/.vimrc && ln -s ~/dotfiles/.vimrc ~/.vimrc
 # Setup gitlola
 ln -s ~/dotfiles/.gitconfig ~/.gitconfig
 
+# Tmux - currently just sets 256 colors
+ln -s ~/dotfiles/.tmux.config ~/.tmux.config
+
 # Install vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
  			    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
