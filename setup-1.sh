@@ -11,5 +11,10 @@ sudo apt-get install -y git curl wget tmux vim ack fonts-powerline tree htop gno
 # Populate paths db for locate command
 sudo updatedb
 
+# Set up vimdiff
+git config --global diff.tool vimdiff
+git config --global merge.tool vimdiff
+git config --global alias.vimdiff difftool
+
 # Will cause terminal session to end and open zsh, so run setup-2.sh once this is done
 sudo apt-get install -y zsh
