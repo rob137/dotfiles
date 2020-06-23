@@ -77,10 +77,14 @@ if v:version >= 700
   au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
 endif
 
-" Color scheme using https://github.com/crusoexia/vim-monokai
-" ~/.vim/colors/monokai.vim
+"" -FORMER- Color scheme using https://github.com/crusoexia/vim-monokai
+"" ~/.vim/colors/monokai.vim
 colorscheme monokai
 set background=dark
+
+" Colorscheme
+" gruvbox colorscheme
+" autocmd vimenter * colorscheme gruvbox
 
 " Open vertical splits to right and horizontal splits below
 set splitright splitbelow
@@ -105,8 +109,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'dense-analysis/ale',
 Plug 'leafgarland/typescript-vim',
 Plug 'peitalin/vim-jsx-typescript'
-Plug 'cakebaker/scss-syntax.vim',
-Plug 'tpope/vim-fugitive'
+Plug 'cakebaker/scss-syntax.vim'
+Plug 'morhetz/gruvbox'
 call plug#end()
 
 
