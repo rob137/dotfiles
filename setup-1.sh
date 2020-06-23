@@ -6,6 +6,8 @@ set -euo pipefail
 # Beforehand, run:
 # sudo apt-get install git && git clone https://github.com/rob137/dotfiles.git
 
+path=$(dirname "$(readlink -f "$0")")
+
 sudo apt-get update -y
 
 # Install tools other than zsh
@@ -20,15 +22,15 @@ git config --global alias.vimdiff difftool
 
 
 # Setup gitlola
-ln -s ~/dotfiles/.gitconfig ~/.gitconfig
+ln -s $path/.gitconfig ~/.gitconfig
 
 # Tmux conf - currently just sets 256 colors
-ln -s ~/dotfiles/.tmux.conf ~/.tmux.conf
+ln -s %path/.tmux.conf ~/.tmux.conf
 
 # Setup vim using dotfiles repository
 mkdir -p ~/.vim/swapfiles ~/.vim/colors
-ln -s ~/dotfiles/monokai.vim ~/.vim/colors/monokai.vim
-rm ~/.vimrc && ln -s ~/dotfiles/.vimrc ~/.vimrc
+ln -s $path/monokai.vim ~/.vim/colors/monokai.vim
+rm ~/.vimrc && ln -s $path/.vimrc ~/.vimrc
 
 # Install vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
