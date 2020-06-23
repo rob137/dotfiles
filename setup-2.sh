@@ -22,6 +22,9 @@ mkdir -p ~/.vim/swapfiles ~/.vim/colors
 ln -s ~/dotfiles/monokai.vim ~/.vim/colors/monokai.vim
 rm ~/.vimrc && ln -s ~/dotfiles/.vimrc ~/.vimrc
 
+# Setup gitlola
+ln -s ~/dotfiles/.gitconfig ~/.gitconfig
+
 # Install vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
  			    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
