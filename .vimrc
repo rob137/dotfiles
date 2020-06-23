@@ -105,8 +105,10 @@ call plug#begin('~/.vim/plugged')
 Plug 'dense-analysis/ale',
 Plug 'leafgarland/typescript-vim',
 Plug 'peitalin/vim-jsx-typescript'
-Plug 'cakebaker/scss-syntax.vim'
+Plug 'cakebaker/scss-syntax.vim',
+Plug 'tpope/vim-fugitive'
 call plug#end()
+
 
 " Autofix with Ale 
 " I've previously just used '*': ['prettier'] and left it at that.
@@ -139,3 +141,8 @@ set omnifunc=syntaxcomplete#Complete
 " Update buffer when file is saved elsewhere
 " set autoread
 
+
+
+" Keybindings
+nmap <silent> <leader>a :ALENext<cr>
+nmap <silent> <leader>A :ALEPrevious<cr>
