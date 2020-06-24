@@ -106,11 +106,12 @@ autocmd FileType gitcommit set colorcolumn+=51
 " Requires separate install of plug from here:
 " https://github.com/junegunn/vim-plug
 call plug#begin('~/.vim/plugged')
-Plug 'dense-analysis/ale',
-Plug 'leafgarland/typescript-vim',
+Plug 'dense-analysis/ale'
+Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'morhetz/gruvbox'
+Plug 'tpope/vim-fugitive'
 call plug#end()
 
 
