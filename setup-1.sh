@@ -24,6 +24,9 @@ git config --global alias.vimdiff difftool
 # Setup gitlola
 ln -s $path/.gitconfig ~/.gitconfig
 
+# Makes nodemon clear on refresh
+ln -s $path/nodemon.json ~/nodemon.json
+
 # Tmux conf - currently just sets 256 colors
 ln -s %path/.tmux.conf ~/.tmux.conf
 
