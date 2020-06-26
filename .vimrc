@@ -113,7 +113,7 @@ Plug 'peitalin/vim-jsx-typescript'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'rafi/awesome-vim-colorschemes'
-Plug 'flazz/vim-colorschemes'
+" Plug 'flazz/vim-colorschemes'
 call plug#end()
 
 " Autofix with Ale 
