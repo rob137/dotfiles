@@ -111,10 +111,10 @@ Plug 'dense-analysis/ale'
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'cakebaker/scss-syntax.vim'
-Plug 'morhetz/gruvbox'
 Plug 'tpope/vim-fugitive'
+Plug 'rafi/awesome-vim-colorschemes'
+Plug 'flazz/vim-colorschemes'
 call plug#end()
-
 
 " Autofix with Ale 
 " I've previously just used '*': ['prettier'] and left it at that.
@@ -152,3 +152,34 @@ set omnifunc=syntaxcomplete#Complete
 " Keybindings
 nmap <silent> <leader>a :ALENext<cr>
 nmap <silent> <leader>A :ALEPrevious<cr>
+nmap =j :%!python -m json.tool<CR>
+" Format JSON (use :formatjson)
+com! Formatjson %!python -m json.tool
+
+" Format xml (use gg=G in file)
+au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null
+
+
+
+
+
+
+
+" Having fun with colorschemes
+" Randomise colorschemes
+function RandomColorScheme()
+  let mycolors = split(globpath(&rtp,"**/colors/*.vim"),"\n") 
+  exe 'so ' . mycolors[localtime() % len(mycolors)]
+  unlet mycolors
+endfunction
+call RandomColorScheme()
+:command NewColor call RandomColorScheme()
+:command NC call RandomColorScheme()
+
+" ':ANC' to add a pretty color to a version-controlled list for later
+" shortlisting (probably make a repository of the best ones)
+function AddToNiceColors()
+	redir >>~/dotfiles/nice-vim-colors.txt|silent colorscheme|redir END
+endfunction
+:command ANC call AddToNiceColors()
+
