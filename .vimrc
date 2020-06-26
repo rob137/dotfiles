@@ -175,6 +175,7 @@ endfunction
 call RandomColorScheme()
 :command NewColor call RandomColorScheme()
 :command NC call RandomColorScheme()
+nmap <silent> <leader>n :NC<cr>
 
 " ':ANC' to add a pretty color to a version-controlled list for later
 " shortlisting (probably make a repository of the best ones)
