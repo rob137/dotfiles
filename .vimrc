@@ -1,4 +1,4 @@
-" Usually on by default, but just in case
+
 set nocompatible
 
 " https://vi.stackexchange.com/a/10125/25047
@@ -92,7 +92,8 @@ set splitright splitbelow
 " Longer q: and undo histories
 set history=1000 undolevels=1000
 
-" Content of yank goes to system clipboard
+" Content of yank goes to system clipboard (mac only, sadly)
+" TODO figure out for linux (ideally cross-platfor solution)
 set clipboard=unnamed
 
 " Git commit messsages
