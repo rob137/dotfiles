@@ -113,7 +113,7 @@ Plug 'peitalin/vim-jsx-typescript'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'rafi/awesome-vim-colorschemes'
-" Plug 'flazz/vim-colorschemes'
+Plug 'flazz/vim-colorschemes'
 call plug#end()
 
 " Autofix with Ale 
@@ -172,7 +172,9 @@ function RandomColorScheme()
   exe 'so ' . mycolors[localtime() % len(mycolors)]
   unlet mycolors
 endfunction
+" Assign random colorscheme for vim on opening
 call RandomColorScheme()
+" Shortcuts / keybinds
 :command NewColor call RandomColorScheme()
 :command NC call RandomColorScheme()
 nmap <silent> <leader>n :NC<cr>
@@ -182,5 +184,7 @@ nmap <silent> <leader>n :NC<cr>
 function AddToNiceColors()
 	redir >>~/dotfiles/nice-vim-colors.txt|silent colorscheme|redir END
 endfunction
+" Shortcuts / keybinds
 :command ANC call AddToNiceColors()
+nmap <silent> <leader>N :ANC<cr>
 
