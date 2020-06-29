@@ -12,6 +12,7 @@ sudo apt-get update -y
 
 # Install tools other than zsh
 sudo apt-get install -y git curl wget tmux vim ack-grep fonts-powerline tree htop gnome-terminal firefox xclip locate 
+pip install grip
 # Populate paths db for locate command
 sudo updatedb
 

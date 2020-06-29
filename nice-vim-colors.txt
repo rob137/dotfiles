@@ -99,3 +99,10 @@ vice
 vorange
 wellsokai
 xoria256
+
+solarized8_light_flat
+spacegray
+
+solarized8
+one-dark
+predawn

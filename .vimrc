@@ -24,6 +24,9 @@ set foldmethod=indent
 " Highlight current line of cursor
 set cursorline
 
+" Scroll page when moving cursor vertically (n lines before edge of screen)
+set so=4
+
 " Search
 " Provides tab-completion for all file-related tasks
 set wildmenu
@@ -36,6 +39,12 @@ set wildignore=*/.git/*,*/node_modules/*,*/dist/*,*/build/*,*/coverage/*
 set hlsearch incsearch
 " Ignore case of search query unless a capital letter is used
 set ignorecase smartcase
+
+" Don't redraw while executing macros (good for performance)
+set lazyredraw
+
+" Show matching brackets when text indicator is over them
+set showmatch
 
 " Line numbers
 set number relativenumber 
@@ -114,7 +123,15 @@ Plug 'cakebaker/scss-syntax.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'flazz/vim-colorschemes'
+Plug 'mileszs/ack.vim'
+Plug 'mxw/vim-jsx'
+Plug 'tpope/vim-surround'
+Plug 'JamshedVesuna/vim-markdown-preview'
 call plug#end()
+
+" markdown preview - note requires grip to work https://github.com/joeyespo/grip
+let vim_markdown_preview_github=1
+let vim_markdown_preview_browser='Google Chrome'
 
 " Autofix with Ale 
 " I've previously just used '*': ['prettier'] and left it at that.
