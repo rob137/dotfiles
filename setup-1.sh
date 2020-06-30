@@ -21,7 +21,6 @@ git config --global diff.tool vimdiff
 git config --global merge.tool vimdiff
 git config --global alias.vimdiff difftool
 
-
 # Setup gitlola
 ln -s $path/.gitconfig ~/.gitconfig
 
@@ -34,13 +33,15 @@ ln -s %path/.tmux.conf ~/.tmux.conf
 # Setup vim using dotfiles repository
 mkdir -p ~/.vim/swapfiles ~/.vim/colors
 ln -s $path/monokai.vim ~/.vim/colors/monokai.vim
-rm ~/.vimrc && ln -s $path/.vimrc ~/.vimrc
+rm ~/.vimrc
+ln -s $path/.vimrc ~/.vimrc
+ln -s $path/.vimrc.coc ~/.vimrc.coc
 
 # Install vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
  			    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-# Use vim-plug to install vim dependencies
-vim +'PlugInstall --sync' +qa
+# Use vim-plug to install vim dependencies, then install CoC language servers
+vim +'PlugInstall --sync | CocInstall coc-html coc-css coc-docker coc-tsserver coc-json coc-xml coc-yaml' +qa
 
 # Change default keyboard (requires input - accept all default options, but change to UK on second screen)
 sudo dpkg-reconfigure keyboard-configuration

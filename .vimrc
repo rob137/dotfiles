@@ -1,4 +1,3 @@
-
 set nocompatible
 
 " https://vi.stackexchange.com/a/10125/25047
@@ -65,7 +64,7 @@ highlight SpecialKey ctermfg=1
 set list
 set listchars=tab:··
 
-" File Explorer
+" File Explorer (netrw)
 " Make file explorer default to tree view (i to cycle between views)
 let g:netrw_liststyle = 3
 " Ensure file explorer preview pane is vertical and to right of screen
@@ -127,13 +126,18 @@ Plug 'mileszs/ack.vim'
 Plug 'mxw/vim-jsx'
 Plug 'tpope/vim-surround'
 Plug 'JamshedVesuna/vim-markdown-preview'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 call plug#end()
 
-" markdown preview - note requires grip to work https://github.com/joeyespo/grip
-let vim_markdown_preview_github=1
-let vim_markdown_preview_browser='Google Chrome'
+" Autocomplete with ALE & CoC
+let g:ale_completion_enabled = 1
+" Allows language-specific autocompletion in insert mode with CTRL-x CTRL-o
+set omnifunc=syntaxcomplete#Complete
+" CoC settings - reccomendations from https://github.com/neoclide/coc.nvim
+" Includes lots of useful keybindings.
+source ~/.vimrc.coc
 
-" Autofix with Ale 
+" Autofix (ALE)
 " I've previously just used '*': ['prettier'] and left it at that.
 let g:ale_fix_on_save = 1
 let g:ale_fixers = {
@@ -142,13 +146,26 @@ let g:ale_fixers = {
 \   'json': ['eslint'],
 \   'javascript': ['eslint'],
 \}
+nmap <silent> <leader>a :ALENext<cr>
+nmap <silent> <leader>A :ALEPrevious<cr>
+" Other autofixers
+" Format JSON (use :FormatJson)
+nmap =j :%!python -m json.tool<CR>
+com! Formatjson %!python -m json.tool
+" Format xml (use gg=G)
+au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null
 
-" $HOME/.vimrc
+" Markdown preview - note requires grip to work https://github.com/joeyespo/grip
+" Use ctrl+p in markdown files to open in browser
+let vim_markdown_preview_github=1
+let vim_markdown_preview_browser='Google Chrome'
+
+" Swap file storage.
 " must first run 'mkdir ~/.vim/swapfiles'
 :set directory=$HOME/.vim/swapfiles//
 
-" Allows language-specific autocompletion in insert mode with CTRL-X CTRL-O
-set omnifunc=syntaxcomplete#Complete
+
+
 
 " Settings I would like to use, but can't get working:
 
@@ -164,17 +181,6 @@ set omnifunc=syntaxcomplete#Complete
 " Update buffer when file is saved elsewhere
 " set autoread
 
-
-
-" Keybindings
-nmap <silent> <leader>a :ALENext<cr>
-nmap <silent> <leader>A :ALEPrevious<cr>
-nmap =j :%!python -m json.tool<CR>
-" Format JSON (use :formatjson)
-com! Formatjson %!python -m json.tool
-
-" Format xml (use gg=G in file)
-au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null
 
 
 
