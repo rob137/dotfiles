@@ -36,6 +36,7 @@ ln -s $path/monokai.vim ~/.vim/colors/monokai.vim
 rm ~/.vimrc
 ln -s $path/.vimrc ~/.vimrc
 ln -s $path/.vimrc.coc ~/.vimrc.coc
+ln -s $path/coc-settings.json ~/.vim/coc-settings.json
 
 # Install vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \

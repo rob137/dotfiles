@@ -1,0 +1,4 @@
+{
+  "coc.preferences.formatOnSaveFiletypes": ["js"],
+  "eslint.autoFixOnSave": true
+}
