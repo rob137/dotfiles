@@ -12,6 +12,10 @@ OceanicNext
 OceanicNextLight
 PaperColor
 Revolution
+Tomorrow
+Tomorrow-Night
+Tomorrow-Night-Bright
+Tomorrow-Night-Eighties
 afterglow
 antares
 apprentice
@@ -66,6 +70,7 @@ metacosm
 minimalist
 mojave
 molokai
+monokai
 monokai
 monokai-chris
 moody

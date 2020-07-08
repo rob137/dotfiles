@@ -1,4 +1,6 @@
 {
   "coc.preferences.formatOnSaveFiletypes": ["js"],
-  "eslint.autoFixOnSave": true
+  "eslint.autoFixOnSave": true,
+	"prettier.useTabs": true,
+	"stylelintplus.autoFixOnSave": true 
 }
