@@ -10,11 +10,9 @@ set foldmethod=indent
 set cursorline " Highlight current line of cursor
 set ruler " show postion at bottom of screen
 set showcmd " show what I'm typing at bottom of screen
-set mouse=a " enable mouse support
 set scrolloff=4 " Line margin from top/bottom
 set path+=** " For file search - display all matching files when we tab complete
 set wildmenu " Provides tab-completion for all file-related tasks
-set wildmode=list:full,longest " Show ls results and tab to first match
 set wildignore=*/.git/*,*/node_modules/*,*/dist/*,*/build/*,*/coverage/*
 set hlsearch incsearch " Highlight search results, and jump to them as you type
 set ignorecase smartcase " Ignore case of search query unless a capital letter is used
@@ -38,7 +36,7 @@ let g:netrw_winsize   = 15 " Make file explorer smaller by default
 let g:netrw_banner    = 0
 command! ShowFile let @/=expand("%:t") | execute 'Lexplore' expand("%:h") | normal n " show file in netrw
 set t_Co=256 " 256 colors (not sure it makes any difference)
-colorscheme seattle
+colorscheme Tomorrow-Night
 set splitright splitbelow " Open vertical splits to right and horizontal splits below
 set history=1000 undolevels=1000
 " TODO figure out for linux (ideally cross-platfor solution using if/then)
@@ -75,7 +73,7 @@ Plug 'mileszs/ack.vim'
 Plug 'tpope/vim-surround' " Use with cs'{ to change surrounding '' to {}
 Plug 'JamshedVesuna/vim-markdown-preview'
 " Plug 'rafi/awesome-vim-colorschemes'
-" Plug 'flazz/vim-colorschemes'
+" Plug 'KurtPreston/vimcolors'
 call plug#end()
 source ~/.vimrc.coc " CoC settings from https://github.com/neoclide/coc.nvim - note includes many keybinding
 com! RefreshVim source ~/.vimrc | PlugClean | PlugInstall 
@@ -109,13 +107,16 @@ map <Leader>ev :tabedit $MYVIMRC<CR>
 map <Leader>es :source $MYVIMRC<CR>
 map <Leader>to :tabonly<CR>
 map <Leader>o :only<CR>
-
-
-
-
+" console.log
+imap <Leader>cl console.log();<Esc>==f(a
+vmap <Leader>cl yo<Leader>cl<Esc>p
+nmap <Leader>cl yiwo<Leader>cl<Esc>==f(p
+" Open buffer search
+noremap <leader>l :ls<CR>:b<space>
+" Search in new tab
+noremap <leader>ta :tabedit<space>\|<space>Ack<space>
 
 " Settings I would like to use, but can't get working:
-
 " Open URL under cursor in Chrome when 'gx' is typed
 " Note that for \"google-chrome\" on MacOS I use the alias 'open -a \"Google Chrome\"'
 " Currently broken:
