@@ -1,6 +1,7 @@
 set nocompatible    
 filetype plugin indent on " https://vi.stackexchange.com/a/10125/25047
 syntax on
+map <Space> <Leader>
 au BufReadPost *.tsx set syntax=javascript " To play nice with TypeScript
 au BufReadPost *.ts set syntax=javascript
 set hidden " Unsaved buffers are ok
@@ -90,31 +91,25 @@ if v:version >= 700 " Prevent window changing position when switching buffers
 	au BufLeave * let b:winview = winsaveview()
 	au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
 endif
-" Disable arrow keys
-noremap <Up> <Nop>
-noremap <Down> <Nop>
-noremap <Left> <Nop>
-noremap <Right> <Nop>
 " Disable ex mode
 nnoremap Q <Nop> 
 " for escaping insert mode
 imap jk <Esc>
-" For navigating quickfix list
-nmap <silent> <leader>cn :cn<cr>
-nmap <silent> <leader>cp :cp<cr>
-nmap <silent> <leader>r :set filetype=typescript.react<cr>
+imap kj <Esc>
+" Editing vimrc
 map <Leader>ev :tabedit $MYVIMRC<CR>
 map <Leader>es :source $MYVIMRC<CR>
-map <Leader>to :tabonly<CR>
-map <Leader>o :only<CR>
-" console.log
+" console.log/clear
 imap <Leader>cl console.log();<Esc>==f(a
 vmap <Leader>cl yo<Leader>cl<Esc>p
 nmap <Leader>cl yiwo<Leader>cl<Esc>==f(p
-" Open buffer search
-noremap <leader>l :ls<CR>:b<space>
+imap <Leader>cc console.clear();<Esc>
+vmap <Leader>cc o<Leader>cc
+nmap <Leader>cc o<Leader>cc
 " Search in new tab
 noremap <leader>ta :tabedit<space>\|<space>Ack<space>
+" View diff
+noremap <leader>gd :Gdiffsplit<space>
 
 " Settings I would like to use, but can't get working:
 " Open URL under cursor in Chrome when 'gx' is typed
@@ -129,7 +124,7 @@ noremap <leader>ta :tabedit<space>\|<space>Ack<space>
 " Update buffer when file is saved elsewhere
 " set autoread
 
-" Ale autcompletion was too slow to be helpful (possibly Docker Desktop
+" Ale autocompletion was too slow to be helpful (possibly Docker Desktop
 " hogging resources?)
 " - Wouldn't work without running ':source ~/.vimrc on opening vim
 " - Way too slow
