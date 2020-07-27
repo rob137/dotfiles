@@ -86,7 +86,7 @@ au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null "
 " Use ctrl+p in markdown files to open in browser
 let vim_markdown_preview_github=1
 let vim_markdown_preview_browser='Google Chrome'
-:set directory=$HOME/.vim/swapfiles// " Swap file storage.  Must first run 'mkdir ~/.vim/swapfiles'
+set noswapfile
 if v:version >= 700 " Prevent window changing position when switching buffers
 	au BufLeave * let b:winview = winsaveview()
 	au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif

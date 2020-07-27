@@ -31,7 +31,7 @@ ln -s $path/nodemon.json ~/nodemon.json
 ln -s %path/.tmux.conf ~/.tmux.conf
 
 # Setup vim using dotfiles repository
-mkdir -p ~/.vim/swapfiles ~/.vim/colors
+mkdir -p ~/.vim/colors
 ln -s $path/monokai.vim ~/.vim/colors/monokai.vim
 rm ~/.vimrc
 ln -s $path/.vimrc ~/.vimrc
