@@ -36,8 +36,6 @@ let g:netrw_alto      = 0 " (netrw_alto=0 is required to keep it on right while 
 let g:netrw_winsize   = 15 " Make file explorer smaller by default
 let g:netrw_banner    = 0
 command! ShowFile let @/=expand("%:t") | execute 'Lexplore' expand("%:h") | normal n " show file in netrw
-set t_Co=256 " 256 colors (not sure it makes any difference)
-colorscheme Tomorrow-Night
 set splitright splitbelow " Open vertical splits to right and horizontal splits below
 set history=1000 undolevels=1000
 " TODO figure out for linux (ideally cross-platfor solution using if/then)
@@ -62,20 +60,19 @@ let g:coc_global_extensions = [
 call plug#begin('~/.vim/plugged')
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
-Plug 'cakebaker/scss-syntax.vim'
-" Plug 'dense-analysis/ale' " TODO: consider whether CoC could replace ALE (bloat)
-" Plug 'maxboisvert/vim-simple-complete' " lightweight as-you-type keyword completion and tab complete
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " Bloaty, makes me sad
-" Plug 'ervandew/supertab' " for as-you-type completion suggestions
 Plug 'tpope/vim-fugitive' " g? for keybindings in git splits/windows
 Plug 'airblade/vim-gitgutter' " marks untracked changes in left column - 'GitGutter' will refresh the gutter
-Plug 'rbong/vim-flog' " Flog/Flogsplit to view branch history
 Plug 'mileszs/ack.vim'
 Plug 'tpope/vim-surround' " Use with cs'{ to change surrounding '' to {}
 Plug 'JamshedVesuna/vim-markdown-preview'
-" Plug 'rafi/awesome-vim-colorschemes'
-" Plug 'KurtPreston/vimcolors'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'rafi/awesome-vim-colorschemes'
+Plug 'KurtPreston/vimcolors'
 call plug#end()
+set t_Co=256 " 256 colors (not sure it makes any difference)
+colorscheme gruvbox
 source ~/.vimrc.coc " CoC settings from https://github.com/neoclide/coc.nvim - note includes many keybinding
 com! RefreshVim source ~/.vimrc | PlugClean | PlugInstall 
 " Other autofixers
