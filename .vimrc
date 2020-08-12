@@ -103,8 +103,13 @@ nmap <Leader>cl yiwo<Leader>cl<Esc>==f(p
 imap <Leader>cc console.clear();<Esc>
 vmap <Leader>cc o<Leader>cc
 nmap <Leader>cc o<Leader>cc
-" Search in new tab
+" Open buffer / Ack / find in new tab / split
+noremap <leader>tb :tabedit<space>\|<space>b<space>
+noremap <leader>vb :vsplit<space>\|<space>b<space>
 noremap <leader>ta :tabedit<space>\|<space>Ack<space>
+noremap <leader>va :vsplit<space>\|<space>Ack<space>
+noremap <leader>tf :tabedit<space>\|<space>find<space>
+noremap <leader>vf :vsplit<space>\|<space>find<space>
 " View diff
 noremap <leader>gd :Gdiffsplit<space>
 
