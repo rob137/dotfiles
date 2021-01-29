@@ -38,6 +38,7 @@ let g:netrw_banner    = 0
 command! ShowFile let @/=expand("%:t") | execute 'Lexplore' expand("%:h") | normal n " show file in netrw
 set splitright splitbelow " Open vertical splits to right and horizontal splits below
 set history=1000 undolevels=1000
+set undofile
 " TODO figure out for linux (ideally cross-platfor solution using if/then)
 set clipboard=unnamed " Content of yank goes to system clipboard (mac only, sadly)
 autocmd FileType gitcommit set textwidth=72 " Break to new line at 72 characters
@@ -60,9 +61,9 @@ let g:coc_global_extensions = [
 call plug#begin('~/.vim/plugged')
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
-Plug 'neoclide/coc.nvim', {'branch': 'release'} " Bloaty, makes me sad
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-fugitive' " g? for keybindings in git splits/windows
-Plug 'airblade/vim-gitgutter' " marks untracked changes in left column - 'GitGutter' will refresh the gutter
+Plug 'airblade/vim-gitgutter'
 Plug 'mileszs/ack.vim'
 Plug 'tpope/vim-surround' " Use with cs'{ to change surrounding '' to {}
 Plug 'JamshedVesuna/vim-markdown-preview'
@@ -73,10 +74,11 @@ Plug 'KurtPreston/vimcolors'
 call plug#end()
 set t_Co=256 " 256 colors (not sure it makes any difference)
 colorscheme gruvbox
+set bg=dark
 source ~/.vimrc.coc " CoC settings from https://github.com/neoclide/coc.nvim - note includes many keybinding
 com! RefreshVim source ~/.vimrc | PlugClean | PlugInstall 
 " Other autofixers
-nmap =j :%!python -m json.tool<CR>
+nmap <leader>j :%!python -m json.tool<CR>
 com! Formatjson %!python -m json.tool " Format JSON (use :FormatJson)
 au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null " Format xml (use gg=G)
 " Markdown preview - note requires grip to work https://github.com/joeyespo/grip
@@ -96,22 +98,37 @@ imap kj <Esc>
 " Editing vimrc
 map <Leader>ev :tabedit $MYVIMRC<CR>
 map <Leader>es :source $MYVIMRC<CR>
-" console.log/clear
+" console.log/error/clear
 imap <Leader>cl console.log();<Esc>==f(a
 vmap <Leader>cl yo<Leader>cl<Esc>p
 nmap <Leader>cl yiwo<Leader>cl<Esc>==f(p
+imap <Leader>ce console.error();<Esc>==f(a
+vmap <Leader>ce yo<Leader>ce<Esc>p
+nmap <Leader>ce yiwo<Leader>ce<Esc>==f(p
 imap <Leader>cc console.clear();<Esc>
 vmap <Leader>cc o<Leader>cc
 nmap <Leader>cc o<Leader>cc
+imap <Leader>co console.count();<Esc>
+vmap <Leader>co o<Leader>co
+nmap <Leader>co o<Leader>co
 " Open buffer / Ack / find in new tab / split
 noremap <leader>tb :tabedit<space>\|<space>b<space>
 noremap <leader>vb :vsplit<space>\|<space>b<space>
-noremap <leader>ta :tabedit<space>\|<space>Ack<space>
-noremap <leader>va :vsplit<space>\|<space>Ack<space>
+noremap <leader>ta :tabedit<space>\|<space>Ack<space>-i<space>
+noremap <leader>va :vsplit<space>\|<space>Ack<space>-i<space>
 noremap <leader>tf :tabedit<space>\|<space>find<space>
 noremap <leader>vf :vsplit<space>\|<space>find<space>
+noremap <leader>a :Ag<CR>
 " View diff
 noremap <leader>gd :Gdiffsplit<space>
+" Search current file for whole word
+nnoremap <leader>/ /\<\><left><left>
+" Vertical resize
+noremap <leader>v5 :vertical<space>resize<space>50<CR>
+noremap <leader>v4 :vertical<space>resize<space>40<CR>
+noremap <leader>v3 :vertical<space>resize<space>30<CR>
+
+nnoremap <F5> :UndotreeToggle<cr>
 
 " Settings I would like to use, but can't get working:
 " Open URL under cursor in Chrome when 'gx' is typed
@@ -180,6 +197,11 @@ endfunction
 nmap <silent> <leader>N :ANC<cr>
 
 
+" For 3 way git merges
+" Remove braces / equals signs
+let @m = '/<<<<<ztddk/=====ddk/>>>>dd'
+" Add spaces between .po file declarations where missing
+let @p = '/msgidkyl/\"\n\#:j0O'
 
 
 
@@ -195,3 +217,7 @@ nmap <silent> <leader>N :ANC<cr>
 " endfunction
 " inoremap <expr> <s-tab> InsertTabWrapper()
 " inoremap <tab> <c-n>
+
+" Xml formatter - brittle!  Switch on, use, switch off.
+" com! FormatXML :%!python3 -c "import xml.dom.minidom, sys; print(xml.dom.minidom.parse(sys.stdin).toprettyxml())"
+" nnoremap = :FormatXML<Cr>
