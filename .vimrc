@@ -130,9 +130,9 @@ noremap <leader>v3 :vertical<space>resize<space>30<CR>
 
 nnoremap <F5> :UndotreeToggle<cr>
 
-nnoremap <space>html :read<space>~/.vim/snippets/html.txt<CR>
-nnoremap <space>classcomponent :read<space>~/.vim/snippets/classcomponent.txt<CR>
-nnoremap <space>functionalcomponent :read <space>~/.vim/snippets/functionalcomponent.txt<CR>
+nnoremap <space>html :-1read<space>~/.vim/snippets/html.txt<CR>
+nnoremap <space>classcomponent :-1read<space>~/.vim/snippets/classcomponent.txt<CR>
+nnoremap <space>functionalcomponent :-1read <space>~/.vim/snippets/functionalcomponent.txt<CR>
 
 " Settings I would like to use, but can't get working:
 " Open URL under cursor in Chrome when 'gx' is typed
