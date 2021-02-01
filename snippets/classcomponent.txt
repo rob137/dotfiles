@@ -1,0 +1,15 @@
+import React 'react';
+
+class NAME_HERE extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+
+	render() {
+		return (
+
+		);
+	}
+}
+
+export default NAME_HERE;

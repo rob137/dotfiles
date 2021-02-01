@@ -1,0 +1,13 @@
+import React from 'react';
+
+const NAME_HERE = (props) => 
+
+(
+);
+OR
+{
+return
+}
+
+export default NAME_HERE;
+

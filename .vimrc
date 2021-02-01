@@ -1,4 +1,4 @@
-set nocompatible    
+set nocompatible
 filetype plugin indent on " https://vi.stackexchange.com/a/10125/25047
 syntax on
 map <Space> <Leader>
@@ -30,7 +30,7 @@ set tabstop=2 " Display tabs as 2 spaces wide
 set list " This and next two highlight tabs with special character
 set listchars=tab:··
 highlight SpecialKey ctermfg=1
-let g:netrw_liststyle = 3 " Make file explorer default to tree view 
+let g:netrw_liststyle = 3 " Make file explorer default to tree view
 let g:netrw_preview   = 1 " Ensure file explorer preview pane is vertical and to right of screen
 let g:netrw_alto      = 0 " (netrw_alto=0 is required to keep it on right while splitright is set)
 let g:netrw_winsize   = 15 " Make file explorer smaller by default
@@ -76,7 +76,7 @@ set t_Co=256 " 256 colors (not sure it makes any difference)
 colorscheme gruvbox
 set bg=dark
 source ~/.vimrc.coc " CoC settings from https://github.com/neoclide/coc.nvim - note includes many keybinding
-com! RefreshVim source ~/.vimrc | PlugClean | PlugInstall 
+com! RefreshVim source ~/.vimrc | PlugClean | PlugInstall
 " Other autofixers
 nmap <leader>j :%!python -m json.tool<CR>
 com! Formatjson %!python -m json.tool " Format JSON (use :FormatJson)
@@ -91,7 +91,7 @@ if v:version >= 700 " Prevent window changing position when switching buffers
 	au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
 endif
 " Disable ex mode
-nnoremap Q <Nop> 
+nnoremap Q <Nop>
 " for escaping insert mode
 imap jk <Esc>
 imap kj <Esc>
@@ -130,6 +130,10 @@ noremap <leader>v3 :vertical<space>resize<space>30<CR>
 
 nnoremap <F5> :UndotreeToggle<cr>
 
+nnoremap <space>html :read<space>~/.vim/snippets/html.txt<CR>
+nnoremap <space>classcomponent :read<space>~/.vim/snippets/classcomponent.txt<CR>
+nnoremap <space>functionalcomponent :read <space>~/.vim/snippets/functionalcomponent.txt<CR>
+
 " Settings I would like to use, but can't get working:
 " Open URL under cursor in Chrome when 'gx' is typed
 " Note that for \"google-chrome\" on MacOS I use the alias 'open -a \"Google Chrome\"'
@@ -154,7 +158,7 @@ nnoremap <F5> :UndotreeToggle<cr>
 " set omnifunc=syntaxcomplete#Complete " Allows language-specific autocompletion in insert mode with CTRL-x CTRL-o
 "set omnifunc=ale#completion#OmniFunc
 "let g:ale_completion_enabled = 1 " can't seem to get this to work :(
-"let g:ale_completion_delay = 10 
+"let g:ale_completion_delay = 10
 "let g:ale_completion_tsserver_autoimport = 1
 " let g:ale_fix_on_save = 1 " Note - currently only works if vimrc is sourced on opening
 " " I've previously just used '*': ['prettier']
@@ -176,7 +180,7 @@ nnoremap <F5> :UndotreeToggle<cr>
 " Having fun with colorschemes
 " Randomise colorschemes
 function RandomColorScheme()
-	let mycolors = split(globpath(&rtp,"**/colors/*.vim"),"\n") 
+	let mycolors = split(globpath(&rtp,"**/colors/*.vim"),"\n")
 	exe 'so ' . mycolors[localtime() % len(mycolors)]
 	unlet mycolors
 endfunction

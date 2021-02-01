@@ -1,0 +1,2 @@
+copy this directory to '~/.vim/snippets'
+fff
