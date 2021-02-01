@@ -114,10 +114,13 @@ nmap <Leader>co o<Leader>co
 " Open buffer / Ack / find in new tab / split
 noremap <leader>tb :tabedit<space>\|<space>b<space>
 noremap <leader>vb :vsplit<space>\|<space>b<space>
+noremap <leader>sb :split<space>\|<space>b<space>
 noremap <leader>ta :tabedit<space>\|<space>Ack<space>-i<space>
 noremap <leader>va :vsplit<space>\|<space>Ack<space>-i<space>
+noremap <leader>sa :split<space>\|<space>Ack<space>-i<space>
 noremap <leader>tf :tabedit<space>\|<space>find<space>
 noremap <leader>vf :vsplit<space>\|<space>find<space>
+noremap <leader>sf :split<space>\|<space>find<space>
 noremap <leader>a :Ag<CR>
 " View diff
 noremap <leader>gd :Gdiffsplit<space>
