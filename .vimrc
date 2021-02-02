@@ -138,6 +138,7 @@ nnoremap <F5> :UndotreeToggle<cr>
 iab _html <esc>:-1read<space>~/.vim/snippets/html.txt<CR>
 iab _classcomponent <esc>:-1read<space>~/.vim/snippets/classcomponent.txt<CR>
 iab _functionalcomponent <esc>:-1read <space>~/.vim/snippets/functionalcomponent.txt<CR>
+iab _componentangular <esc>:-1read <space>~/.vim/snippets/componentangular.txt<CR>
 iab _arrow const<space>=<space>()<space>=><esc>?t<CR>a
 iab _media @media<space>(min-width:px)<space>{<CR>}<esc>?:<CR>a
 
