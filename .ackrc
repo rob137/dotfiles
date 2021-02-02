@@ -1,0 +1,16 @@
+--ignore-file=match:.svg
+--ignore-file=match:.vim
+--ignore-file=match:yarn.lock
+--ignore-file=match:package-lock.json
+--ignore-dir=wp-includes
+--ignore-dir=i18n
+--ignore-dir=locales
+--ignore-dir=ios/Pods
+--ignore-dir=.cache-loader
+--ignore-dir=node_modules
+--ignore-dir=dev
+--ignore-dir=locales
+--ignore-dir=dist
+--ignore-dir=android
+--ignore-dir=vendor
+--ignore-dir=wp-content/plugins
