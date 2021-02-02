@@ -69,6 +69,7 @@ Plug 'tpope/vim-surround' " Use with cs'{ to change surrounding '' to {}
 Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'junegunn/goyo.vim'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'KurtPreston/vimcolors'
 call plug#end()
