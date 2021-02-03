@@ -182,6 +182,8 @@ noremap <leader>gdmno :Git<space>diff<space>master<space>--relative<space>--name
 noremap <leader>gdhno :Git<space>diff<space>HEAD\^<space>--relative<space>--name-only<CR>
 noremap <leader>gdno :Git<space>diff<space>--relative<space>--name-only<CR>
 noremap <leader>gl :Git<space>log<CR>
+noremap <leader>glog :Glog<space>--<CR>
+noremap <leader>glog% :Glog<space>--<space>%<CR>
 noremap <leader>grf :Git<space>reflog<CR>
 noremap <leader>gsh :Git<space>stash<CR>
 noremap <leader>gshp :Git<space>stash<space>pop<CR>
