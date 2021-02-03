@@ -187,6 +187,9 @@ noremap <leader>glog% :Glog<space>--<space>%<CR>
 noremap <leader>grf :Git<space>reflog<CR>
 noremap <leader>gsh :Git<space>stash<CR>
 noremap <leader>gshp :Git<space>stash<space>pop<CR>
+"Quickfix window
+noremap [q :cprev<CR>
+noremap ]q :cnext<CR>
 
 nnoremap <F5> :UndotreeToggle<cr>
 
