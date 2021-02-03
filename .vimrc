@@ -145,7 +145,7 @@ noremap <leader>gca :Git<space>commit<space>--amend<CR>
 noremap <leader>gcane :Git<space>commit<space>--amend<space>--no-edit<CR>
 noremap <leader>gcanv :Git<space>commit<space>--amend<space>--no-verify<CR>
 noremap <leader>gcanenv :Git<space>commit<space>--amend<space>--no-edit<space>--no-verify<CR>
-noremap <leader>gs :Git<space>status<CR>
+noremap <leader>gs :Git<CR>
 noremap <leader>gsh :Git<space>stash<CR>
 noremap <leader>gshp :Git<space>stash<space>pop<CR>
 noremap <leader>gpoh :Git<space>push<space>origin<space>HEAD<CR>
