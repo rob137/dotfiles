@@ -99,6 +99,8 @@ imap kj <Esc>
 " Editing vimrc
 map <Leader>ev :tabedit $MYVIMRC<CR>
 map <Leader>es :source $MYVIMRC<CR>
+" Todos
+map <leader>td :tabedit ~/notes/todo.txt<CR>
 " console.log/error/clear
 imap <Leader>cl console.log();<Esc>==f(a
 vmap <Leader>cl yo<Leader>cl<Esc>p
