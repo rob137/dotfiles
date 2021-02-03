@@ -190,6 +190,10 @@ noremap <leader>gshp :Git<space>stash<space>pop<CR>
 "Quickfix window
 noremap [q :cprev<CR>
 noremap ]q :cnext<CR>
+noremap [a :prev<CR>
+noremap ]a :next<CR>
+noremap [b :bprev<CR>
+noremap ]b :bnext<CR>
 
 nnoremap <F5> :UndotreeToggle<cr>
 
