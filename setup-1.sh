@@ -16,11 +16,6 @@ pip install grip
 # Populate paths db for locate command
 sudo updatedb
 
-# Set up vimdiff
-git config --global diff.tool vimdiff
-git config --global merge.tool vimdiff
-git config --global alias.vimdiff difftool
-
 # Setup gitlola
 ln -s $path/.gitconfig ~/.gitconfig
 

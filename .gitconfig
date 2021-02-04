@@ -1,3 +1,7 @@
+[user]
+email = "robertaxelkirby@gmail.com"
+name = "Rob"
+
 [alias]
 lol = log --graph --decorate --pretty=oneline --abbrev-commit
 lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
