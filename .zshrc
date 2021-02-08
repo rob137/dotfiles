@@ -1,0 +1,190 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Path to your oh-my-zsh installation.
+export ZSH="/Users/robert.kirby/.oh-my-zsh"
+
+ZSH_DISABLE_COMPFIX=true
+
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="powerlevel10k/powerlevel10k"
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in $ZSH/themes/
+# If set to an empty array, this variable will have no effect.
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment the following line to disable bi-weekly auto-update checks.
+# DISABLE_AUTO_UPDATE="true"
+
+# Uncomment the following line to automatically update without prompting.
+# DISABLE_UPDATE_PROMPT="true"
+
+# Uncomment the following line to change how often to auto-update (in days).
+# export UPDATE_ZSH_DAYS=13
+
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS="true"
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
+# See https://github.com/ohmyzsh/ohmyzsh/issues/5765
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
+# HIST_STAMPS="mm/dd/yyyy"
+EDITOR='vim'
+HISTSIZE=100000
+SAVEHIST=100000
+EDITOR='vim'
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git)
+
+source $ZSH/oh-my-zsh.sh
+
+# User configuration
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+
+alias v='vim'
+alias v.='vim .'
+alias vs='vim -S'
+
+alias g='git'
+alias ga='git add'
+alias gbm='git branch -m'
+alias gbd='git branch -D'
+alias gap='git add --patch'
+alias gap.='git add --patch .'
+alias ga.='git add .'
+alias gc='git commit'
+alias gcnv='git commit --no-verify'
+alias gca='git commit --amend'
+alias gcane='git commit --amend --no-edit'
+alias gcanv='git commit --amend --no-verify'
+alias gcanenv='git commit --amend --no-edit --no-verify'
+alias gs='git status'
+alias gsh='git stash'
+alias gshp='git stash pop'
+alias gpoh='git push origin HEAD'
+alias gpohf='git push origin HEAD --force'
+alias gch='git checkout'
+alias gch-='git checkout -'
+alias gchd='git checkout develop'
+alias gchm='git checkout master'
+alias gchh='git checkout HEAD\^'
+alias gchb='git checkout -b'
+alias gchf='git checkout feature/eas-'
+alias gcd='git checkout develop'
+alias gcm='git checkout master'
+alias gpl='git pull'
+alias gf='git fetch'
+alias gps='git push'
+alias grb='git rebase'
+alias grb-='git rebase -'
+alias grbd='git rebase develop'
+alias grbm='git rebase master'
+alias grbi='git rebase --interactive'
+alias grmc='git remove --cached'
+alias grs='git reset'
+alias grsh='git reset HEAD\^'
+alias gd='git diff'
+alias gdh='git diff HEAD\^'
+alias gdd='git diff develop'
+alias gdm='git diff master'
+alias gds='git diff --staged'
+alias gddno='git diff develop --relative --name-only | cat'
+alias gdmno='git diff master --relative --name-only | cat'
+alias gdhno='git diff HEAD\^ --relative --name-only | cat'
+alias gdno='git diff --relative --name-only | cat'
+alias vgdno='vim $(gdno)'
+alias vgddno='vim $(gddno)'
+alias vgdmno='vim $(gdmno)'
+alias vgdhno='vim $(gdhno)'
+alias gl='git log'
+alias glod='git log --oneline --decorate'
+alias grf='git reflog'
+alias gsh='git stash'
+alias gshp='git stash pop'
+
+alias ad='adb devices'
+
+alias notes='cd ~/notes'
+alias vtodos='vim ~/notes/todo.txt'
+alias vtodo='vtodos'
+alias vtd='vtodos'
+alias vt='vtodos'
+alias td='vtodos'
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
