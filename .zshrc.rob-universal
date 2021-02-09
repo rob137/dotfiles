@@ -167,6 +167,11 @@ alias grf='git reflog'
 alias gsh='git stash'
 alias gshp='git stash pop'
 
+# Just here as an example for future
+function createFeature() {
+	git checkout -b feature/CESG-"$1"
+}
+
 alias ad='adb devices'
 
 alias notes='cd ~/notes'
