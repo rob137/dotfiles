@@ -25,7 +25,7 @@ set colorcolumn=80 " Vertical column to show 80 chars
 set autoindent " Figure out the correct indentation when creating a new line
 set shiftwidth=2 " Number of spaces used for indentation
 set shiftround " round to multiple of shiftwidth
-" set expandtab " Convert tab to spaces - disabled as work prefer tabs
+set expandtab " Convert tab to spaces
 set tabstop=2 " Display tabs as 2 spaces wide
 set list " This and next two highlight tabs with special character
 set listchars=tab:··
