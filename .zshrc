@@ -169,11 +169,9 @@ alias gshp='git stash pop'
 alias ad='adb devices'
 
 alias notes='cd ~/notes'
-alias vtodos='vim ~/notes/todo.txt'
-alias vtodo='vtodos'
-alias vtd='vtodos'
-alias vt='vtodos'
-alias td='vtodos'
+alias td='vim ~/notes/todo.txt'
+alias tdl='vim ~/notes/todo_life.txt'
+alias tdb='vim ~/notes/todo.txt ~/notes/todo_life.txt'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
