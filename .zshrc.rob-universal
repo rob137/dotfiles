@@ -171,6 +171,9 @@ alias gshp='git stash pop'
 function createFeature() {
 	git checkout -b feature/CESG-"$1"
 }
+function ch() {
+  curl cheat.sh/"$1"
+}
 
 alias ad='adb devices'
 
