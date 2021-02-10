@@ -173,10 +173,10 @@ function ch() {
 
 alias ad='adb devices'
 
-alias notes='cd ~/notes'
+alias n='vim ~/notes/*'
 alias td='vim ~/notes/todo.txt'
 alias tdl='vim ~/notes/todo_life.txt'
-alias tdb='vim ~/notes/todo.txt ~/notes/todo_life.txt'
+alias abb='vim ~/notes/abbreviations.txt'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
