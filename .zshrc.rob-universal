@@ -167,10 +167,6 @@ alias grf='git reflog'
 alias gsh='git stash'
 alias gshp='git stash pop'
 
-# Just here as an example for future
-function createFeature() {
-	git checkout -b feature/CESG-"$1"
-}
 function ch() {
   curl cheat.sh/"$1"
 }
