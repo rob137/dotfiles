@@ -72,6 +72,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'junegunn/goyo.vim'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'KurtPreston/vimcolors'
+Plug 'editorconfig/editorconfig-vim'
 call plug#end()
 set t_Co=256 " 256 colors (not sure it makes any difference)
 colorscheme gruvbox
