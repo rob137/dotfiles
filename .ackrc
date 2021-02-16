@@ -11,6 +11,8 @@
 --ignore-dir=dev
 --ignore-dir=locales
 --ignore-dir=dist
+--ignore-dir=build
+--ignore-dir=lcov-report
 --ignore-dir=android
 --ignore-dir=vendor
 --ignore-dir=wp-content/plugins
