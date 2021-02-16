@@ -171,6 +171,10 @@ function ch() {
   curl cheat.sh/"$1"
 }
 
+function va() {
+  vim $(ack "$1" -l)
+}
+
 alias ad='adb devices'
 
 alias n='vim ~/notes/*'
