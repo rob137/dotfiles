@@ -180,11 +180,14 @@ function vai() {
 
 alias ad='adb devices'
 
+alias notes='cd ~/notes'
 alias n='vim ~/notes/*'
 alias td='vim ~/notes/todo.txt'
 alias tdl='vim ~/notes/todo_life.txt'
 alias glossary='vim ~/notes/glossary.txt'
 alias glos='vim ~/notes/glossary.txt'
+alias dotfiles='cd ~/dotfiles'
+alias dot='cd ~/dotfiles'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
