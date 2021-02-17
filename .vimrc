@@ -9,6 +9,7 @@ set backspace=indent,eol,start " Normal backspace (in case I'm ever on an old sy
 set foldmethod=indent
 " set foldlevelstart=20 " Ensure all folds are unfolded when a file is opened
 set cursorline " Highlight current line of cursor
+set cuc " Vertical highlight on cursor
 set guicursor= " static cursor
 set ruler " show postion at bottom of screen
 set showcmd " show what I'm typing at bottom of screen
