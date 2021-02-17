@@ -192,6 +192,10 @@ noremap <leader>glog% :Glog<space>--<space>%<CR>
 noremap <leader>grf :Git<space>reflog<CR>
 noremap <leader>gsh :Git<space>stash<CR>
 noremap <leader>gshp :Git<space>stash<space>pop<CR>
+" vim only
+noremap <leader>gbl :Gblame<CR>
+noremap <leader>gblp :Gblame<CR><C-w><C-w>
+
 "Quickfix window
 noremap [q :cprev<CR>
 noremap ]q :cnext<CR>
