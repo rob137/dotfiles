@@ -1,0 +1,4 @@
+IdeaVIM
+aws.toolkit
+com.arcticicestudio.nord.jetbrains
+com.intellij.bigdatatools

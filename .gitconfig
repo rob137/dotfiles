@@ -1,6 +1,6 @@
 [user]
-email = "robertaxelkirby@gmail.com"
-name = "Rob"
+email = "robert.kirby@sophos.com"
+name = "Robert Kirby"
 
 [alias]
 lol = log --graph --decorate --pretty=oneline --abbrev-commit
@@ -10,3 +10,11 @@ branch = auto
 diff = auto
 interactive = auto
 status = auto
+[url "https://github.com/"]
+	insteadOf = git@github.com:
+[url "https://"]
+	insteadOf = git://
+[init]
+	defaultBranch = master
+[commit]
+	verbose = true

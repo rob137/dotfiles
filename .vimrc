@@ -10,7 +10,7 @@ set foldmethod=indent
 " set foldlevelstart=20 " Ensure all folds are unfolded when a file is opened
 set cursorline " Highlight current line of cursor
 set cuc " Vertical highlight on cursor
-set guicursor= " static cursor
+set guicursor= " non-blinking cursor
 set ruler " show postion at bottom of screen
 set showcmd " show what I'm typing at bottom of screen
 set scrolloff=4 " Line margin from top/bottom
@@ -21,6 +21,7 @@ set hlsearch incsearch " Highlight search results, and jump to them as you type
 set ignorecase smartcase " Ignore case of search query unless a capital letter is used
 set lazyredraw " Don't redraw while executing macros (good for performance)
 set ttyfast " needed?
+set timeoutlen=600 " Reduce key mapping delays; default 1000ms
 set showmatch " Show matching brackets when text indicator is over them
 set number relativenumber
 set colorcolumn=80 " Vertical column to show 80 chars
@@ -31,6 +32,8 @@ set expandtab " Convert tab to spaces
 set tabstop=2 " Display tabs as 2 spaces wide
 set list " This and next two highlight tabs with special character
 set listchars=tab:··
+set visualbell
+set noerrorbells
 highlight SpecialKey ctermfg=1
 let g:netrw_liststyle = 3 " Make file explorer default to tree view
 let g:netrw_preview   = 1 " Ensure file explorer preview pane is vertical and to right of screen
@@ -38,9 +41,11 @@ let g:netrw_alto      = 0 " (netrw_alto=0 is required to keep it on right while 
 let g:netrw_winsize   = 15 " Make file explorer smaller by default
 let g:netrw_banner    = 0
 command! ShowFile let @/=expand("%:t") | execute 'Lexplore' expand("%:h") | normal n " show file in netrw
+nnoremap <leader>sh :ShowFile<CR> " for 'show'
 set splitright splitbelow " Open vertical splits to right and horizontal splits below
 set history=1000 undolevels=1000
 set undofile
+ set undodir=~/.vim/undodir
 " TODO figure out for linux (ideally cross-platfor solution using if/then)
 set clipboard=unnamed " Content of yank goes to system clipboard (mac only, sadly)
 autocmd FileType gitcommit set textwidth=72 " Break to new line at 72 characters
@@ -71,15 +76,23 @@ Plug 'tpope/vim-surround' " Use with cs'{ to change surrounding '' to {}
 Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'junegunn/goyo.vim'
-Plug 'rafi/awesome-vim-colorschemes'
-Plug 'KurtPreston/vimcolors'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'arcticicestudio/nord-vim'
+Plug 'altercation/vim-colors-solarized'
+Plug 'morhetz/gruvbox'
+Plug 'vim-test/vim-test'
+Plug 'szw/vim-maximizer'
+Plug 'junegunn/goyo.vim'
+Plug 'ap/vim-css-color'
+Plug 'NikolayFrantsev/jshint2.vim'
+Plug 'tpope/vim-commentary'
+Plug 'hashivim/vim-terraform'
 call plug#end()
 set t_Co=256 " 256 colors (not sure it makes any difference)
-colorscheme gruvbox
+colorscheme nord 
 set bg=dark
 source ~/.vimrc.coc " CoC settings from https://github.com/neoclide/coc.nvim - note includes many keybinding
+source ~/.vimrc.local
 com! RefreshVim source ~/.vimrc | PlugClean | PlugInstall
 " Other autofixers
 nmap <leader>j :%!python -m json.tool<CR>
@@ -90,6 +103,12 @@ au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null "
 let vim_markdown_preview_github=1
 let vim_markdown_preview_browser='Google Chrome'
 set noswapfile
+
+" Recognise txt files,  set linebreak on txt and markdown files
+autocmd BufNewFile,BufRead    *.txt     setf text
+autocmd FileType text setlocal linebreak foldlevel=999
+autocmd FileType markdown setlocal linebreak foldlevel=999
+
 if v:version >= 700 " Prevent window changing position when switching buffers
 	au BufLeave * let b:winview = winsaveview()
 	au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
@@ -99,11 +118,22 @@ nnoremap Q <Nop>
 " for escaping insert mode
 imap jk <Esc>
 imap kj <Esc>
-" Editing vimrc
-map <Leader>ev :tabedit $MYVIMRC<CR>
-map <Leader>es :source $MYVIMRC<CR>
+" Editing / sourcing rcs
+map <Leader>ev :tabedit ~/.vimrc<CR>
+map <Leader>es :source ~/.vimrc<CR>
+map <Leader>ez :tabedit ~/.zshrc<CR>
+map <Leader>zsh :tabedit ~/.zshrc<CR>
+
 " Todos
 map <leader>td :tabedit ~/notes/todo.txt<CR>
+map <leader>tdl :tabedit ~/notes/todo_life.txt<CR>
+map <leader>tdb :split ~/notes/todo.txt<CR><C-W>J<C-W>100-ggj<C-W><C-W>
+map <leader>br :tabedit ~/notes/branches.txt<CR>
+map <leader>acc :tabedit ~/notes/accounts.txt<CR>
+
+map <leader>glo :tabedit ~/notes/glossary.txt<CR>
+map <leader>re :tabedit ~/notes/refresher.txt<CR>
+
 " console.log/error/clear
 imap <Leader>cl console.log();<Esc>==f(a
 vmap <Leader>cl yo<Leader>cl<Esc>p
@@ -117,19 +147,119 @@ nmap <Leader>cc o<Leader>cc
 imap <Leader>co console.count();<Esc>
 vmap <Leader>co o<Leader>co
 nmap <Leader>co o<Leader>co
+imap <Leader>kcl console.log('\u001b[2J\u001b[0;0H');<Esc>
+vmap <Leader>kcl ggO<Leader>kcl
+nmap <Leader>kcl ggO<Leader>kcl
+  
+
+" General
+nnoremap <leader>qq :q<CR>
+nnoremap <leader>QQ :q!<CR>
+nnoremap <leader>qa :qa<CR>
+nnoremap <leader>QA :qa!<CR>
+nnoremap <leader>wq :wq<CR>
+nnoremap <leader>WQ :wq!<CR>
+nnoremap <leader>w :w<CR>
+nnoremap <leader>W :w!<CR>
+nnoremap <leader>o :only<CR>
+nnoremap <leader>tt :tabe<space>
+nnoremap <leader>vs :vs<space>
+nnoremap <leader>sp :sp<space>
+nnoremap <leader>ee :edit<space>
+nnoremap <leader>EE :edit!<CR>
+nnoremap <leader>ls :ls<cr>
+nnoremap <leader>bb :buffer<space>
+nnoremap <leader>bu :Buffers<CR>
+nnoremap <leader>bd :bd<space>
+nnoremap <leader>BD :bd!<space>
+nnoremap <leader>bn :bn<cr>
+nnoremap <leader>bp :bp<cr>
+nnoremap <leader>co :Commits<CR>
+nnoremap <leader>ff :find<space>
+nnoremap <leader>fi :Files<CR>
+nnoremap <leader>hi :History<CR>
+nnoremap <leader>he :Help<CR>
+nnoremap <leader>ma :Marks<CR>
+nnoremap <leader>aa :Ack<space>
+nnoremap <leader>ag :Ag<CR>
+nnoremap <leader>to :tabonly<CR>
+nnoremap <leader>tc :tabclose<CR>
+nnoremap <leader>nh :nohlsearch<cr>
+nnoremap <leader>nr :set norelativenumber<cr>
+nnoremap <leader>rn :set relativenumber<cr>
+nnoremap <leader>ts :tab<space>split<cr>
+nnoremap <leader>zen :Goyo<cr>
+nnoremap <leader>r :e<CR>
+nnoremap <leader>R :w<CR>:e<CR>
+nnoremap <leader>ch :tabedit<space>ch><CR>ggdG:read<space>!ch<space>
+nnoremap <leader>ch :tabedit<space>ch><CR>ggdG:read<space>!ch<space>
+nnoremap <leader>zz zR
+nnoremap <leader>bde :bufdo<space>e<CR>
+nnoremap <leader>pwd :pwd<CR>
+" Copy absolute path of current buffer to clipboard
+nnoremap <Leader>cp :let @+=expand('%:p')<CR>
+nnoremap <leader>cd :cd<space>
+nnoremap <leader>lb :set<space>linebreak<CR>
+nnoremap <leader>nlb :set<space>nolinebreak<CR>
+nnoremap <leader>wr :set<space>wrap<CR>
+nnoremap <leader>nwr :set<space>nowrap<CR>
+nnoremap <leader>mks :mks<CR>
+nnoremap <leader>MKS :mks!<CR>
+nnoremap <leader>lh :GitGutterLineHighlightsEnable<CR>
+nnoremap <leader>nlh :GitGutterLineHighlightsDisable<CR>
+nnoremap <leader>pi :PlugInstall<CR>
+nnoremap <leader>pc :PlugClean<CR>
+
+
+
+" Sort multiline lists within brackets
+nnoremap <leader>so[ vi[:sort<CR>
+nnoremap <leader>so{ vi{:sort<CR>
+nnoremap <leader>so( vi(:sort<CR>
+
+" CoC
+nnoremap <leader>ft :CocCommand tslint.fixAllProblems<CR>
+
+" prettier format file
+nnoremap <leader>fp :CocCommand prettier.formatFile<CR>
+" prettier format selection - not working at present, will reformat whole file
+" https://github.com/neoclide/coc-prettier/issues/120
+vmap <leader>fp  <Plug>(coc-format-selected)
+
+" JSHint
+nnoremap <leader>js :'<,'>JSHint
+
+" Debugger
+let g:vimspector_enable_mappings = 'HUMAN'
+fun GotoWindow(id)
+  call win_gotoid(a:id)
+endfun
+noremap <leader>mt :MaximizerToggle!<CR>
+noremap <leader>db :call vimspector#Launch()<CR>
+noremap <leader>dc :call GotoWindow(g:vimspector_session_windows.code)<CR>
+noremap <leader>dt :call GotoWindow(g:vimspector_session_windows.tagpage)<CR>
+noremap <leader>dv :call GotoWindow(g:vimspector_session_windows.variables)<CR>
+noremap <leader>dw :call GotoWindow(g:vimspector_session_windows.watches)<CR>
+noremap <leader>ds :call GotoWindow(g:vimspector_session_windows.stack_trace)<CR>
+noremap <leader>do :call GotoWindow(g:vimspector_session_windows.output)<CR>      
+noremap <leader>dr :call vimspector#Reset()<CR> 
+noremap <leader>ws /\s\+\n
+
+
+
+
 " Open buffer / Ack / find in new tab / split
-noremap <leader>tb :tabedit<space>\|<space>b<space>
-noremap <leader>vb :vsplit<space>\|<space>b<space>
-noremap <leader>sb :split<space>\|<space>b<space>
-noremap <leader>ta :tabedit<space>\|<space>Ack<space>-i<space>
-noremap <leader>va :vsplit<space>\|<space>Ack<space>-i<space>
-noremap <leader>sa :split<space>\|<space>Ack<space>-i<space>
-noremap <leader>tf :tabedit<space>\|<space>find<space>
-noremap <leader>vf :vsplit<space>\|<space>find<space>
-noremap <leader>sf :split<space>\|<space>find<space>
-noremap <leader>a :Ag<CR>
+nnoremap <leader>tb :tabedit<space>\|<space>b<space>
+nnoremap <leader>vb :vsplit<space>\|<space>b<space>
+nnoremap <leader>sb :split<space>\|<space>b<space>
+nnoremap <leader>ta :tabedit<space>\|<space>Ack<space>-i<space>
+nnoremap <leader>va :vsplit<space>\|<space>Ack<space>-i<space>
+nnoremap <leader>sa :split<space>\|<space>Ack<space>-i<space>
+nnoremap <leader>tf :tabedit<space>\|<space>find<space>
+nnoremap <leader>vf :vsplit<space>\|<space>find<space>
+nnoremap <leader>sf :split<space>\|<space>find<space>
 " View diff
-noremap <leader>gd :Gdiffsplit<space>
+nnoremap <leader>gds :Gdiffsplit<space>
 " Search current file for whole word
 nnoremap <leader>/ /\<\><left><left>
 " Vertical resize
@@ -159,7 +289,7 @@ noremap <leader>gch :Git<space>checkout<space>
 noremap <leader>gch- :Git<space>checkout<space>-<CR>
 noremap <leader>gchd :Git<space>checkout<space>develop<CR>
 noremap <leader>gchm :Git<space>checkout<space>master<CR>
-noremap <leader>gchh :Git<space>checkout<space>HEAD\^<CR>
+noremap <leader>gchh :Git<space>checkout<space>HEAD^<CR>
 noremap <leader>gchb :Git<space>checkout<space>-b<CR>
 noremap <leader>gchf :Git<space>chec<space>uuu/eas-
 noremap <leader>gcd :Git<space>chec<space>uuu<CR>
@@ -174,17 +304,16 @@ noremap <leader>grbm :Git<space>re<space>uuu<CR>
 noremap <leader>grbi :Git<space>re<space>uuuinteractive<space>
 noremap <leader>grmc :Git<space>remove<space>--cached<CR>
 noremap <leader>grs :Git<space>reset<space>
-noremap <leader>grsh :Git<space>reset<space>HEAD\^<CR>
+noremap <leader>grsh :Git<space>reset<space>HEAD^<CR>
 noremap <leader>gd :Git<space>diff<space>
 noremap <leader>gd. :Git<space>diff<space>.<CR>
 noremap <leader>gd% :Git<space>diff<space>%<CR>
-noremap <leader>gdh :Git<space>diff<space>HEAD\^<CR>
+noremap <leader>gdh :Git<space>diff<space>HEAD^<CR>
 noremap <leader>gdd :Git<space>diff<space>develop<CR>
 noremap <leader>gdm :Git<space>diff<space>master<CR>
-noremap <leader>gds :Git<space>diff<space>--staged<CR>
 noremap <leader>gddno :Git<space>diff<space>develop<space>--relative<space>--name-only<CR>
 noremap <leader>gdmno :Git<space>diff<space>master<space>--relative<space>--name-onl<CR>
-noremap <leader>gdhno :Git<space>diff<space>HEAD\^<space>--relative<space>--name-only<CR>
+noremap <leader>gdhno :Git<space>diff<space>HEAD^<space>--relative<space>--name-only<CR>
 noremap <leader>gdno :Git<space>diff<space>--relative<space>--name-only<CR>
 noremap <leader>gl :Git<space>log<CR>
 noremap <leader>glog :Glog<space>--<CR>
@@ -193,8 +322,11 @@ noremap <leader>grf :Git<space>reflog<CR>
 noremap <leader>gsh :Git<space>stash<CR>
 noremap <leader>gshp :Git<space>stash<space>pop<CR>
 " vim only
-noremap <leader>gbl :Gblame<CR>
-noremap <leader>gblp :Gblame<CR><C-w><C-w>
+noremap <leader>gbl :Git blame<CR>
+noremap <leader>gblp :Git blame<CR><C-w><C-w>
+noremap <leader>gcl :Gclog<CR>
+noremap <leader>sfjs :set filetype=json<CR>
+noremap <leader>sfja :set filetype=javascript<CR>
 
 "Quickfix window
 noremap [q :cprev<CR>
@@ -203,104 +335,27 @@ noremap [a :prev<CR>
 noremap ]a :next<CR>
 noremap [b :bprev<CR>
 noremap ]b :bnext<CR>
+noremap [q :cb<CR>
+noremap ]q :cn<CR>
+
 
 nnoremap <F5> :UndotreeToggle<cr>
 
+" Make tmux display current filename in statusline - doesn't update when
+" switching buffers / tabs /windows
+" autocmd BufReadPost,FileReadPost,BufNewFile * call system("tmux rename-window " . expand("%:t"))
+
+
 " snippets
+iab _commit <esc>ICESG-:<space><esc>hs
 iab _html <esc>:-1read<space>~/.vim/snippets/html.txt<CR>
 iab _classcomponent <esc>:-1read<space>~/.vim/snippets/classcomponent.txt<CR>
 iab _functionalcomponent <esc>:-1read <space>~/.vim/snippets/functionalcomponent.txt<CR>
 iab _componentangular <esc>:-1read <space>~/.vim/snippets/componentangular.txt<CR>
 iab _arrow const<space>=<space>()<space>=><esc>?t<CR>a
 iab _media @media<space>(min-width:px)<space>{<CR>}<esc>?:<CR>a
-
-" Settings I would like to use, but can't get working:
-" Open URL under cursor in Chrome when 'gx' is typed
-" Note that for \"google-chrome\" on MacOS I use the alias 'open -a \"Google Chrome\"'
-" Currently broken:
-" https://github.com/vim/vim/issues/4738#issuecomment-612354457
-" let g:netrw_browsex_viewer="google-chrome"
-
-" Appears to be a vanilla Vim issue - these work in gvim / neovim, but not vim.
-" Automatic reloading of .vimrc
-" autocmd! bufwritepost .vimrc source %
-" Update buffer when file is saved elsewhere
-" set autoread
-
-" Ale autocompletion was too slow to be helpful (possibly Docker Desktop
-" hogging resources?)
-" - Wouldn't work without running ':source ~/.vimrc on opening vim
-" - Way too slow
-"let g:ale_linters = {
-"			\	'typeScript': ['tsserver'],
-"			\	'javascript': ['tsserver'],
-"\}
-" set omnifunc=syntaxcomplete#Complete " Allows language-specific autocompletion in insert mode with CTRL-x CTRL-o
-"set omnifunc=ale#completion#OmniFunc
-"let g:ale_completion_enabled = 1 " can't seem to get this to work :(
-"let g:ale_completion_delay = 10
-"let g:ale_completion_tsserver_autoimport = 1
-" let g:ale_fix_on_save = 1 " Note - currently only works if vimrc is sourced on opening
-" " I've previously just used '*': ['prettier']
-" let g:ale_fixers = {
-" \   'css': ['prettier'],
-" \   'less': ['prettier'],
-" \   'json': ['eslint'],
-" \   'javascript': ['eslint'],
-" \}
-" nmap <silent> <leader>]a :ALENext<cr>
-" nmap <silent> <leader>[a :ALEPrevious<cr>
-
-
-
-
-
-
-
-" Having fun with colorschemes
-" Randomise colorschemes
-function RandomColorScheme()
-	let mycolors = split(globpath(&rtp,"**/colors/*.vim"),"\n")
-	exe 'so ' . mycolors[localtime() % len(mycolors)]
-	unlet mycolors
-endfunction
-" Assign random colorscheme for vim on opening
-" call RandomColorScheme()
-" Shortcuts / keybinds
-:command NewColor call RandomColorScheme()
-:command NC call RandomColorScheme()
-nmap <silent> <leader>n :NC<cr>
-
-" ':ANC' to add a pretty color to a version-controlled list for later
-" shortlisting (probably make a repository of the best ones)
-function AddToNiceColors()
-	redir >>~/dotfiles/nice-vim-colors.txt|silent colorscheme|redir END
-endfunction
-" Shortcuts / keybinds
-:command ANC call AddToNiceColors()
-nmap <silent> <leader>N :ANC<cr>
-
-
-" For 3 way git merges
-" Remove braces / equals signs
-let @m = '/<<<<<ztddk/=====ddk/>>>>dd'
-" Add spaces between .po file declarations where missing
-let @p = '/msgidkyl/\"\n\#:j0O'
-
-
-
-
-" use tab for autocompletion rather than ctrl+p
-" function! InsertTabWrapper()
-" 	let col = col('.') - 1
-" 	if !col || getline('.')[col - 1] !~ '\k'
-" 		return "\<tab>"
-" 	else
-" 		return "\<c-p>"
-" 	endif
-" endfunction
-" inoremap <expr> <s-tab> InsertTabWrapper()
-" inoremap <tab> <c-n>
+iab _it <esc>:-1read<space>~/.vim/snippets/it.txt<CR>2f'i
+iab _describe <esc>:-1read<space>~/.vim/snippets/describe.txt<CR>2f'i
 
 " Xml formatter - brittle!  Switch on, use, switch off.
 " com! FormatXML :%!python3 -c "import xml.dom.minidom, sys; print(xml.dom.minidom.parse(sys.stdin).toprettyxml())"

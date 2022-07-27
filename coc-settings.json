@@ -1,6 +1,3 @@
 {
-  "coc.preferences.formatOnSaveFiletypes": ["typescript", "typescriptreact", "tsx"],
-  "eslint.autoFixOnSave": true,
-	"prettier.useTabs": true,
-	"stylelintplus.autoFixOnSave": true 
+  "tslint.autoFixOnSave": true,
 }

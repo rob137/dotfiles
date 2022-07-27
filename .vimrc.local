@@ -1,0 +1,7 @@
+" Sadly nuked - contained:
+"   - Add branch name to start of commit message on starting up a commit message
+"   - Look up translation <leader>trd and <leader>trs
+
+nnoremap <leader>C /CESG-<CR>yEggpA:<space><esc>:nohlsearch<CR>A
+nnoremap <leader>trd yi":Ag<C-V>
+nnoremap <leader>te STEMP COMMIT<esc>

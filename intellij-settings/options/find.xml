@@ -1,0 +1,29 @@
+<application>
+  <component name="FindSettings">
+    <option name="customScope" value="All Places" />
+    <option name="defaultScopeName" value="All Places" />
+    <option name="SEARCH_SCOPE" value="All Places" />
+    <mask>Users*.java</mask>
+    <mask>*.json</mask>
+    <mask>*test.java</mask>
+    <mask>*service.java</mask>
+    <mask>LPASUser*.java</mask>
+    <mask>*Service.java</mask>
+    <mask>*ServiceImpl.java</mask>
+    <mask>*.groovy</mask>
+    <mask>*.css</mask>
+    <mask>*.html</mask>
+    <mask>*.xml</mask>
+    <mask>*.jsp</mask>
+    <mask>*.properties</mask>
+    <mask>*.java</mask>
+    <mask>*.vm</mask>
+    <mask>*html.vm</mask>
+    <mask>*Queries.java</mask>
+    <mask>*.text.vm</mask>
+    <mask>!*Test.java</mask>
+    <mask>*ContractTest.java</mask>
+    <mask>*Test.java</mask>
+    <mask>EdrResults*</mask>
+  </component>
+</application>

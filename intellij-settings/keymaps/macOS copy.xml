@@ -1,0 +1,37 @@
+<keymap version="1" name="macOS copy" parent="Mac OS X 10.5+">
+  <action id="$LRU">
+    <keyboard-shortcut first-keystroke="alt o" />
+  </action>
+  <action id="Annotate">
+    <keyboard-shortcut first-keystroke="alt b" />
+  </action>
+  <action id="Editor LRU">
+    <keyboard-shortcut first-keystroke="alt o" />
+  </action>
+  <action id="GotoNextError">
+    <keyboard-shortcut first-keystroke="f2" />
+    <keyboard-shortcut first-keystroke="g" />
+    <keyboard-shortcut first-keystroke="close_bracket" second-keystroke="g" />
+  </action>
+  <action id="GotoPreviousError">
+    <keyboard-shortcut first-keystroke="shift f2" />
+    <keyboard-shortcut first-keystroke="open_bracket" second-keystroke="g" />
+  </action>
+  <action id="GotoTest" />
+  <action id="ReopenClosedTab">
+    <keyboard-shortcut first-keystroke="shift meta t" />
+  </action>
+  <action id="ResourceExplorer.show" />
+  <action id="SelectInProjectView">
+    <keyboard-shortcut first-keystroke="alt s" />
+  </action>
+  <action id="ServiceView.ShowServices" />
+  <action id="VcsShowNextChangeMarker">
+    <keyboard-shortcut first-keystroke="shift ctrl alt down" />
+    <keyboard-shortcut first-keystroke="close_bracket" second-keystroke="c" />
+  </action>
+  <action id="VcsShowPrevChangeMarker">
+    <keyboard-shortcut first-keystroke="shift ctrl alt up" />
+    <keyboard-shortcut first-keystroke="open_bracket" second-keystroke="c" />
+  </action>
+</keymap>

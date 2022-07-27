@@ -22,8 +22,9 @@ ln -s $path/.gitconfig ~/.gitconfig
 # Makes nodemon clear on refresh
 ln -s $path/nodemon.json ~/nodemon.json
 
-# Tmux conf - currently just sets 256 colors
 ln -s %path/.tmux.conf ~/.tmux.conf
+
+ln -s %path/.emacs ~/.emacs
 
 # Setup vim using dotfiles repository
 mkdir -p ~/.vim/colors
@@ -32,6 +33,7 @@ rm ~/.vimrc
 ln -s $path/.vimrc ~/.vimrc
 ln -s $path/.vimrc.coc ~/.vimrc.coc
 ln -s $path/coc-settings.json ~/.vim/coc-settings.json
+mkdir ~/.vim/undodir
 
 # Install vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \

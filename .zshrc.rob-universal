@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/robert.kirby/.oh-my-zsh"
+export ZSH="/Users/robert/.oh-my-zsh"
 
 ZSH_DISABLE_COMPFIX=true
 
@@ -63,9 +63,7 @@ ZSH_THEME="agnoster"
 # see 'man strftime' for details.
 # HIST_STAMPS="mm/dd/yyyy"
 EDITOR='vim'
-HISTSIZE=100000
 SAVEHIST=100000
-EDITOR='vim'
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
@@ -105,16 +103,57 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+alias vim='nvim'
 alias v='vim'
 alias v.='vim .'
+alias vz='vim ~/.zshrc'
+alias vzu='vim ~/.zshrc.rob-universal'
+alias vzru='vzu'
+alias vru='vzu'
+alias vzr='vzu'
+alias vv='vim ~/.vimrc'
+alias vr='vim ./README.md'
+alias vp='vim ./package.json'
+alias v-='vim -'
+alias sz='source ~/.zshrc'
+alias .z='. ~/.zshrc'
 alias vs='vim -S'
+alias vh='history | vim -'
+alias vt='tree | vim -'
+
+alias cd-='cd -'
+alias cd..='cd ..'
+
+alias a='ack'
+
+alias t='tmux'
+alias tt='clear && cd && tmux'
+
+alias h='history'
+
+alias p='python3'
 
 alias g='git'
+alias gg='git grep'
+alias gcl='git clone'
 alias ga='git add'
 alias gbm='git branch -m'
 alias gbd='git branch -D'
+# Copy current branch name to clipboard, from https://gist.github.com/lnolte/4016361
+alias gbsc='git branch --show-current | pbcopy'
+alias copybranch='gbsc'
+alias copy-branch='gbsc'
+alias cpbranch='gbsc'
+alias cp-branch='gbsc'
+alias cpbr='gbsc'
+alias cpb='gbsc'
+alias bcp='cpb'
+alias cpc='git show-ref feature/CESG-20989-testing | grep -v origin | cut -c 1-40 | pbcopy'
+alias cps='cpc'
 alias gap='git add --patch'
 alias gap.='git add --patch .'
+alias gaps='git add --patch ./src'
+alias gapl='git add --patch ./lib'
 alias ga.='git add .'
 alias gc='git commit'
 alias gcnv='git commit --no-verify'
@@ -124,8 +163,11 @@ alias gcanv='git commit --amend --no-verify'
 alias gcanenv='git commit --amend --no-edit --no-verify'
 alias gs='git status'
 alias gsh='git stash'
+alias gshsh='git stash show -p'
+alias gash='git add . && git stash'
+alias gsha='git stash apply'
 alias gshp='git stash pop'
-alias gpuo='git push -u origin $(git rev-parse --abbrev-ref HEAD)'
+alias gpsuo='git push -u origin $(git rev-parse --abbrev-ref HEAD)'
 alias gpoh='git push origin HEAD'
 alias gpohf='git push origin HEAD --force'
 alias gch='git checkout'
@@ -137,7 +179,18 @@ alias gchb='git checkout -b'
 alias gchf='git checkout feature/eas-'
 alias gcd='git checkout develop'
 alias gcm='git checkout master'
+alias gcp='git cherry-pick'
+alias gcpn='git cherry-pick -n'
+alias gcpc='git cherry-pick --continue'
+alias gcpa='git cherry-pick --abort'
+alias gcps='git cherry-pick --skip'
+alias gm='git merge'
+alias gm-='git merge -'
+alias gmd='git merge develop'
+alias gmm='git merge master'
 alias gpl='git pull'
+# Prevent warning on first pull
+alias gcprf='git config pull.rebase false'
 alias gf='git fetch'
 alias gps='git push'
 alias grb='git rebase'
@@ -146,26 +199,69 @@ alias grbd='git rebase develop'
 alias grbm='git rebase master'
 alias grbi='git rebase --interactive'
 alias grmc='git remove --cached'
+alias grv='git revert'
+alias grvh='git revert HEAD\^'
 alias grs='git reset'
 alias grsh='git reset HEAD\^'
 alias gd='git diff'
+alias gds='git diff ./src'
+alias gdl='git diff ./lib'
 alias gdh='git diff HEAD\^'
 alias gdd='git diff develop'
 alias gdm='git diff master'
-alias gds='git diff --staged'
+alias gdst='git diff --staged'
 alias gddno='git diff develop --relative --name-only | cat'
 alias gdmno='git diff master --relative --name-only | cat'
 alias gdhno='git diff HEAD\^ --relative --name-only | cat'
 alias gdno='git diff --relative --name-only | cat'
 alias vgdno='vim $(gdno)'
+alias vuntracked='v $(git ls-files --others --exclude-standard)'
 alias vgddno='vim $(gddno)'
 alias vgdmno='vim $(gdmno)'
 alias vgdhno='vim $(gdhno)'
+alias gun='git config user.name'
 alias gl='git log'
+alias glnm='git log --no-merges --author=$(gun)'
 alias glod='git log --oneline --decorate'
 alias grf='git reflog'
+alias grl='grf'
+alias grfl='grf'
 alias gsh='git stash'
 alias gshp='git stash pop'
+
+alias beep='osascript -e "beep 5"'
+alias b='beep'
+alias bx='osascript -e "beep 5 && exit"'
+
+function ff() {
+  find "$1" -type f -iname "$2"
+}
+
+alias d='docker'
+alias dcu='docker-compose up'
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias dsp='docker system prune -a'
+alias di='docker images'
+alias dockernuke='dsa; drma; yes | dsp'
+alias dn='dsa; drma; yes | dsp'
+drm() {
+  docker rm "$@"
+}
+alias drma='docker rm $(docker ps -a -q)'
+drmi() {
+  docker rmi "$@"
+}
+dl() {
+  docker logs "$@"
+}
+ds() {
+  docker stop "$@"
+}
+alias dsa='docker stop $(docker ps -a -q)'
+dl() {
+  docker logs "$1"
+}
 
 function ch() {
   curl cheat.sh/"$1"
@@ -177,14 +273,20 @@ function va() {
 function vai() {
   vim $(ack "$1" -il)
 }
+function vn() {
+  ack "$1" ~/notes
+}
 
-alias ad='adb devices'
+alias sp='cd ~/sandpit'
 
 alias notes='cd ~/notes'
 alias n='vim ~/notes/*'
 alias td='vim ~/notes/todo.txt'
 alias tdl='vim ~/notes/todo_life.txt'
 alias glossary='vim ~/notes/glossary.txt'
+alias refresher='vim ~/notes/refresher.txt'
+alias ref='refresher'
+alias re='refresher'
 alias glos='vim ~/notes/glossary.txt'
 alias dotfiles='cd ~/dotfiles'
 alias dot='cd ~/dotfiles'
@@ -192,6 +294,8 @@ alias dot='cd ~/dotfiles'
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# # Excruciatingly slow, enable when needed
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
