@@ -92,7 +92,7 @@ set t_Co=256 " 256 colors (not sure it makes any difference)
 colorscheme nord 
 set bg=dark
 source ~/.vimrc.coc " CoC settings from https://github.com/neoclide/coc.nvim - note includes many keybinding
-source ~/.vimrc.local
+" source ~/.vimrc.local
 com! RefreshVim source ~/.vimrc | PlugClean | PlugInstall
 " Other autofixers
 nmap <leader>j :%!python -m json.tool<CR>
