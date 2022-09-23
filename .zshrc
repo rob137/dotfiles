@@ -14,6 +14,7 @@ alias es='cd ~/g/events-service'
 alias esu='cd ~/g/events-service-ui'
 alias mc='cd ~/g/microservices-cms'
 alias pf='cd ~/g/pickswise-frontend'
+alias pa='cd ~/g/pickswise-app'
 alias rc='cd ~/g/react-components'
 
 alias python='python3'
