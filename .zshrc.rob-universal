@@ -73,6 +73,7 @@ alias gash='git add . && git stash'
 alias gsha='git stash apply'
 alias gshp='git stash pop'
 alias gpsuo='git push -u origin $(git rev-parse --abbrev-ref HEAD)'
+alias git-set-remote=gpsuo
 alias gpoh='git push origin HEAD'
 alias gpohf='git push origin HEAD --force'
 alias gch='git checkout'
@@ -134,19 +135,30 @@ alias grfl='grf'
 alias gsh='git stash'
 alias gshp='git stash pop'
 
-alias beep='osascript -e "beep 5"'
+alias beep='osascript -e "beep 2"'
 alias b='beep'
-alias bx='osascript -e "beep 5 && exit"'
+alias bx='osascript -e "beep 2 && exit"'
+
+alias gt='go test -v'
+alias gti='go test -v -tags=integration'
+
+alias cl='clear'
 
 function ff() {
   find "$1" -type f -iname "$2"
 }
 
+alias nci='npm clean-install'
+alias nu='nvm use'
+alias nuci='nvm use; npm ci'
+alias nunci='nuci'
+
 alias d='docker'
 alias dcu='docker-compose up'
+alias dcud='docker-compose up -d'
 alias dps='docker ps'
 alias dpsa='docker ps -a'
-alias dsp='docker system prune -a'
+alias dspa='docker system prune -a'
 alias di='docker images'
 alias dockernuke='dsa; drma; yes | dsp'
 alias dn='dsa; drma; yes | dsp'
@@ -158,7 +170,7 @@ drmi() {
   docker rmi "$@"
 }
 dl() {
-  docker logs "$@"
+  docker logs --timestamps "$@"
 }
 ds() {
   docker stop "$@"
@@ -167,6 +179,8 @@ alias dsa='docker stop $(docker ps -a -q)'
 dl() {
   docker logs "$1"
 }
+
+alias ungron='gron --ungron'
 
 function ch() {
   curl cheat.sh/"$1"
@@ -178,3 +192,16 @@ alias td='vim ~/notes/todo.txt'
 alias tdl='vim ~/notes/todo_life.txt'
 alias glossary='vim ~/notes/glossary.txt'
 alias glos='vim ~/notes/glossary.txt'
+
+ # For emacs vterm, from here: https://github.com/akermu/emacs-libvterm#shell-side-configuration
+vterm_printf(){
+    if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
+        # Tell tmux to pass the escape sequences through
+        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
+    elif [ "${TERM%%-*}" = "screen" ]; then
+        # GNU screen (screen, screen-256color, screen-256color-bce)
+        printf "\eP\e]%s\007\e\\" "$1"
+    else
+        printf "\e]%s\e\\" "$1"
+    fi
+}

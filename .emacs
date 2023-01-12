@@ -10,7 +10,7 @@
 
 ;; for making the package exec-path-from-shell work
 ;; this package allows lsp-mode to find npm when npm is at a non-standard
-;; directory - e.g. when npm is installed via nvm (and t always should be)
+;; directory - e.g. when npm is installed via nvm (and it always should be)
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
 (setq exec-path (append exec-path '("/Users/robert.kirby/.n")))
@@ -23,9 +23,17 @@
  '(git-gutter:update-interval 2)
  '(org-agenda-files '("~/notes/todo.org"))
  '(package-selected-packages
-   '(gotest dtrt-indent highlight cov coverage indium restclient which-key docker dockerfile-mode doom-themes go-mode jenkinsfile-mode evil-collection evil expand-region hl-todo flycheck eslint-rc prettier-rc scss-mode exec-path-from-shell web-mode docker-compose-mode lsp-mode rg rjsx-mode typescript-mode tree-sitter-langs tree-sitter projectile fzf counsel ag neotree git-gutter vimrc-mode ranger magit prettier))
+   '(sass-mode chatgpt epc ctable concurrent deferred quelpa-use-package quelpa php-mode json-mode jsfmt zenburn-theme which-key web-mode vterm typescript-mode tree-sitter-langs scss-mode rjsx-mode rg restclient prettier-rc prettier magit lsp-ui jenkinsfile-mode indium hl-todo highlight grip-mode gotest git-gutter fzf flycheck expand-region exec-path-from-shell evil-collection eslint-rc eglot dtrt-indent doom-themes dockerfile-mode docker-compose-mode docker coverage cov company-quickhelp auto-org-md))
+ '(package-selected-packagesn
+   '(grip-mode eglot vterm zenburn-theme gotest dtrt-indent highlight cov coverage indium restclient which-key docker dockerfile-mode doom-themes go-mode jenkinsfile-mode evil-collection evil expand-region hl-todo flycheck eslint-rc prettier-rc scss-mode exec-path-from-shell web-mode docker-compose-mode lsp-mode rg rjsx-mode typescript-mode tree-sitter-langs tree-sitter projectile fzf counsel ag neotree git-gutter vimrc-mode ranger magit prettier))
  '(safe-local-variable-values
-   '((cov-lcov-file-name . "/Users/robert.kirby/g/events-service/coverage/lcov.info")
+   '((vc-prepare-patches-separately)
+     (diff-add-log-use-relative-names . t)
+     (vc-git-annotate-switches . "-w")
+     (cov-lcov-file-name . "/Users/robert.kirby/g/aff-services-mono/apps/bookmaker-aliases-servicex/coverage/unit/lcov.info")
+     (cov-lcov-file-name . "/Users/robert.kirby/g/aff-services-mono/apps/bookmaker-aliases-service/coverage/unit/lcov.info")
+     (cov-lcov-file-name . "/Users/robert.kirby/g/events-service/coverage/unit/lcov.info")
+     (cov-lcov-file-name . "/Users/robert.kirby/g/events-service/coverage/lcov.info")
      (lcov-file-name . "/Users/robert.kirby/g/events-service/coverage/lcov.info"))))
 
 
@@ -58,24 +66,20 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-;; ============= EMACS NATIVE SETTINGS =============
+;; ============= Emacs NATIVE SETTINGS =============
 
 ;; hide ui
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
-;; (set-frame-parameter (selected-frame) 'alpha '(90 . 0)) ;; Make emacs windows transparent
+;; dired-style buffer menu
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;; don't show scratch buffer description text
+(setq initial-scratch-message nil)
+
+(set-frame-parameter (selected-frame) 'alpha '(98 . 98)) ;; Make emacs windows transparent
 
 ;; add a 5 line buffer between the point and the top / bottom of the window
 (setq scroll-margin 5)
@@ -109,35 +113,31 @@
 ;; Save minibuffer history
 (savehist-mode 1)
 
-;; partial matching when entering buffer, file, directory names
-;; disable for given input with C-b for buffers, C-b for files
-(setq-default ido-enable-flex-matching t)
-(setq-default ido-everywhere t)
-(ido-mode t)
-
 ;; Don't display the 'Welcome to GNU Emacs' buffer on startup
 (setq-default inhibit-startup-message t)
 
 ;; instead of icomplete - covers M-x and help too
 ;; http://xahpmlee.info/emacs/emacs/emacs_icomplete_mode.html
+;; Removed ido-mode as it was causing issues with project grep
 (fido-mode t)
+;; display results in vertical list
+(fido-vertical-mode t)
 
 ;; ;; show tabs, spaces, newlines etc
 (global-whitespace-mode t)
-;; All of the defaults, minus line / lines-tail newline / newline mark, which were too
-;; noisy; added line-tail to highlight end of long lines
-(setq-default whitespace-style '(face
-                                 spaces
+;; Some of these are noisy, so I've disabled them.
+;; Others are worse on certain color themes.
+(setq-default whitespace-style '(
+                                 face ;; necessary for some of the others in this list
                                  trailing
-                                 space-before-tab
-                                 indentation
-                                 empty
-                                 space-after-tab
-                                 space-mark
-                                 tab
-                                 ;; tab-mark ;; ugly, can't seem to change color
-                                 missing-newline-at-eof))
+                                 ;; space-before-tab
+                                 ;; space-after-tab
+                                 ;; indentation ;; noisy in zenburn
+                                 ;; tabs ;; noisy in zenburn
+                                 ))
 
+;; smooth scroll
+(setq scroll-step 1) ;; don't see difference
 
 ;; vertical line on 80 char column
 (setq-default display-fill-column-indicator-column 79)
@@ -203,6 +203,7 @@
 
 (setq-default dired-listing-switches "-alh") ;; human readable sizes in dired
 
+
 ;; Revert buffer to disk version if it has changed
 (global-auto-revert-mode)
 ;; refresh dired when files change
@@ -227,6 +228,8 @@
 
 ;; Treat wordsSeparatedByCapitalLetters as separate words
 (add-hook 'prog-mode-hook 'subword-mode)
+;; same but for magit
+(add-hook 'magit-mode-hook 'subword-mode)
 
 ;; Hide ugly newline arrows in fringe
 (setf (cdr (assq 'continuation fringe-indicator-alist))
@@ -244,9 +247,28 @@
 (add-hook 'markdown-mode-hook 'hl-todo-mode)
 (add-hook 'fundamental-mode-hook 'hl-todo-mode)
 
+;; word-wrap in markdown mode, text mode, etc (experimental)
+(add-hook 'markdown-mode-hook 'visual-line-mode)
+(add-hook 'text-mode-hook 'visual-line-mode)
+(add-hook 'fundamental-mode-hook 'visual-line-mode)
 
+;; Add vterm / magit to project switch modeline
+;; Wrapped like this to prevent things breaking - this pattern was new to me
+;; and feels smart. Should almost certainly be using it elsewhere!
+(with-eval-after-load 'project
+  (add-to-list 'project-switch-commands '(?t "vterm" vterm))
+  (add-to-list 'project-switch-commands '(?m "magit" magit))
+  )
 
-
+;; ignore directories when grepping in a project - doesn't work for C-u C-x p g
+(eval-after-load 'grep
+  '(progn
+     (add-to-list 'grep-find-ignored-directories "node_modules")
+     (add-to-list 'grep-find-ignored-directories "dist")
+     (add-to-list 'grep-find-ignored-directories "build")
+     (add-to-list 'grep-find-ignored-directories "package-lock.json")))
+;; Truncate lines in grep results
+(add-hook 'grep-mode-hook (lambda () (toggle-truncate-lines 1)))
 
 
 
@@ -271,6 +293,12 @@
 (define-key term-raw-map (kbd "C-c C-j") 'term-toggle-mode)
 (define-key term-raw-map (kbd "C-c C-k") 'term-toggle-mode)
 
+;; C-c o to open org mode file
+(defun open-todo ()
+  (interactive)
+  (find-file "~/notes/org.org"))
+(global-set-key (kbd "C-c o") 'open-todo)
+
 ;; In term modes, quit the buffer when the process exits
 ;; (e.g. when you exit the shell)
 ;; Warning: stolen from stackoverflow...
@@ -283,7 +311,16 @@
 (defun term-zsh ()
   (interactive)
   (term "/bin/zsh"))
-(global-set-key (kbd "C-c t") 'term-zsh)
+
+;; vterm - creates / switches to buffer called 'vterm'
+;; can rename each vterm buffer with incrementing suffix using C-x x u
+;; Doing so allows you to open a new vterm buffer with C-c t
+(global-set-key (kbd "C-c t") 'vterm)
+;; Rename current buffer to "*vterm*"
+(defun rename-buffer-to-*vterm* ()
+  (interactive)
+  (rename-buffer "*vterm*"))
+(global-set-key (kbd "C-x x v") 'rename-buffer-to-*vterm*)
 
 ;; org mode fully expand tree under cursor - s-Tab does globally, not always what I want
 (with-eval-after-load 'org
@@ -291,9 +328,19 @@
 
 ;; org mode add a day as header to next line, then move point under it, for logging activity
 (fset 'org-new-day
-      (kmacro-lambda-form [?\C-e return ?* ?* ?* ?  ?\C-c ?. ?  return return] 0 "%d"))
+      (kmacro-lambda-form [?\C-e return ?* ?* ?  ?\C-c ?. ?  return return] 0 "%d"))
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-c a d") 'org-new-day))
+
+;; for this at top of TS / JS files, useful for pretty logging:
+;; const jl = (x: any) => console.log(JSON.stringify(x, null, 2)); // TODO remove [can ignore this TODO]
+(fset 'add-pretty-print-method-to-top-of-file
+   (kmacro-lambda-form [?\M-< return return ?\M-< ?c ?o ?n ?s ?t ?  ?j ?l ?  ?= ?  ?\( ?x ?: ?  ?a ?n ?y ?\C-e ?  ?= ?> ?  ?c ?o ?n ?s ?o ?l ?e ?. ?l ?o ?g ?\( ?J ?S ?O ?N ?. ?s ?t ?r ?i ?n ?g ?i ?f ?y ?\( ?x ?, ?  ?n ?u ?l ?l ?, ?  ?2 ?\C-e ?\; ?  ?/ ?/ ?  ?T ?O ?D ?O ?  ?r ?e ?m ?o ?v ?e] 0 "%d"))
+
+
+
+
+
 
 ;; for autoformatting code with prettier
 ;; prettify highlighted text, or the whole file
@@ -307,6 +354,9 @@
 ;; indent-for-tab-command
 ;; pop-to-mark-command
 (global-set-key (kbd "C-c p") 'prettify) ;; probably shrould be a single binding for all formatters, which listens for correct file type...
+
+
+
 (global-set-key (kbd "C-c c o") 'compile)
 
 ;; for mac os x https://www.emacswiki.org/emacs/FullScreen#h5o-27
@@ -316,7 +366,6 @@
   (set-frame-parameter
      nil 'fullscreen
      (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
-(global-set-key (kbd "C-c C-f") 'toggle-fullscreen)
 
 ;; backup / autosave / lock files - don't litter directories
 (setq backup-directory-alist `(("." . "~/.emacs.d/backups")))
@@ -332,42 +381,50 @@
 (defun insert-ticket-number ()
   (interactive)
   (let ((branch (magit-get-current-branch)))
-    (if (string-match "[a-zA-Z]+-[0-9]\\{1,\\}" branch)
-        (insert (upcase (match-string 0 branch)) ": ")
-      )))
+    (when (string-match "[a-zA-Z]+-[0-9]\\{1,\\}" branch)
+      (let ((prefix (upcase (match-string 0 branch))))
+        (unless (string-prefix-p prefix (buffer-string))
+          (insert prefix ": "))))))
+
 ;; On opening magit commit message, insert ticket number
 (add-hook 'git-commit-setup-hook 'insert-ticket-number)
 
 (global-set-key (kbd "C-=") 'er/expand-region)
 
+(global-set-key (kbd "C-c c k") 'kill-compilation)
+
+;; keybinding to open scratch buffer
+(global-set-key (kbd "C-c s") 'switch-to-scratch-buffer)
+;; switch to scratch buffer
+(defun switch-to-scratch-buffer ()
+  "Switch to the scratch buffer."
+  (interactive)
+  (switch-to-buffer "*scratch*"))
+
+;; display full file path in modeline
+(setq-default mode-line-buffer-identification
+              '(:eval (if buffer-file-name
+                          (abbreviate-file-name buffer-file-name)
+                        "%b")))
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-;; ============= PACKAGES =============
+;; ============= PACKAGES / PLUGINS =============
 
 ;; outsource autoindentation to dtrt-indent, as it's a pain
 (dtrt-indent-global-mode t)
 
-;; enable autocompletion
-(global-company-mode)
-;; but disable for modes
-(setq company-global-modes '(not-eshell-mode))
-(setq company-global-modes '(not-shell-mode))
-(setq company-global-modes '(not-term-mode))
+;; enable autocompletion, disable by exception
+(global-company-mode t)
+(defun disable-company-mode ()
+  (company-mode -1))
+(add-hook 'eshell-mode-hook 'disable-company-mode)
+(add-hook 'shell-mode-hook 'disable-company-mode)
+(add-hook 'term-mode-hook 'disable-company-mode)
+(add-hook 'org-mode-hook 'disable-company-mode)
+
 
 ;; additional package to show documentation alongside autocomplete
 ;; currently not displaying correctly in html / css files, see:
@@ -382,12 +439,14 @@
       ;; To prevent completions always appearing in lowercase - annoying in most languages
       company-dabbrev-downcase nil
       company-dabbrev-ignore-case "keep-prefix"
-)
+      )
+
+;; trying prettier everywhere
+(add-hook 'after-init-hook #'global-prettier-mode)
 
 ;; pop-up showing next possible key press - similar natively by '[keypress] ?'
 (which-key-mode)
 (setq which-key-idle-delay 0.5)
-
 
 ;; Syntax highlighting - requires major mode to recognise file type, e.g. must
 ;; first install seperate package typescript-mode.el to see highlighting of .ts
@@ -399,30 +458,94 @@
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (setq flycheck-javascript-eslint-executable "eslint_d"
       scss-stylelint "stylelint")
+(global-set-key (kbd "C-c g n") 'git-gutter:next-hunk)
+(global-set-key (kbd "C-c g p") 'git-gutter:previous-hunk)
 
-;; some ease of use bindings for code familiar from my vimrc
-(global-set-key (kbd "C-c d") 'lsp-find-definition)
 (global-set-key (kbd "C-c f") 'ffap)
 
-;; set up the lsp server
-(add-hook 'typescript-mode-hook #'lsp)
-(add-hook 'js-jsx-mode-hook #'lsp)
-(add-hook 'html-mode-hook #'lsp)
-(add-hook 'css-mode-hook #'lsp)
+;; magit ease-of-use bindings
+(global-set-key (kbd "C-c g d") 'magit-diff-buffer-file) ;; diff current buffer
+
+;; always use dired
+(global-set-key (kbd "C-x C-d") 'dired)
 
 
-(setq lsp-enable-symbol-highlighting t)
-(setq lsp-ui-doc-enable t)
-(setq lsp-ui-doc-show-with-cursor t)
-(setq lsp-ui-doc-show-with-mouse t)
+;; ;; LSP MODE ---------------------------- probably no longer going to use, but keeping to hand because eglot has issues in go
+;; ;; set up the lsp server
+;; (add-hook 'typescript-mode-hook #'lsp)
+;; (add-hook 'js-jsx-mode-hook #'lsp)
+;; (add-hook 'html-mode-hook #'lsp)
+;; (add-hook 'css-mode-hook #'lsp)
+;; (add-hook 'go-mode-hook #'lsp-deferred)
+;; (setq lsp-enable-symbol-highlighting t)
+;; (setq lsp-ui-doc-enable t)
+;; (setq lsp-ui-doc-show-with-cursor t)
+;; (setq lsp-ui-doc-show-with-mouse t)
+;; ;; mimicking flymake
+;; ;; flycheck next error M-n
+;; (global-set-key (kbd "M-n") 'flycheck-next-error)
+;; ;;  flycheck previous error M-p
+;; (global-set-key (kbd "M-p") 'flycheck-previous-error)
+;; (global-set-key (kbd "C-c d") 'lsp-find-definition)
+;; ;; END LSP MODE ------------------------
 
-;; Ever-growing list of mappings of filetype to language mode.
-;; Note that these will override any defaults, since they'll be appended to the
-;; auto-mode-list and therfore read last
+;; EGLOT MODE ----------------------------
+;; NOTE Golang / emacs bug due to be fixed in Emacs 29 (probably already fixed in prerelease)
+;; https://github.com/golang/go/issues/54559#issuecomment-1352862969
+;; Flymake goes hand-in-hand with eglot (flycheck plays nice with lsp-mode)
+(add-hook 'typescript-mode-hook 'eglot-ensure)
+(add-hook 'js-jsx-mode-hook 'eglot-ensure)
+(add-hook 'rjsx-mode-hook 'eglot-ensure)
+(add-hook 'html-mode-hook 'eglot-ensure)
+(add-hook 'css-mode-hook 'eglot-ensure)
+(add-hook 'sass-mode-hook 'eglot-ensure)
+(add-hook 'sass-mode-hook 'flymake-sass-load)
+(add-hook 'go-mode-hook 'eglot-ensure)
+(add-hook 'eglot--managed-mode-hook
+          (lambda ()
+            (define-key eglot-mode-map (kbd "C-c d") 'xref-find-definitions)
+            (define-key eglot-mode-map (kbd "C-c r") 'xref-find-references)
+            (define-key eglot-mode-map (kbd "C-c R") 'eglot-rename)
+            )
+          )
+;; setup eglot with gopls - from gopls docs https://github.com/golang/tools/blob/master/gopls/doc/emacs.md
+(require 'project)
+(defun project-find-go-module (dir)
+  (when-let ((root (locate-dominating-file dir "go.mod")))
+    (cons 'go-module root)))
+(cl-defmethod project-root ((project (head go-module)))
+  (cdr project))
+(add-hook 'project-find-functions #'project-find-go-module)
+;; setup gopls for integratioln build tags - might not be needed if dir_locals.el does it's job in pickwise-beffe
+(setq eglot-workspace-configuration
+      '((gopls . ((usePlaceholders . t)
+                  (completeUnimported . t)
+                  (staticcheck . t)
+                  (buildFlags . ["-tags=integration"])))))
+;; We have to set up eslint to play nice with flymake
+(add-hook 'web-mode-hook
+  (lambda ()
+    (flymake-eslint-enable)))
+(add-hook 'typescript-mode-hook
+  (lambda ()
+    (flymake-eslint-enable)))
+(add-hook 'flymake-mode-hook
+          (lambda ()
+            (define-key flymake-mode-map (kbd "M-n") 'flymake-goto-next-error)
+            (define-key flymake-mode-map (kbd "M-p") 'flymake-goto-prev-error)
+            ;; don't make unnecessary imports invisible - suspect doom zenburn will fix this themselves when eglot is merged into emacs
+            (set-face-foreground 'eglot-diagnostic-tag-unnecessary-face "#F18C96")
+            ))
+;; END EGLOT MODE ------------------------
+
 (setq auto-mode-alist
       (append '(  ; note these are encapsulated in a '() list
                 ("\\.js\\'" . typescript-mode)
-                ("\\.jsx\\'" . typescript-mode)
+
+                ;; trying this instead of typescript-mode
+                ("\\.jsx\\'" . rjsx-mode)
+                ("\\.tsx\\'" . rjsx-mode)
+
                 ("\\.ts\\'" . typescript-mode)
                 ("\\.tsx\\'" . typescript-mode)
 
@@ -433,19 +556,13 @@
                 )
               auto-mode-alist))
 
-;; Color theme
-(require 'doom-themes)
-(load-theme 'doom-nord t)
 ;; Enable flashing mode-line on errors
 (doom-themes-visual-bell-config)
 
 (fset 'next-theme
       (kmacro-lambda-form [?\C-x ?r ?b ?. ?e ?m ?a tab return ?\M-< ?\C-s ?d ?o ?o ?m ?- ?\C-s ?\C-s ?\M-d ?\C-/ ?\M-x ?z ?p backspace ?a ?p ?- ?u ?p ?- ?t ?o ?- ?c ?h ?h ?a ?r backspace backspace backspace ?a ?r return ?  ?\C-x ?\C-f ?~ ?/ ?s ?a ?n ?d ?p ?i ?t ?/ ?t ?h ?e ?m ?e ?s ?. ?t ?x ?t return ?\M-< ?\C-s ?\C-y return ?\C-n ?\C-a ?\C-s ?- return ?\C-k ?\C-/ ?\C-x ?b return ?\C-y ?\C-e ?\C-x ?\C-e] 0 "%d"))
 
-(global-set-key (kbd "C-c n") 'next-theme)
-
-;; Use a different color for the active window's modeline
-(set-face-background 'mode-line "#3B4252")
+;; (global-set-key (kbd "C-c n") 'next-theme) ;; sometimes tripped up by this, fun as it was
 
 
 ;; copilot, needs the dependencies dash, s, editorconfig, at least it did when I installed it acording to its github README
@@ -472,12 +589,11 @@
    file-notify-descriptors))
 
 
-;; golang
-;; On entering go mode, start lsp
-(add-hook 'go-mode-hook #'lsp-deferred)
 ;; Shortcuts for common go-test invocations.
 (add-hook 'go-mode-hook (lambda ()
   (company-mode) ; enable company upon activating go
+
+  (add-hook 'before-save-hook 'gofmt-before-save)
 
   ;; Code layout.
   (setq tab-width 2 indent-tabs-mode 1) ; std go whitespace configuration
@@ -485,15 +601,53 @@
 
   ;; Shortcuts for common go-test invocations.
   (let ((map go-mode-map))
+    (define-key map (kbd "C-c p") 'gofmt)
     (define-key map (kbd "C-c g t p") 'go-test-current-project) ;; current package, really
     (define-key map (kbd "C-c g t f") 'go-test-current-file)
     (define-key map (kbd "C-c g t t") 'go-test-current-test)
     )
   ))
 
+;; Color theme
+(require 'doom-themes)
+(load-theme 'doom-zenburn t)
 
+;; theme-specific tweaks
+;; --- doom-zenburn ---
+;; make directories stand out in dired
+;; palette: https://en.wikipedia.org/wiki/Wikipedia:Zenburn
+(set-face-foreground 'dired-directory "#8CD0D3")
+(set-face-bold 'dired-directory t)
+(set-face-background 'isearch "gold1")
+(set-face-foreground 'lazy-highlight "black")
+(set-face-background 'lazy-highlight "grey90")
+(set-face-foreground `copilot-overlay-face "#C0BED1")
+(set-face-italic `copilot-overlay-face t)
+(set-face-background 'icomplete-selected-match "brown4")
+(set-face-background 'region "black")
 
+;; TODO make todo items legible
+;; --- doom-nord ---
+;; Use a different color for the active window's modeline
+;; (set-face-background 'mode-line "#3B4252")
 
+;; note for vterm: also depends on having these lines in .zshrc:
+;; https://github.com/akermu/emacs-libvterm#shell-side-configuration
+;; And some other dependencies that can be installed with homebrew - see github
+
+;; For markdown previewing (grip mode) - C-c C-c g to start/stop grip server
+;; This line works fine, except that it produces a warning on startup:
+;; ""Symbol's value as variable is void: markdown-mode-command-map""
+;; (define-key markdown-mode-command-map (kbd "g") #'grip-mode)
+
+;; Alias for grip-mode, which toggles in-browser md previews - since I can never remember the name
+(defun preview-markdown ()
+  (interactive)
+  (if (bound-and-true-p grip-mode)
+      (grip-mode -1)
+    (grip-mode 1)
+    )
+  )
 
 
 
