@@ -10,7 +10,7 @@
 
 ;; for making the package exec-path-from-shell work
 ;; this package allows lsp-mode to find npm when npm is at a non-standard
-;; directory - e.g. when npm is installed via nvm (and it always should be)
+;; directory - e.g. when npm is installed via nvm (and bit always should be)
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
 (setq exec-path (append exec-path '("/Users/robert.kirby/.n")))
@@ -20,12 +20,13 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(codeium/metadata/api_key "8e92b8d8-76d7-438c-968e-80f8719fb00b")
+ '(custom-safe-themes
+   '("46c65f6d9031e2f55b919b1486952cddcc8e3ee081ade7eb2ffb6a68a804d30e" "b64a60e69617b4348d0402fad2f0d08a694301132e7ab243dab4d6a65c3bf948" "02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644" "443e2c3c4dd44510f0ea8247b438e834188dc1c6fb80785d83ad3628eadf9294" "a44e2d1636a0114c5e407a748841f6723ed442dc3a0ed086542dc71b92a87aee" "7e068da4ba88162324d9773ec066d93c447c76e9f4ae711ddd0c5d3863489c52" "51c71bb27bdab69b505d9bf71c99864051b37ac3de531d91fdad1598ad247138" "2e05569868dc11a52b08926b4c1a27da77580daa9321773d92822f7a639956ce" "1a1ac598737d0fcdc4dfab3af3d6f46ab2d5048b8e72bc22f50271fd6d393a00" "afa47084cb0beb684281f480aa84dab7c9170b084423c7f87ba755b15f6776ef" default))
  '(git-gutter:update-interval 2)
  '(org-agenda-files '("~/notes/todo.org"))
  '(package-selected-packages
-   '(sass-mode chatgpt epc ctable concurrent deferred quelpa-use-package quelpa php-mode json-mode jsfmt zenburn-theme which-key web-mode vterm typescript-mode tree-sitter-langs scss-mode rjsx-mode rg restclient prettier-rc prettier magit lsp-ui jenkinsfile-mode indium hl-todo highlight grip-mode gotest git-gutter fzf flycheck expand-region exec-path-from-shell evil-collection eslint-rc eglot dtrt-indent doom-themes dockerfile-mode docker-compose-mode docker coverage cov company-quickhelp auto-org-md))
- '(package-selected-packagesn
-   '(grip-mode eglot vterm zenburn-theme gotest dtrt-indent highlight cov coverage indium restclient which-key docker dockerfile-mode doom-themes go-mode jenkinsfile-mode evil-collection evil expand-region hl-todo flycheck eslint-rc prettier-rc scss-mode exec-path-from-shell web-mode docker-compose-mode lsp-mode rg rjsx-mode typescript-mode tree-sitter-langs tree-sitter projectile fzf counsel ag neotree git-gutter vimrc-mode ranger magit prettier))
+   '(eglot hl-todo magit sass-mode chatgpt epc ctable concurrent deferred quelpa-use-package quelpa php-mode json-mode jsfmt which-key web-mode vterm typescript-mode tree-sitter-langs scss-mode rjsx-mode restclient prettier-rc prettier lsp-ui jenkinsfile-mode indium highlight grip-mode gotest git-gutter fzf flycheck expand-region exec-path-from-shell evil-collection eslint-rc dtrt-indent doom-themes dockerfile-mode docker-compose-mode coverage cov company-quickhelp auto-org-md))
  '(safe-local-variable-values
    '((vc-prepare-patches-separately)
      (diff-add-log-use-relative-names . t)
@@ -43,6 +44,25 @@
 
 
 
+
+
+
+
+;; straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+;; packages installed via straight.el
+(straight-use-package '(codeium :type git :host github :repo "Exafunction/codeium.el"))
 
 
 
@@ -75,6 +95,27 @@
 
 ;; dired-style buffer menu
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+;; Needs debugging
+;; Update buffer listings automatically when buffers change
+;; (defun my/refresh-visible-ibuffer ()
+;;   (dolist (win (window-list))
+;;     (with-current-buffer (window-buffer win)
+;;       (when (equal (buffer-name) "*Ibuffer*")
+;;         (ibuffer-update nil t)))))
+;; (add-hook 'buffer-list-update-hook 'my/refresh-visible-ibuffer)
+
+;; dired settings
+(setq
+ ;; Instead of refusing..
+ dired-create-destination-dirs 'ask
+
+ ;; Update directory listings automatically
+ dired-do-revert-buffer t
+ )
+
+
+;; Better performance with v long lines (noticeable)
+(global-so-long-mode)
 
 ;; don't show scratch buffer description text
 (setq initial-scratch-message nil)
@@ -117,7 +158,7 @@
 (setq-default inhibit-startup-message t)
 
 ;; instead of icomplete - covers M-x and help too
-;; http://xahpmlee.info/emacs/emacs/emacs_icomplete_mode.html
+;; http://xahlee.info/emacs/emacs/emacs_fido_mode.html
 ;; Removed ido-mode as it was causing issues with project grep
 (fido-mode t)
 ;; display results in vertical list
@@ -179,6 +220,7 @@
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'markdown-mode-hook 'display-line-numbers-mode)
 (add-hook 'org-mode-hook 'display-line-numbers-mode)
+(add-hook 'text-mode-hook 'display-line-numbers-mode)
 (add-hook 'yml-mode-hook 'display-line-numbers-mode)
 (add-hook 'docker-compose-mode-hook 'display-line-numbers-mode)
 
@@ -193,6 +235,11 @@
 
 ;; Delete selected text if you type while it is highlighted
 (delete-selection-mode t)
+
+;; no thanks to intrusive emacs project pop-ups
+(defalias 'view-emacs-news 'ignore)
+(defalias 'describe-gnu-project 'ignore)
+(defalias 'describe-copying 'ignore)
 
 ;; automatically add delete closing parens
 (electric-pair-mode t)
@@ -219,7 +266,7 @@
 (recentf-mode t)
 
 ;; show clock
-(display-time-mode 1)
+(display-time-mode t)
 ;; show 24 hr time
 (setq-default display-time-24hr-format t)
 
@@ -228,6 +275,9 @@
 
 ;; Treat wordsSeparatedByCapitalLetters as separate words
 (add-hook 'prog-mode-hook 'subword-mode)
+(add-hook 'gptel-mode-hook 'subword-mode)
+(add-hook 'typescript-mode-hook 'subword-mode)
+(add-hook 'go-mode-hook 'subword-mode)
 ;; same but for magit
 (add-hook 'magit-mode-hook 'subword-mode)
 
@@ -260,6 +310,9 @@
   (add-to-list 'project-switch-commands '(?m "magit" magit))
   )
 
+;; Bigger scrollback
+(setq vterm-max-scrollback 1000000)
+
 ;; ignore directories when grepping in a project - doesn't work for C-u C-x p g
 (eval-after-load 'grep
   '(progn
@@ -269,6 +322,42 @@
      (add-to-list 'grep-find-ignored-directories "package-lock.json")))
 ;; Truncate lines in grep results
 (add-hook 'grep-mode-hook (lambda () (toggle-truncate-lines 1)))
+
+;; hideshow mode - built-in code folding
+;; function that enables hideshow mode and folds all blocks by default when opening files
+;; (defun hide-code-blocks (mode-hook)
+;;   (add-hook mode-hook 'hs-minor-mode)
+;;   (add-hook mode-hook 'hs-hide-all))
+;; (hide-code-blocks 'prog-mode-hook)
+;; (hide-code-blocks 'web-mode-hook)
+;; (hide-code-blocks 'go-mode-hook)
+;; (hide-code-blocks 'typescript-mode-hook)
+;; (hide-code-blocks 'css-mode-hook)
+;; (hide-code-blocks 'scss-mode-hook)
+;; (hide-code-blocks 'groovy-mode-hook)
+;; (global-set-key (kbd "C-c h h") 'hs-hide-block)
+;; (global-set-key (kbd "C-c h H") 'hs-hide-all)
+;; (global-set-key (kbd "C-c h s") 'hs-show-block)
+;; (global-set-key (kbd "C-c h S") 'hs-show-all)
+;; (global-set-key (kbd "C-c h t") 'hs-toggle-hiding) ;; under point
+;; ;; Hide all blocks N levels below this block (‘hs-hide-level’).
+;; (global-set-key (kbd "C-c h l") 'hs-hide-level)
+;; (setq hs-hide-comments-when-hiding-all nil)
+
+;; TODO always choose utf-8 when asked for preferred encoding
+;; ?????
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -316,11 +405,9 @@
 ;; can rename each vterm buffer with incrementing suffix using C-x x u
 ;; Doing so allows you to open a new vterm buffer with C-c t
 (global-set-key (kbd "C-c t") 'vterm)
-;; Rename current buffer to "*vterm*"
-(defun rename-buffer-to-*vterm* ()
-  (interactive)
-  (rename-buffer "*vterm*"))
-(global-set-key (kbd "C-x x v") 'rename-buffer-to-*vterm*)
+
+;; treemacs
+(global-set-key (kbd "C-c j") 'treemacs) ;; i.e. similar to C-x j for dired
 
 ;; org mode fully expand tree under cursor - s-Tab does globally, not always what I want
 (with-eval-after-load 'org
@@ -332,15 +419,20 @@
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-c a d") 'org-new-day))
 
-;; for this at top of TS / JS files, useful for pretty logging:
-;; const jl = (x: any) => console.log(JSON.stringify(x, null, 2)); // TODO remove [can ignore this TODO]
-(fset 'add-pretty-print-method-to-top-of-file
-   (kmacro-lambda-form [?\M-< return return ?\M-< ?c ?o ?n ?s ?t ?  ?j ?l ?  ?= ?  ?\( ?x ?: ?  ?a ?n ?y ?\C-e ?  ?= ?> ?  ?c ?o ?n ?s ?o ?l ?e ?. ?l ?o ?g ?\( ?J ?S ?O ?N ?. ?s ?t ?r ?i ?n ?g ?i ?f ?y ?\( ?x ?, ?  ?n ?u ?l ?l ?, ?  ?2 ?\C-e ?\; ?  ?/ ?/ ?  ?T ?O ?D ?O ?  ?r ?e ?m ?o ?v ?e] 0 "%d"))
+;; replace (e.g.) "should return" with "returns"
+(fset 'should-be-gone
+   (kmacro-lambda-form [?\M-< ?\M-< ?\S-\C-\M-s ?\[ ?\' ?\\ ?| ?\" ?\\ ?\] ?s ?h ?o ?u ?l ?d return M-backspace ?\C-d ?\M-f ?s ?\C-n ?\C-a] 0 "%d"))
 
+(fset 'convert-typescript-class-function-to-arrow-function
+   (kmacro-lambda-form [?\C-s ?\( return ?\C-b ?  ?= ?  ?\C-e ?\C-b ?= ?> ?  ?\C-a ?\C-n ?\S-\C-\M-s ?p ?r ?i ?v ?a ?t ?e ?\\ ?| ?p ?u ?b ?l ?i ?c return ?\C-a] 0 "%d"))
 
-
-
-
+;; revert all unsaved buffers
+(defun revert-all-buffers ()
+  (interactive)
+  (dolist (buffer (buffer-list))
+    (with-current-buffer buffer
+      (when (and (buffer-file-name) (buffer-modified-p))
+        (revert-buffer t t t) ))))
 
 ;; for autoformatting code with prettier
 ;; prettify highlighted text, or the whole file
@@ -391,7 +483,55 @@
 
 (global-set-key (kbd "C-=") 'er/expand-region)
 
-(global-set-key (kbd "C-c c k") 'kill-compilation)
+;; C-c m to open *messages*, often useful for looking up lsp errors
+(defun open-messages ()
+  (interactive)
+  (switch-to-buffer "*Messages*"))
+(global-set-key (kbd "C-c m") 'open-messages)
+
+;; yank last message - useful when wanting to google (say) a linting or lang server
+;; error currently displayed in the minibuffer
+(defun copy-last-message-to-clipboard ()
+  (interactive)
+  (with-current-buffer "*Messages*"
+    (goto-char (point-max))
+    ;; Backtrack to the first non-empty line
+    (while (and (> (point) (point-min))
+                (looking-at-p "^$"))
+      (forward-line -1))
+    ;; Backtrack to the first line that's not indented (beginning of the last message)
+    (while (and (> (point) (point-min))
+                (or (looking-at-p "^\\s-") (not (looking-back "^\\s-*\n" (line-beginning-position)))))
+      (forward-line -1))
+    ;; If we're on an indented line, move forward to start of next line
+    (when (looking-at-p "^\\s-")
+      (forward-line 1))
+    ;; Save the beginning of the last message
+    (let ((beg (point)))
+      ;; Copy the last message to the system clipboard
+      (kill-new (buffer-substring-no-properties beg (point-max))))))
+(global-set-key (kbd "C-c M") 'copy-last-message-to-clipboard)
+
+
+
+
+;; C-c l to load-file ~/.emacs
+(defun load-emacs ()
+  (interactive)
+  (load-file "~/.emacs"))
+(global-set-key (kbd "C-c l") 'load-emacs)
+
+;; C-c b to bury buffer
+(global-set-key (kbd "C-c b") 'bury-buffer)
+
+;; C-c e  open ~/.emacs
+(global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/.emacs")))
+;; override org-mode binding for C-c e
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "C-c e") 'org-show-subtree))
+
+;; C-c P open ~/sandbox/white-paper.txt
+(global-set-key (kbd "C-c P") (lambda () (interactive) (find-file "~/sandpit/white-paper.txt")))
 
 ;; keybinding to open scratch buffer
 (global-set-key (kbd "C-c s") 'switch-to-scratch-buffer)
@@ -400,49 +540,224 @@
   "Switch to the scratch buffer."
   (interactive)
   (switch-to-buffer "*scratch*"))
-
 ;; display full file path in modeline
 (setq-default mode-line-buffer-identification
               '(:eval (if buffer-file-name
                           (abbreviate-file-name buffer-file-name)
                         "%b")))
 
+(defun toggle-typescript-source-and-spec ()
+  "Toggle between TypeScript source file and its corresponding .spec file."
+  (interactive)
+  (let* ((current-file (buffer-file-name))
+         (spec-file (replace-regexp-in-string "\.ts$" ".spec.ts" current-file))
+         (source-file (replace-regexp-in-string "\.spec\.ts$" ".ts" current-file)))
+    (if (string= current-file source-file)
+        (find-file spec-file)
+      (find-file source-file))))
+(with-eval-after-load 'typescript-mode
+  (define-key typescript-mode-map (kbd "C-c T") 'toggle-typescript-source-and-spec))
+
+(defun toggle-go-source-and-test ()
+  "Toggle between Go source file and its corresponding _test.go file."
+  (interactive)
+  (let* ((current-file (buffer-file-name))
+         (test-file (replace-regexp-in-string "\\.go$" "_test.go" current-file))
+         (source-file (replace-regexp-in-string "_test\\.go$" ".go" current-file)))
+    (if (string= current-file source-file)
+        (find-file test-file)
+      (find-file source-file))))
+(with-eval-after-load 'go-mode
+  (define-key go-mode-map (kbd "C-c T") 'toggle-go-source-and-test))
+
+(defun split-window-thirds ()
+  "Split a window into thirds."
+  (interactive)
+  (split-window-right)
+  (split-window-right)
+  (balance-windows))
+
+(bind-key "C-c 3" #'split-window-thirds)
+
+
+;; Useful LLM prompting utils - put context about current file / dir structure in system clipboard
+(defun copy-file-path ()
+  "Copy the current buffer's file path to the clipboard."
+  (interactive)
+  (when buffer-file-name
+    (let* ((path (buffer-file-name)))
+      (kill-new path)
+      (message "File path copied to clipboard.")
+      path)))
+(global-set-key (kbd "C-c V") 'copy-file-path)
+(defun copy-file-path-and-contents ()
+  "Copy the current buffer's file path and its contents to the clipboard."
+  (interactive)
+  (when buffer-file-name
+    (let* ((path (copy-file-path))
+           (file-contents (buffer-string))
+           (combined (concat path "\n" file-contents)))
+      (kill-new combined)
+      (message "File path and contents copied to clipboard."))))
+(global-set-key (kbd "C-c C") 'copy-file-path-and-contents)
+(defun copy-all-file-paths-and-contents ()
+  "Copy the file paths and contents of all files in the current dired directory and its subdirectories to the clipboard."
+  (interactive)
+  (let* ((ignore-patterns '("node_modules" "\\.git" "dist" "outputs" "build" "\\.vscode" "\\.idea" "\\.DS_Store" "\\.log"
+                           "\\.cache" "\\.tmp" "venv" "\\.next" "\\.npm" "coverage" "bower_components" "\\.lock$"
+                           "\\.swp$" "\\.tmp$" "\\.gz$" "\\.zip$" "\\.tar$" "\\.rar$" "\\.jpg$" "\\.jpeg$" "\\.png$"
+                           "\\.gif$" "\\.bmp$")) ; the list of patterns to ignore
+         (all-paths-and-contents '()))
+    (dolist (file (directory-files-recursively default-directory ".*"))
+      (when (and (not (file-directory-p file)) ; skip directories
+                 (not (seq-some (lambda (pattern) ; check if file matches any ignore pattern
+                                  (string-match-p pattern file))
+                                ignore-patterns)))
+        (find-file file)
+        (setq all-paths-and-contents
+              (append all-paths-and-contents
+                      (list (concat file "\n" (buffer-string)))))
+        (kill-buffer)))
+    (kill-new (mapconcat 'identity all-paths-and-contents "\n\n")) ; join all file paths and contents
+    (message "All file paths and contents copied to clipboard.")))
+(global-set-key (kbd "C-c T") 'copy-all-file-paths-and-contents)
+(defun copy-current-line-to-clipboard ()
+  "Copy the current line to the system clipboard without newlines."
+  (interactive)
+  (let ((begin (line-beginning-position))
+        (end (line-end-position)))
+    (kill-ring-save begin end)
+    (with-temp-buffer
+      (yank)
+      (let ((copy (substring-no-properties (buffer-string) 0 -1))) ; remove newline
+        (kill-new copy)
+        (message "Line copied to clipboard: %s" copy)))))
+(global-set-key (kbd "C-c L") 'copy-current-line-to-clipboard)
+
+(defun copy-to-drag-n-drop-dir ()
+  "Copy the current file to ~/Desktop/drag-n-drop/."
+  (interactive)
+  (let* ((target-dir (expand-file-name "~/Desktop/drag-n-drop/"))
+         (current-file (buffer-file-name))
+         (target-file (concat target-dir (file-name-nondirectory current-file))))
+    ;; Ensure the target directory exists
+    (unless (file-exists-p target-dir)
+      (make-directory target-dir t))
+    ;; Copy the file
+    (copy-file current-file target-file t)
+    ;; Display confirmation
+    (message "File copied to %s" target-dir)))
+(global-set-key (kbd "C-c D") 'copy-to-drag-n-drop-dir)
+
+(defun wipe-drag-n-drop-dir ()
+  "Remove all files under ~/Desktop/drag-n-drop/."
+  (interactive)
+  (let* ((target-dir (expand-file-name "~/Desktop/drag-n-drop/"))
+         (files (directory-files target-dir t "\\w+")))
+    ;; Ensure the target directory exists
+    (if (file-exists-p target-dir)
+        (progn
+          ;; Delete each file in the directory
+          (mapc 'delete-file files)
+          ;; Display confirmation
+          (message "All files in %s removed" target-dir))
+      (message "Directory %s does not exist" target-dir))))
+(global-set-key (kbd "C-c W") 'wipe-drag-n-drop-dir)
+
+(defun vterm-copy-previous-output (arg)
+  "Copy from the ARG+2th most recent '➜' to the end of the buffer in vterm copy mode.
+If ARG is not provided, copy from the second most recent '➜'."
+  (interactive "p")
+  (require 'vterm)
+  ;; Enable vterm copy mode
+  (vterm-copy-mode 1)
+  ;; Jump to the ARG+2th most recent '➜'
+  (let ((num-found (how-many "➜" (point-min) (point-max))))
+    (when (> num-found (+ arg 1))
+      (dotimes (_ (+ arg 1))
+        (re-search-backward "➜"))))
+  ;; Start marking
+  (set-mark (point))
+  ;; Jump to the end of the line before the last '➜'
+  (goto-char (point-max))
+  (re-search-backward "➜")
+  (beginning-of-line)
+  ;; Copy to clipboard
+  (kill-ring-save (mark) (point))
+  ;; Exit vterm copy mode
+  (vterm-copy-mode -1))
+;; Bind the new function to the key sequence C-c O
+(with-eval-after-load 'vterm
+  (define-key vterm-mode-map (kbd "C-c C") 'vterm-copy-previous-output))
+
+
+
+;; Compilation mode
+(defun universal-test-command ()
+  "Run tests based on the project type."
+  (interactive)
+  (let ((default-directory (or (locate-dominating-file default-directory "go.mod")
+                               (locate-dominating-file default-directory "package.json")
+                               (locate-dominating-file default-directory "requirements.txt")
+                               default-directory)))
+    (cond
+     ((file-exists-p (expand-file-name "go.mod" default-directory))
+      (compile "go test ./..."))
+     ((file-exists-p (expand-file-name "package.json" default-directory))
+      (compile "npm test"))
+     ((file-exists-p (expand-file-name "requirements.txt" default-directory))
+      (compile "pytest"))
+     (t (message "Unknown project type.")))))
+;; Butter fingers
+(global-set-key (kbd "<f3>") 'universal-test-command)
+(global-set-key (kbd "<f4>") 'universal-test-command)
+(global-set-key (kbd "<f5>") 'universal-test-command)
+(global-set-key (kbd "<f6>") 'universal-test-command)
+(global-set-key (kbd "<f7>") 'universal-test-command)
+(global-set-key (kbd "<f7>") 'universal-test-command)
+
+(global-set-key (kbd "C-c w") 'toggle-word-wrap)
 
 
 
 
-;; ============= PACKAGES / PLUGINS =============
+
+
+
+
+
+
+;; ============= PACKAGES / PLUGINS / EXTENSIONS =============
 
 ;; outsource autoindentation to dtrt-indent, as it's a pain
 (dtrt-indent-global-mode t)
 
-;; enable autocompletion, disable by exception
+;; ;; enable autocompletion, disable by exception
 (global-company-mode t)
-(defun disable-company-mode ()
-  (company-mode -1))
 (add-hook 'eshell-mode-hook 'disable-company-mode)
 (add-hook 'shell-mode-hook 'disable-company-mode)
 (add-hook 'term-mode-hook 'disable-company-mode)
 (add-hook 'org-mode-hook 'disable-company-mode)
 
+;; ;; additional package to show documentation alongside autocomplete
+;; ;; currently not displaying correctly in html / css files, see:
+;; ;; https://github.com/company-mode/company-quickhelp/issues/122
+;; (company-quickhelp-mode)
+;; (setq company-minimum-prefix-length 1
+;;       company-idle-delay 0
+;;       company-selection-wrap-around t
+;;       company-tooltip-flip-when-above t
+;;       ;; select using M-n where n is next to choice
+;;       company-show-quick-access 'left
+;;       ;; To prevent completions always appearing in lowercase - annoying in most languages
+;;       company-dabbrev-downcase nil
+;;       company-dabbrev-ignore-case "keep-prefix"
+;;       )
 
-;; additional package to show documentation alongside autocomplete
-;; currently not displaying correctly in html / css files, see:
-;; https://github.com/company-mode/company-quickhelp/issues/122
-(company-quickhelp-mode)
-(setq company-minimum-prefix-length 1
-      company-idle-delay 0
-      company-selection-wrap-around t
-      company-tooltip-flip-when-above t
-      ;; select using M-n where n is next to choice
-      company-show-quick-access 'left
-      ;; To prevent completions always appearing in lowercase - annoying in most languages
-      company-dabbrev-downcase nil
-      company-dabbrev-ignore-case "keep-prefix"
-      )
-
-;; trying prettier everywhere
+;; trying prettier everywhere - note the package is prettier.el, not prettier-js.el
 (add-hook 'after-init-hook #'global-prettier-mode)
+;; don't open  a new window when we detect syntax errors (it's annoying)
+(setq prettier-inline-errors-flag t)
 
 ;; pop-up showing next possible key press - similar natively by '[keypress] ?'
 (which-key-mode)
@@ -453,6 +768,10 @@
 ;; files
 (global-tree-sitter-mode)
 (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+
+
+
+
 
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -469,64 +788,78 @@
 ;; always use dired
 (global-set-key (kbd "C-x C-d") 'dired)
 
-
-;; ;; LSP MODE ---------------------------- probably no longer going to use, but keeping to hand because eglot has issues in go
-;; ;; set up the lsp server
+;; LSP MODE ---------------------------- Using for now because of eglot mode issues with Gopls, to be fixed in Emacs 29
 ;; (add-hook 'typescript-mode-hook #'lsp)
 ;; (add-hook 'js-jsx-mode-hook #'lsp)
 ;; (add-hook 'html-mode-hook #'lsp)
 ;; (add-hook 'css-mode-hook #'lsp)
-;; (add-hook 'go-mode-hook #'lsp-deferred)
-;; (setq lsp-enable-symbol-highlighting t)
-;; (setq lsp-ui-doc-enable t)
-;; (setq lsp-ui-doc-show-with-cursor t)
-;; (setq lsp-ui-doc-show-with-mouse t)
-;; ;; mimicking flymake
-;; ;; flycheck next error M-n
-;; (global-set-key (kbd "M-n") 'flycheck-next-error)
-;; ;;  flycheck previous error M-p
-;; (global-set-key (kbd "M-p") 'flycheck-previous-error)
-;; (global-set-key (kbd "C-c d") 'lsp-find-definition)
-;; ;; END LSP MODE ------------------------
+;; For the below:
+;; Note that this infers  workspaces based on presence of .git/ directory - which won't always do the trick!
+;; See: https://emacs-lsp.github.io/lsp-mode/page/lsp-gopls/#working-with-nested-gomod-files
+(require 'lsp-mode)
+(add-hook 'go-mode-hook #'lsp-deferred)
+;; enable lsp-ui-mode
+(setq lsp-enable-symbol-highlighting t)
+(setq lsp-ui-doc-enable t)
+(setq lsp-ui-doc-show-with-cursor t)
+(setq lsp-ui-doc-show-with-mouse t)
+;; mimicking flymake
+;; flycheck next error M-n
+(global-set-key (kbd "M-n") 'flycheck-next-error)
+;;  flycheck previous error M-p
+(global-set-key (kbd "M-p") 'flycheck-previous-error)
+(global-set-key (kbd "C-c d") 'lsp-find-definition)
+(global-set-key (kbd "C-c r") 'lsp-find-references)
+(global-set-key (kbd "C-c i") 'lsp-find-implementation)
+(global-set-key (kbd "C-c R") 'lsp-rename)
+;; END LSP MODE ------------------------
 
 ;; EGLOT MODE ----------------------------
-;; NOTE Golang / emacs bug due to be fixed in Emacs 29 (probably already fixed in prerelease)
+;; NOTE Golang / emacs bug due to be fixed in Emacs 29 (probably already fixed in prerelease.. could compile from source)
 ;; https://github.com/golang/go/issues/54559#issuecomment-1352862969
+;; Works perfectly otherwise
 ;; Flymake goes hand-in-hand with eglot (flycheck plays nice with lsp-mode)
 (add-hook 'typescript-mode-hook 'eglot-ensure)
 (add-hook 'js-jsx-mode-hook 'eglot-ensure)
-(add-hook 'rjsx-mode-hook 'eglot-ensure)
 (add-hook 'html-mode-hook 'eglot-ensure)
 (add-hook 'css-mode-hook 'eglot-ensure)
 (add-hook 'sass-mode-hook 'eglot-ensure)
 (add-hook 'sass-mode-hook 'flymake-sass-load)
-(add-hook 'go-mode-hook 'eglot-ensure)
+(add-hook 'rust-mode-hook 'eglot-ensure)
+;; (add-hook 'go-mode-hook 'eglot-ensure) ;; disabled because using lsp-mode
 (add-hook 'eglot--managed-mode-hook
           (lambda ()
             (define-key eglot-mode-map (kbd "C-c d") 'xref-find-definitions)
+            (define-key eglot-mode-map (kbd "C-c i") 'eglot-find-implementation)
             (define-key eglot-mode-map (kbd "C-c r") 'xref-find-references)
             (define-key eglot-mode-map (kbd "C-c R") 'eglot-rename)
             )
           )
-;; setup eglot with gopls - from gopls docs https://github.com/golang/tools/blob/master/gopls/doc/emacs.md
-(require 'project)
-(defun project-find-go-module (dir)
-  (when-let ((root (locate-dominating-file dir "go.mod")))
-    (cons 'go-module root)))
-(cl-defmethod project-root ((project (head go-module)))
-  (cdr project))
-(add-hook 'project-find-functions #'project-find-go-module)
-;; setup gopls for integratioln build tags - might not be needed if dir_locals.el does it's job in pickwise-beffe
-(setq eglot-workspace-configuration
-      '((gopls . ((usePlaceholders . t)
-                  (completeUnimported . t)
-                  (staticcheck . t)
-                  (buildFlags . ["-tags=integration"])))))
-;; We have to set up eslint to play nice with flymake
+;; ;; * NOT USED because LSP-mode standing in for now *
+;; ;; setup eglot with gopls - from gopls docs https://github.com/golang/tools/blob/master/gopls/doc/emacs.md
+;; (require 'project)
+;; (defun project-find-go-module (dir)
+;;   (when-let ((root (locate-dominating-file dir "go.mod")))
+;;     (cons 'go-module root)))
+;; (cl-defmethod project-root ((project (head go-module)))
+;;   (cdr project))
+;; (add-hook 'project-find-functions #'project-find-go-module)
+;; ;; setup gopls for integratioln build tags - might not be needed if dir_locals.el does it's job in pickwise-beffe
+;; (setq eglot-workspace-configuration
+;;       '((gopls . ((usePlaceholders . t)
+;;                   (completeUnimported . t)
+;;                   (staticcheck . t)
+;;                   (buildFlags . ["-tags=integration"])))))
+
+;; NOT WORKING Set up eslint to play nice with flymake
+;; This might actually be ok - flycheck does the trick happily enough via C-c ! n and C-c ! p
 (add-hook 'web-mode-hook
   (lambda ()
     (flymake-eslint-enable)))
 (add-hook 'typescript-mode-hook
+  (lambda ()
+    (flymake-eslint-enable)))
+(add-hook 'js-jsx-mode-hook
   (lambda ()
     (flymake-eslint-enable)))
 (add-hook 'flymake-mode-hook
@@ -534,25 +867,31 @@
             (define-key flymake-mode-map (kbd "M-n") 'flymake-goto-next-error)
             (define-key flymake-mode-map (kbd "M-p") 'flymake-goto-prev-error)
             ;; don't make unnecessary imports invisible - suspect doom zenburn will fix this themselves when eglot is merged into emacs
-            (set-face-foreground 'eglot-diagnostic-tag-unnecessary-face "#F18C96")
+            ;; (set-face-foreground 'eglot-diagnostic-tag-unnecessary-face "#F18C96") ;; not needed in light mode
             ))
 ;; END EGLOT MODE ------------------------
 
 (setq auto-mode-alist
-      (append '(  ; note these are encapsulated in a '() list
+      (append '(
                 ("\\.js\\'" . typescript-mode)
-
-                ;; trying this instead of typescript-mode
-                ("\\.jsx\\'" . rjsx-mode)
-                ("\\.tsx\\'" . rjsx-mode)
-
                 ("\\.ts\\'" . typescript-mode)
-                ("\\.tsx\\'" . typescript-mode)
+                ("\\.tsx\\'" . js-jsx-mode)
+                ("\\.jsx\\'" . js-jsx-mode)
 
                 ;; Wrap words, truncate lines
                 ("\\.txt\\'" . visual-line-mode)
 
                 ("\\.go\\'" . go-mode)
+
+                ("\\.mk\\'" . makefile-mode)
+                ("Makefile\\'" . makefile-mode)
+
+                ("\\.sh\\'" . shell-script-mode)
+                ("\\.trivyignore\\'" . shell-script-mode)
+                ("\\.zshrc.rob-universal\\'" . shell-script-mode)
+                ("\\.env\\(\\..*\\)?\\'" . shell-script-mode)
+                ("\\.\.*ignore\\'" . shell-script-mode)
+                ("\\.nvmrc\\'" . shell-script-mode)
                 )
               auto-mode-alist))
 
@@ -565,17 +904,43 @@
 ;; (global-set-key (kbd "C-c n") 'next-theme) ;; sometimes tripped up by this, fun as it was
 
 
+;; ;; WIP: Codium, free alternative to copilot, installed via straight.el near top of this config
+;; (use-package codeium
+;;     :init
+;;     ;; use globally
+;;     (add-to-list 'completion-at-point-functions #'codeium-completion-at-point)
+;;     :defer t
+;;     :config
+;;     )
+;; ;; codium/company mode
+;; (use-package company
+;;     :defer 0.1
+;;     :config
+;;     (setq-default
+;;         company-idle-delay 0.05
+;;         company-require-match nile
+;;         company-minimum-prefix-length 0
+;;         ;; get only preview
+;;         company-frontends '(company-preview-frontend)
+;;         ;; also get a drop down
+;;         company-frontends '(company-pseudo-tooltip-frontend company-preview-frontend)
+;;         ))
+
+
 ;; copilot, needs the dependencies dash, s, editorconfig, at least it did when I installed it acording to its github README
 (load-file "~/.emacs.d/copilot.el/dash.el")
 (load-file "~/.emacs.d/copilot.el/copilot.el")
 (add-hook 'prog-mode-hook 'copilot-mode)
 (add-hook 'web-mode-hook 'copilot-mode)
-(global-set-key (kbd "C-c c c") 'copilot-mode) ;; toggle
+(add-hook 'dockerfile-mode-hook 'copilot-mode)
+(global-set-key (kbd "TAB") 'copilot-accept-completion) ;; might clash?  experimenting
 (global-set-key (kbd "C-c c a") 'copilot-accept-completion)
 (global-set-key (kbd "C-c c w") 'copilot-accept-completion-by-word)
 (global-set-key (kbd "C-c c l") 'copilot-accept-completion-by-line)
 (global-set-key (kbd "C-c c n") 'copilot-next-completion)
 (global-set-key (kbd "C-c c p") 'copilot-previous-completion)
+(global-set-key (kbd "C-c c d") 'copilot-diagnose)
+(global-set-key (kbd "C-c c c") 'copilot-clear-overlay)
 
 ;; This will probably be included in a new version of emacs, in filenotify.el
 ;; https://www.blogbyben.com/2022/05/gotcha-emacs-on-mac-os-too-many-files.html
@@ -587,7 +952,6 @@
    (lambda (key _value)
      (file-notify-rm-watch key))
    file-notify-descriptors))
-
 
 ;; Shortcuts for common go-test invocations.
 (add-hook 'go-mode-hook (lambda ()
@@ -610,21 +974,23 @@
 
 ;; Color theme
 (require 'doom-themes)
-(load-theme 'doom-zenburn t)
+;; favoured dark theme
+;; (load-theme 'doom-zenburn t)
+;; favoured light theme
+(load-theme 'ef-light t)
 
 ;; theme-specific tweaks
 ;; --- doom-zenburn ---
-;; make directories stand out in dired
 ;; palette: https://en.wikipedia.org/wiki/Wikipedia:Zenburn
-(set-face-foreground 'dired-directory "#8CD0D3")
-(set-face-bold 'dired-directory t)
-(set-face-background 'isearch "gold1")
-(set-face-foreground 'lazy-highlight "black")
-(set-face-background 'lazy-highlight "grey90")
-(set-face-foreground `copilot-overlay-face "#C0BED1")
-(set-face-italic `copilot-overlay-face t)
-(set-face-background 'icomplete-selected-match "brown4")
-(set-face-background 'region "black")
+;; (set-face-foreground 'dired-directory "#8CD0D3")
+;; (set-face-bold 'dired-directory t)
+;; (set-face-background 'isearch "gold1")
+;; (set-face-foreground 'lazy-highlight "black")
+;; (set-face-background 'lazy-highlight "grey90")
+;; (set-face-foreground `copilot-overlay-face "#C0BED1")
+;; (set-face-italic `copilot-overlay-face t)
+;; (set-face-background 'icomplete-selected-match "brown4")
+;; (set-face-background 'region "black")
 
 ;; TODO make todo items legible
 ;; --- doom-nord ---
@@ -649,10 +1015,17 @@
     )
   )
 
+;; gptel chatgpt api client
+;; C-c RET to send query
+;; C-u C-c RET to open prefix menu
+(global-set-key (kbd "C-c G") 'gptel)
+(setq-default gptel--model "gpt-4")
+;; sets api key with (setq gptel-api-key "secret")
+(load-file "~/.emacs.d/openai-init.el")
 
-
-
-
+;; For very large files - offered as option in minibuffer when you go to open file over 10mb in size
+;; Emacs barely usable for big files
+(require 'vlf-setup)
 
 
 
@@ -663,7 +1036,8 @@
 
 
 ;; ============= EVIL - maybe one day =============
-;; (SETQ EVIL-WANT-C-u-scroll t)
+(global-set-key (kbd "C-c v") 'evil-mode)
+;; (setq evil-want-C-u-scroll t)
 ;; (setq evil-want-C-w-in-emacs-state t)
 ;; (setq evil-undo-system 'undo-redo)
 ;; (require 'evil)
@@ -707,3 +1081,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+

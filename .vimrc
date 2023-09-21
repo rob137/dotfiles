@@ -87,11 +87,17 @@ Plug 'ap/vim-css-color'
 Plug 'NikolayFrantsev/jshint2.vim'
 Plug 'tpope/vim-commentary'
 Plug 'hashivim/vim-terraform'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 call plug#end()
 set t_Co=256 " 256 colors (not sure it makes any difference)
-colorscheme nord 
+" colorscheme morning
+colorscheme morning
 set bg=dark
 source ~/.vimrc.coc " CoC settings from https://github.com/neoclide/coc.nvim - note includes many keybinding
+" for CoC / Go 
+" disable all linters as that is taken care of by coc.nvim
+let g:go_diagnostics_enabled = 0
+let g:go_metalinter_enabled = []
 " source ~/.vimrc.local
 com! RefreshVim source ~/.vimrc | PlugClean | PlugInstall
 " Other autofixers
@@ -347,7 +353,7 @@ nnoremap <F5> :UndotreeToggle<cr>
 
 
 " snippets
-iab _commit <esc>ICESG-:<space><esc>hs
+iab _commit <esc>ICAFF-:<space><esc>hs
 iab _html <esc>:-1read<space>~/.vim/snippets/html.txt<CR>
 iab _classcomponent <esc>:-1read<space>~/.vim/snippets/classcomponent.txt<CR>
 iab _functionalcomponent <esc>:-1read <space>~/.vim/snippets/functionalcomponent.txt<CR>
