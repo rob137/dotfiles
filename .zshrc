@@ -70,7 +70,10 @@ alias ,rmrfd='rm -rf ./dist/'
 
 alias ,mb='make build'
 alias ,mcu='make compose-up'
+alias ,mcul='make compose-up-local'
+alias ,mcuu='make compose-up-uat'
 alias ,mcd='make compose-down'
+alias ,ml='make logs'
 alias ,ml='make logs'
 alias ,mcul='mcu && ml'
 

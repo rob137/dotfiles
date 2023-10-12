@@ -93,34 +93,28 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
+;; Don't display the 'Welcome to GNU Emacs' buffer on startup
+(setq-default inhibit-startup-message t)
+
+;; don't show scratch buffer description text
+(setq initial-scratch-message nil)
+
 ;; dired-style buffer menu
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-;; Needs debugging
-;; Update buffer listings automatically when buffers change
-;; (defun my/refresh-visible-ibuffer ()
-;;   (dolist (win (window-list))
-;;     (with-current-buffer (window-buffer win)
-;;       (when (equal (buffer-name) "*Ibuffer*")
-;;         (ibuffer-update nil t)))))
-;; (add-hook 'buffer-list-update-hook 'my/refresh-visible-ibuffer)
 
 ;; dired settings
 (setq
  ;; Instead of refusing..
  dired-create-destination-dirs 'ask
-
  ;; Update directory listings automatically
  dired-do-revert-buffer t
  )
 
-
 ;; Better performance with v long lines (noticeable)
 (global-so-long-mode)
 
-;; don't show scratch buffer description text
-(setq initial-scratch-message nil)
-
-(set-frame-parameter (selected-frame) 'alpha '(98 . 98)) ;; Make emacs windows transparent
+;; Make emacs windows transparent
+(set-frame-parameter (selected-frame) 'alpha '(98 . 98))
 
 ;; add a 5 line buffer between the point and the top / bottom of the window
 (setq scroll-margin 5)
@@ -129,7 +123,7 @@
 (setq scroll-conservatively 101) ;; 101 just means it never recenters
 
 ;; remember point in window
- (setq switch-to-buffer-preserve-window-point t)
+(setq switch-to-buffer-preserve-window-point t)
 
 ;; make version control work better, prevent warnings about opening simlinks
 (setq-default vc-follow-symlinks t)
@@ -139,7 +133,7 @@
 (setq-default isearch-allow-scroll t)
 (setq-default lazy-highlight-initial-delay 0)
 
-;; navigate window layout history with C-c left / right
+ ;; navigate window layout history with C-c left / right
 (winner-mode t)
 
 (setq confirm-kill-emacs 'y-or-n-p) ;; ask before killing emacs
@@ -154,9 +148,6 @@
 ;; Save minibuffer history
 (savehist-mode 1)
 
-;; Don't display the 'Welcome to GNU Emacs' buffer on startup
-(setq-default inhibit-startup-message t)
-
 ;; instead of icomplete - covers M-x and help too
 ;; http://xahlee.info/emacs/emacs/emacs_fido_mode.html
 ;; Removed ido-mode as it was causing issues with project grep
@@ -168,17 +159,16 @@
 (global-whitespace-mode t)
 ;; Some of these are noisy, so I've disabled them.
 ;; Others are worse on certain color themes.
+;; Can edit these on the fly with M-x globall-whitespace-toggle-options - follow up with ? to see options and bindings
 (setq-default whitespace-style '(
                                  face ;; necessary for some of the others in this list
                                  trailing
-                                 ;; space-before-tab
-                                 ;; space-after-tab
-                                 ;; indentation ;; noisy in zenburn
-                                 ;; tabs ;; noisy in zenburn
+                                 space-before-tab
+                                 space-after-tab ;; doesn't seem to work
                                  ))
 
 ;; smooth scroll
-(setq scroll-step 1) ;; don't see difference
+(setq scroll-step 1) ;; don't see difference, might be emacs 29 thing
 
 ;; vertical line on 80 char column
 (setq-default display-fill-column-indicator-column 79)
@@ -200,13 +190,10 @@
 ;; show bell icon (e.g. on C-g)...  I dislike the visual bell, but don't want a plugin yet
 (setq-default visible-bell 1)
 
-;;leauu always show current keys (0.01 is dealy - but 0 would show none)
-(setq echo-keystrokes 0.01)
-
 ;; Delete trailing whitespaces, but...
 (add-hook 'before-save-hook
           'delete-trailing-whitespace)
-;; ... Don't delete trailing newlines
+;; ... Don't delete trailing newlines (since opinions differ on this)
 (setq-default delete-trailing-lines nil)
 
 ;; for node, which is needed for prettier
@@ -244,12 +231,11 @@
 ;; automatically add delete closing parens
 (electric-pair-mode t)
 
-(show-paren-mode t) ;; highlight matching parens (not sure this changes anything)
+(show-paren-mode t) ;; highlight matching parens
 
 (save-place-mode 1) ;; save cursor position in file
 
-(setq-default dired-listing-switches "-alh") ;; human readable sizes in dired
-
+(setq-default dired-listing-switches "-alh") ;; human readable file sizes in dired
 
 ;; Revert buffer to disk version if it has changed
 (global-auto-revert-mode)
@@ -270,15 +256,11 @@
 ;; show 24 hr time
 (setq-default display-time-24hr-format t)
 
-;; start fiel search from home directory
-;; (setq default-directory "~/")
-
 ;; Treat wordsSeparatedByCapitalLetters as separate words
 (add-hook 'prog-mode-hook 'subword-mode)
 (add-hook 'gptel-mode-hook 'subword-mode)
 (add-hook 'typescript-mode-hook 'subword-mode)
 (add-hook 'go-mode-hook 'subword-mode)
-;; same but for magit
 (add-hook 'magit-mode-hook 'subword-mode)
 
 ;; Hide ugly newline arrows in fringe
@@ -291,16 +273,20 @@
 ;; show errors, linting etc in left column
 (fringe-mode)
 
+;; Repeat C-u C-<SPC> and C-x C-<SPC> by just using C-<SPC> after first jump
+(setq set-mark-command-repeat-pop 1)
+
 ;; highlight TODO
 (add-hook 'prog-mode-hook 'hl-todo-mode)
 (add-hook 'web-mode-hook 'hl-todo-mode)
 (add-hook 'markdown-mode-hook 'hl-todo-mode)
 (add-hook 'fundamental-mode-hook 'hl-todo-mode)
 
-;; word-wrap in markdown mode, text mode, etc (experimental)
+;; word-wrap in markdown mode, text mode, etc
 (add-hook 'markdown-mode-hook 'visual-line-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
 (add-hook 'fundamental-mode-hook 'visual-line-mode)
+
 
 ;; Add vterm / magit to project switch modeline
 ;; Wrapped like this to prevent things breaking - this pattern was new to me
@@ -311,7 +297,7 @@
   )
 
 ;; Bigger scrollback
-(setq vterm-max-scrollback 1000000)
+(setq vterm-max-scrollback 100000000)
 
 ;; ignore directories when grepping in a project - doesn't work for C-u C-x p g
 (eval-after-load 'grep
@@ -322,30 +308,6 @@
      (add-to-list 'grep-find-ignored-directories "package-lock.json")))
 ;; Truncate lines in grep results
 (add-hook 'grep-mode-hook (lambda () (toggle-truncate-lines 1)))
-
-;; hideshow mode - built-in code folding
-;; function that enables hideshow mode and folds all blocks by default when opening files
-;; (defun hide-code-blocks (mode-hook)
-;;   (add-hook mode-hook 'hs-minor-mode)
-;;   (add-hook mode-hook 'hs-hide-all))
-;; (hide-code-blocks 'prog-mode-hook)
-;; (hide-code-blocks 'web-mode-hook)
-;; (hide-code-blocks 'go-mode-hook)
-;; (hide-code-blocks 'typescript-mode-hook)
-;; (hide-code-blocks 'css-mode-hook)
-;; (hide-code-blocks 'scss-mode-hook)
-;; (hide-code-blocks 'groovy-mode-hook)
-;; (global-set-key (kbd "C-c h h") 'hs-hide-block)
-;; (global-set-key (kbd "C-c h H") 'hs-hide-all)
-;; (global-set-key (kbd "C-c h s") 'hs-show-block)
-;; (global-set-key (kbd "C-c h S") 'hs-show-all)
-;; (global-set-key (kbd "C-c h t") 'hs-toggle-hiding) ;; under point
-;; ;; Hide all blocks N levels below this block (‘hs-hide-level’).
-;; (global-set-key (kbd "C-c h l") 'hs-hide-level)
-;; (setq hs-hide-comments-when-hiding-all nil)
-
-;; TODO always choose utf-8 when asked for preferred encoding
-;; ?????
 
 
 
@@ -366,52 +328,16 @@
 
 ;; ============= MAPPINGS / FUNCTIONS =============
 
-;; In term mode, make the keys for setting char / line mode *toggle between*
-;; char / line mode, saving headaches.
-;; Also sets cursor to bar shape in line mode to make the difference clear.
-;; I don't love having cursor stuff as a side effect, but there doesn't
-;; appear to be a better way to set the cursor shape during term mode.
-(require 'term)
-(defun term-toggle-mode ()
-  (interactive)
-  (if (term-in-line-mode)
-      (progn (term-char-mode) (setq cursor-type 'box))
-    (progn (term-line-mode) (setq cursor-type 'bar))))
-(define-key term-mode-map (kbd "C-c C-j") 'term-toggle-mode)
-(define-key term-mode-map (kbd "C-c C-k") 'term-toggle-mode)
-(define-key term-raw-map (kbd "C-c C-j") 'term-toggle-mode)
-(define-key term-raw-map (kbd "C-c C-k") 'term-toggle-mode)
-
 ;; C-c o to open org mode file
 (defun open-todo ()
   (interactive)
   (find-file "~/notes/org.org"))
 (global-set-key (kbd "C-c o") 'open-todo)
 
-;; In term modes, quit the buffer when the process exits
-;; (e.g. when you exit the shell)
-;; Warning: stolen from stackoverflow...
-(defun my-term-handle-exit (&optional process-name msg)
-  (message "%s | %s" process-name msg)
-  (kill-buffer (current-buffer)))
-(advice-add 'term-handle-exit :after 'my-term-handle-exit)
-
-;; Don't prompt me for term type
-(defun term-zsh ()
-  (interactive)
-  (term "/bin/zsh"))
-
 ;; vterm - creates / switches to buffer called 'vterm'
 ;; can rename each vterm buffer with incrementing suffix using C-x x u
 ;; Doing so allows you to open a new vterm buffer with C-c t
 (global-set-key (kbd "C-c t") 'vterm)
-
-;; treemacs
-(global-set-key (kbd "C-c j") 'treemacs) ;; i.e. similar to C-x j for dired
-
-;; org mode fully expand tree under cursor - s-Tab does globally, not always what I want
-(with-eval-after-load 'org
-  (define-key org-mode-map (kbd "C-c e") 'org-show-subtree))
 
 ;; org mode add a day as header to next line, then move point under it, for logging activity
 (fset 'org-new-day
@@ -419,20 +345,12 @@
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-c a d") 'org-new-day))
 
-;; replace (e.g.) "should return" with "returns"
+;; replace (e.g.) "should return" with "returns" - e.g. in test it("") statements
 (fset 'should-be-gone
    (kmacro-lambda-form [?\M-< ?\M-< ?\S-\C-\M-s ?\[ ?\' ?\\ ?| ?\" ?\\ ?\] ?s ?h ?o ?u ?l ?d return M-backspace ?\C-d ?\M-f ?s ?\C-n ?\C-a] 0 "%d"))
 
 (fset 'convert-typescript-class-function-to-arrow-function
    (kmacro-lambda-form [?\C-s ?\( return ?\C-b ?  ?= ?  ?\C-e ?\C-b ?= ?> ?  ?\C-a ?\C-n ?\S-\C-\M-s ?p ?r ?i ?v ?a ?t ?e ?\\ ?| ?p ?u ?b ?l ?i ?c return ?\C-a] 0 "%d"))
-
-;; revert all unsaved buffers
-(defun revert-all-buffers ()
-  (interactive)
-  (dolist (buffer (buffer-list))
-    (with-current-buffer buffer
-      (when (and (buffer-file-name) (buffer-modified-p))
-        (revert-buffer t t t) ))))
 
 ;; for autoformatting code with prettier
 ;; prettify highlighted text, or the whole file
@@ -441,13 +359,7 @@
   (if (region-active-p)
       (prettier-prettify-region)
     (prettier-prettify)))
-;; on either condition, I want to append the following to the end:
-;; exchange-point-and-mark
-;; indent-for-tab-command
-;; pop-to-mark-command
 (global-set-key (kbd "C-c p") 'prettify) ;; probably shrould be a single binding for all formatters, which listens for correct file type...
-
-
 
 (global-set-key (kbd "C-c c o") 'compile)
 
@@ -481,39 +393,36 @@
 ;; On opening magit commit message, insert ticket number
 (add-hook 'git-commit-setup-hook 'insert-ticket-number)
 
+;; expand region stuff (there's more, but this is all I need)
 (global-set-key (kbd "C-=") 'er/expand-region)
+(global-set-key (kbd "C-+") 'er/contract-region)
 
-;; C-c m to open *messages*, often useful for looking up lsp errors
+;; C-c m to open *messages*, useful for looking up errors
 (defun open-messages ()
   (interactive)
   (switch-to-buffer "*Messages*"))
 (global-set-key (kbd "C-c m") 'open-messages)
 
-;; yank last message - useful when wanting to google (say) a linting or lang server
+;; C-c M to yank last message - useful when wanting to google (say) a linting or lang server
 ;; error currently displayed in the minibuffer
 (defun copy-last-message-to-clipboard ()
   (interactive)
-  (with-current-buffer "*Messages*"
-    (goto-char (point-max))
-    ;; Backtrack to the first non-empty line
-    (while (and (> (point) (point-min))
-                (looking-at-p "^$"))
-      (forward-line -1))
-    ;; Backtrack to the first line that's not indented (beginning of the last message)
-    (while (and (> (point) (point-min))
-                (or (looking-at-p "^\\s-") (not (looking-back "^\\s-*\n" (line-beginning-position)))))
-      (forward-line -1))
-    ;; If we're on an indented line, move forward to start of next line
-    (when (looking-at-p "^\\s-")
-      (forward-line 1))
-    ;; Save the beginning of the last message
-    (let ((beg (point)))
-      ;; Copy the last message to the system clipboard
-      (kill-new (buffer-substring-no-properties beg (point-max))))))
+  (let ((current-buffer (current-buffer)))
+    (with-current-buffer "*Messages*"
+      ;; Step 1: Already in "*Messages*" buffer due to 'with-current-buffer'
+      ;; Step 2: Go to the end of the buffer
+      (goto-char (point-max))
+      ;; Step 3: Move to the beginning of the previous line
+      (forward-line -1)
+      (move-beginning-of-line nil)
+      ;; Step 4: Save the beginning of the line
+      (let ((beg (point)))
+        ;; Step 5: Copy the previous line to the clipboard
+        (move-end-of-line nil)
+        (kill-new (buffer-substring-no-properties beg (point)))))
+    ;; Step 6: Return to the previous buffer
+    (switch-to-buffer current-buffer)))
 (global-set-key (kbd "C-c M") 'copy-last-message-to-clipboard)
-
-
-
 
 ;; C-c l to load-file ~/.emacs
 (defun load-emacs ()
@@ -530,16 +439,14 @@
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-c e") 'org-show-subtree))
 
-;; C-c P open ~/sandbox/white-paper.txt
-(global-set-key (kbd "C-c P") (lambda () (interactive) (find-file "~/sandpit/white-paper.txt")))
-
-;; keybinding to open scratch buffer
+;; C-c s to open scratch buffer
 (global-set-key (kbd "C-c s") 'switch-to-scratch-buffer)
 ;; switch to scratch buffer
 (defun switch-to-scratch-buffer ()
   "Switch to the scratch buffer."
   (interactive)
   (switch-to-buffer "*scratch*"))
+
 ;; display full file path in modeline
 (setq-default mode-line-buffer-identification
               '(:eval (if buffer-file-name
@@ -578,7 +485,6 @@
   (balance-windows))
 
 (bind-key "C-c 3" #'split-window-thirds)
-
 
 ;; Useful LLM prompting utils - put context about current file / dir structure in system clipboard
 (defun copy-file-path ()
@@ -727,6 +633,15 @@ If ARG is not provided, copy from the second most recent '➜'."
 
 
 
+
+
+
+
+
+
+
+
+
 ;; ============= PACKAGES / PLUGINS / EXTENSIONS =============
 
 ;; outsource autoindentation to dtrt-indent, as it's a pain
@@ -739,21 +654,6 @@ If ARG is not provided, copy from the second most recent '➜'."
 (add-hook 'term-mode-hook 'disable-company-mode)
 (add-hook 'org-mode-hook 'disable-company-mode)
 
-;; ;; additional package to show documentation alongside autocomplete
-;; ;; currently not displaying correctly in html / css files, see:
-;; ;; https://github.com/company-mode/company-quickhelp/issues/122
-;; (company-quickhelp-mode)
-;; (setq company-minimum-prefix-length 1
-;;       company-idle-delay 0
-;;       company-selection-wrap-around t
-;;       company-tooltip-flip-when-above t
-;;       ;; select using M-n where n is next to choice
-;;       company-show-quick-access 'left
-;;       ;; To prevent completions always appearing in lowercase - annoying in most languages
-;;       company-dabbrev-downcase nil
-;;       company-dabbrev-ignore-case "keep-prefix"
-;;       )
-
 ;; trying prettier everywhere - note the package is prettier.el, not prettier-js.el
 (add-hook 'after-init-hook #'global-prettier-mode)
 ;; don't open  a new window when we detect syntax errors (it's annoying)
@@ -761,7 +661,7 @@ If ARG is not provided, copy from the second most recent '➜'."
 
 ;; pop-up showing next possible key press - similar natively by '[keypress] ?'
 (which-key-mode)
-(setq which-key-idle-delay 0.5)
+(setq which-key-idle-delay 0.01)
 
 ;; Syntax highlighting - requires major mode to recognise file type, e.g. must
 ;; first install seperate package typescript-mode.el to see highlighting of .ts
@@ -798,6 +698,8 @@ If ARG is not provided, copy from the second most recent '➜'."
 ;; See: https://emacs-lsp.github.io/lsp-mode/page/lsp-gopls/#working-with-nested-gomod-files
 (require 'lsp-mode)
 (add-hook 'go-mode-hook #'lsp-deferred)
+(setq lsp-enable-snippet nil)  ;; this prevents weird bug in company-mode, where company mode will insert arguments from function definitions as part of the completion - https://github.com/company-mode/company-mode/issues/943 - I only experienced this with golang
+;; Note that this might become unnecessary
 ;; enable lsp-ui-mode
 (setq lsp-enable-symbol-highlighting t)
 (setq lsp-ui-doc-enable t)
@@ -826,6 +728,7 @@ If ARG is not provided, copy from the second most recent '➜'."
 (add-hook 'sass-mode-hook 'eglot-ensure)
 (add-hook 'sass-mode-hook 'flymake-sass-load)
 (add-hook 'rust-mode-hook 'eglot-ensure)
+(add-hook 'python-mode-hook 'eglot-ensure)
 ;; (add-hook 'go-mode-hook 'eglot-ensure) ;; disabled because using lsp-mode
 (add-hook 'eglot--managed-mode-hook
           (lambda ()
@@ -969,42 +872,48 @@ If ARG is not provided, copy from the second most recent '➜'."
     (define-key map (kbd "C-c g t p") 'go-test-current-project) ;; current package, really
     (define-key map (kbd "C-c g t f") 'go-test-current-file)
     (define-key map (kbd "C-c g t t") 'go-test-current-test)
+    (define-key go-mode-map (kbd "C-c B") 'break-up-golang-args)
     )
   ))
 
+;; C-c B in go-mode to break up next single line arg list in current file
+;; Gofmt doesn't break up long lines; typically result of long function arg lists
+(defun break-up-golang-args ()
+  "Break up long argument lists in Go function calls and apply gofmt."
+  (interactive)
+  (if (not (eq major-mode 'go-mode))
+      (message "Not in Go mode")
+    (let ((current-line (line-number-at-pos))
+          (start nil)
+          (end nil))
+      (save-excursion
+        (beginning-of-line)
+        (when (setq start (search-forward "(" (line-end-position) t))
+          (when (setq end (scan-sexps (1- start) 1))
+            (if (not (= current-line (line-number-at-pos end)))
+                (message "Brackets not on the same line")
+              (let ((arg-string (buffer-substring-no-properties start (- end 1)))
+                    (new-arg-string "")
+                    (stack '())
+                    (in-string nil))
+                (dolist (char (string-to-list arg-string))
+                  (cond ((= char ?\")
+                         (setq in-string (not in-string)))
+                        ((and (not in-string) (= char ?\())
+                         (push "(" stack))
+                        ((and (not in-string) (= char ?\)))
+                         (pop stack)))
+                  (setq new-arg-string (concat new-arg-string (string char)))
+                  (when (and (not in-string) (null stack) (= char ?,))
+                    (setq new-arg-string (concat new-arg-string "\n"))))
+                (delete-region (1- start) end)
+                (insert (concat "(\n" new-arg-string ",\n)"))
+                (if (fboundp 'gofmt)
+                    (gofmt)
+                  (message "gofmt not found. Make sure the Go Emacs package is installed."))))))))))
+
 ;; Color theme
-(require 'doom-themes)
-;; favoured dark theme
-;; (load-theme 'doom-zenburn t)
-;; favoured light theme
 (load-theme 'ef-light t)
-
-;; theme-specific tweaks
-;; --- doom-zenburn ---
-;; palette: https://en.wikipedia.org/wiki/Wikipedia:Zenburn
-;; (set-face-foreground 'dired-directory "#8CD0D3")
-;; (set-face-bold 'dired-directory t)
-;; (set-face-background 'isearch "gold1")
-;; (set-face-foreground 'lazy-highlight "black")
-;; (set-face-background 'lazy-highlight "grey90")
-;; (set-face-foreground `copilot-overlay-face "#C0BED1")
-;; (set-face-italic `copilot-overlay-face t)
-;; (set-face-background 'icomplete-selected-match "brown4")
-;; (set-face-background 'region "black")
-
-;; TODO make todo items legible
-;; --- doom-nord ---
-;; Use a different color for the active window's modeline
-;; (set-face-background 'mode-line "#3B4252")
-
-;; note for vterm: also depends on having these lines in .zshrc:
-;; https://github.com/akermu/emacs-libvterm#shell-side-configuration
-;; And some other dependencies that can be installed with homebrew - see github
-
-;; For markdown previewing (grip mode) - C-c C-c g to start/stop grip server
-;; This line works fine, except that it produces a warning on startup:
-;; ""Symbol's value as variable is void: markdown-mode-command-map""
-;; (define-key markdown-mode-command-map (kbd "g") #'grip-mode)
 
 ;; Alias for grip-mode, which toggles in-browser md previews - since I can never remember the name
 (defun preview-markdown ()
@@ -1015,13 +924,28 @@ If ARG is not provided, copy from the second most recent '➜'."
     )
   )
 
-;; gptel chatgpt api client
+;; --- gptel --- chatgpt api client
 ;; C-c RET to send query
 ;; C-u C-c RET to open prefix menu
-(global-set-key (kbd "C-c G") 'gptel)
-(setq-default gptel--model "gpt-4")
+
+;; Keybinding to call 'gptel' function interactively.
+;; This opens or switches to the gptel buffer.
+(global-set-key (kbd "C-c g") 'gptel)
+
+;; Define a custom function 'gptel-clear' to clear the gptel buffer.
+;; This function first calls 'gptel' interactively to ensure the buffer is open.
+;; Then it switches to the gptel buffer and deletes all its contents.
+(defun gptel-clear ()
+  "Open or switch to the gptel buffer and clear its contents."
+  (interactive)
+  (let ((gptel-buffer (call-interactively 'gptelG)))
+    (with-current-buffer gptel-buffer
+      (delete-region (point-min) (point-max)))))
+(global-set-key (kbd "C-c G") 'gptel-clear)
+
 ;; sets api key with (setq gptel-api-key "secret")
 (load-file "~/.emacs.d/openai-init.el")
+;; --- end gptel ---
 
 ;; For very large files - offered as option in minibuffer when you go to open file over 10mb in size
 ;; Emacs barely usable for big files
@@ -1035,50 +959,5 @@ If ARG is not provided, copy from the second most recent '➜'."
 
 
 
-;; ============= EVIL - maybe one day =============
+;; ============= EVIL - I keep it on hand for C-w H/J/K/L =============
 (global-set-key (kbd "C-c v") 'evil-mode)
-;; (setq evil-want-C-u-scroll t)
-;; (setq evil-want-C-w-in-emacs-state t)
-;; (setq evil-undo-system 'undo-redo)
-;; (require 'evil)
-;; (evil-mode nil) ;; decided against this for now
-;; (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-;; (define-key evil-replace-state-map (kbd "C-g") 'evil-normal-state)
-;; (setq evil-normal-state-cursor '(box "cadet blue")
-;;       evil-insert-state-cursor '(bar "medium sea green")
-;;       evil-emacs-state-cursor '(box "light blue")
-;;       evil-visual-state-cursor '(hollow "orange"))
-;; (evil-set-leader 'normal (kbd "SPC"))
-;; ;; I don't love using vim names like write, but this serves as an example of a leader binding
-;; (evil-define-key 'normal 'global (kbd "<leader> w w") 'save-buffer)
-;; ;; disable by default
-;; ;; overrides - C-z to toggle vim bindings in these modes
-;; (evil-set-initial-state 'term-mode 'emacs)
-;; (evil-set-initial-state 'esh-mode 'emacs)
-;; (evil-set-initial-state 'shell-mode 'emacs)
-;; (evil-set-initial-state 'bookmark-bmenu-mode 'emacs)
-;; (evil-set-initial-state 'dired-mode 'emacs)
-;; (evil-set-initial-state 'outline-mode 'emacs)
-;; (evil-set-initial-state 'help-mode 'emacs)
-;; (evil-set-initial-state 'calendar-mode 'emacs)
-;; (evil-set-initial-state 'buffer-menu-mode 'emacs)
-;; (evil-set-initial-state 'xref--xref-buffer-mode 'emacs)
-;; (evil-set-initial-state 'company-mode 'emacs)
-;; (evil-set-initial-state 'fundamental-mode 'emacs)
-;; (evil-set-initial-state 'special-mode 'emacs)
-;; (evil-set-initial-state 'log-edit-mode 'emacs)
-;; (evil-set-initial-state 'vc-log-edit-mode 'emacs)
-;; (evil-set-initial-state 'magit-mode 'emacs)
-;; ;; save company mode from vim bindings
-;; (evil-define-key 'insert 'global (kbd "C-n") 'company-select-next)
-;; (evil-define-key 'replace 'global (kbd "C-n") 'company-select-next)
-;; (evil-define-key 'insert 'global (kbd "C-p") 'company-select-previous)
-;; (evil-define-key 'replace 'global (kbd "C-p") 'company-select-previous)
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
