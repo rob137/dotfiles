@@ -1,5 +1,6 @@
 ;; ============= PACKAGE MANAGEMENT =============
 
+
 ;; Set up package.el to work with MELPA
 (require 'package)
 (add-to-list 'package-archives
@@ -24,11 +25,38 @@
  '(custom-safe-themes
    '("46c65f6d9031e2f55b919b1486952cddcc8e3ee081ade7eb2ffb6a68a804d30e" "b64a60e69617b4348d0402fad2f0d08a694301132e7ab243dab4d6a65c3bf948" "02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644" "443e2c3c4dd44510f0ea8247b438e834188dc1c6fb80785d83ad3628eadf9294" "a44e2d1636a0114c5e407a748841f6723ed442dc3a0ed086542dc71b92a87aee" "7e068da4ba88162324d9773ec066d93c447c76e9f4ae711ddd0c5d3863489c52" "51c71bb27bdab69b505d9bf71c99864051b37ac3de531d91fdad1598ad247138" "2e05569868dc11a52b08926b4c1a27da77580daa9321773d92822f7a639956ce" "1a1ac598737d0fcdc4dfab3af3d6f46ab2d5048b8e72bc22f50271fd6d393a00" "afa47084cb0beb684281f480aa84dab7c9170b084423c7f87ba755b15f6776ef" default))
  '(git-gutter:update-interval 2)
+ '(grep-files-aliases
+   '(("all" . "* .*")
+     ("el" . "*.el")
+     ("ch" . "*.[ch]")
+     ("c" . "*.c")
+     ("cc" . "*.cc *.cxx *.cpp *.C *.CC *.c++")
+     ("cchh" . "*.cc *.[ch]xx *.[ch]pp *.[CHh] *.CC *.HH *.[ch]++")
+     ("hh" . "*.hxx *.hpp *.[Hh] *.HH *.h++")
+     ("h" . "*.h")
+     ("l" . "[Cc]hange[Ll]og*")
+     ("am" . "Makefile.am GNUmakefile *.mk")
+     ("m" . "[Mm]akefile*")
+     ("tex" . "*.tex")
+     ("texi" . "*.texi")
+     ("asm" . "*.[sS]")
+     ("go" . "*.go")
+     ("php" . "*.php")
+     ("py" . "*.py")
+     ("ts" . "*.ts")
+     ("js" . "*.js")
+     ("css" . "*.css")
+     ("html" . "*.html")
+     ("json" . "*.json")
+     ("jsonl" . "*.jsonl")
+     ("jsonld" . "*.jsonld")
+     ("sh" . "*.sh")))
  '(org-agenda-files '("~/notes/todo.org"))
  '(package-selected-packages
-   '(eglot hl-todo magit sass-mode chatgpt epc ctable concurrent deferred quelpa-use-package quelpa php-mode json-mode jsfmt which-key web-mode vterm typescript-mode tree-sitter-langs scss-mode rjsx-mode restclient prettier-rc prettier lsp-ui jenkinsfile-mode indium highlight grip-mode gotest git-gutter fzf flycheck expand-region exec-path-from-shell evil-collection eslint-rc dtrt-indent doom-themes dockerfile-mode docker-compose-mode coverage cov company-quickhelp auto-org-md))
+   '(hl-todo magit sass-mode chatgpt epc ctable concurrent deferred quelpa-use-package quelpa php-mode json-mode jsfmt which-key web-mode vterm typescript-mode tree-sitter-langs scss-mode rjsx-mode restclient prettier-rc prettier lsp-ui jenkinsfile-mode indium highlight grip-mode gotest git-gutter fzf flycheck expand-region exec-path-from-shell evil-collection eslint-rc dtrt-indent doom-themes dockerfile-mode docker-compose-mode coverage cov company-quickhelp auto-org-md))
  '(safe-local-variable-values
-   '((vc-prepare-patches-separately)
+   '((eval add-to-list 'grep-find-ignored-files "*.json")
+     (vc-prepare-patches-separately)
      (diff-add-log-use-relative-names . t)
      (vc-git-annotate-switches . "-w")
      (cov-lcov-file-name . "/Users/robert.kirby/g/aff-services-mono/apps/bookmaker-aliases-servicex/coverage/unit/lcov.info")
@@ -36,7 +64,6 @@
      (cov-lcov-file-name . "/Users/robert.kirby/g/events-service/coverage/unit/lcov.info")
      (cov-lcov-file-name . "/Users/robert.kirby/g/events-service/coverage/lcov.info")
      (lcov-file-name . "/Users/robert.kirby/g/events-service/coverage/lcov.info"))))
-
 
 
 
@@ -63,9 +90,7 @@
   (load bootstrap-file nil 'nomessage))
 ;; packages installed via straight.el
 (straight-use-package '(codeium :type git :host github :repo "Exafunction/codeium.el"))
-
-
-
+(straight-use-package '(copilot :type git :host github :repo "zerolfx/copilot.el" :files ("dist" "*.el")))
 
 
 
@@ -163,12 +188,8 @@
 (setq-default whitespace-style '(
                                  face ;; necessary for some of the others in this list
                                  trailing
-                                 space-before-tab
                                  space-after-tab ;; doesn't seem to work
                                  ))
-
-;; smooth scroll
-(setq scroll-step 1) ;; don't see difference, might be emacs 29 thing
 
 ;; vertical line on 80 char column
 (setq-default display-fill-column-indicator-column 79)
@@ -309,8 +330,11 @@
 ;; Truncate lines in grep results
 (add-hook 'grep-mode-hook (lambda () (toggle-truncate-lines 1)))
 
+(add-hook 'prog-mode-hook 'hs-minor-mode)
+(global-set-key (kbd "C-c @ @") 'hs-toggle-hiding)
 
-
+;; smooth scrolling
+(pixel-scroll-precision-mode 1)
 
 
 
@@ -608,19 +632,20 @@ If ARG is not provided, copy from the second most recent '➜'."
                                default-directory)))
     (cond
      ((file-exists-p (expand-file-name "go.mod" default-directory))
-      (compile "go test ./..."))
+      (compile "staticcheck ./..."))
      ((file-exists-p (expand-file-name "package.json" default-directory))
       (compile "npm test"))
      ((file-exists-p (expand-file-name "requirements.txt" default-directory))
       (compile "pytest"))
      (t (message "Unknown project type.")))))
 ;; Butter fingers
+(global-set-key (kbd "<f2>") 'universal-test-command)
 (global-set-key (kbd "<f3>") 'universal-test-command)
 (global-set-key (kbd "<f4>") 'universal-test-command)
 (global-set-key (kbd "<f5>") 'universal-test-command)
 (global-set-key (kbd "<f6>") 'universal-test-command)
 (global-set-key (kbd "<f7>") 'universal-test-command)
-(global-set-key (kbd "<f7>") 'universal-test-command)
+(global-set-key (kbd "<f8>") 'universal-test-command)
 
 (global-set-key (kbd "C-c w") 'toggle-word-wrap)
 
@@ -661,14 +686,7 @@ If ARG is not provided, copy from the second most recent '➜'."
 
 ;; pop-up showing next possible key press - similar natively by '[keypress] ?'
 (which-key-mode)
-(setq which-key-idle-delay 0.01)
-
-;; Syntax highlighting - requires major mode to recognise file type, e.g. must
-;; first install seperate package typescript-mode.el to see highlighting of .ts
-;; files
-(global-tree-sitter-mode)
-(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-
+(setq which-key-idle-delay 0.5)
 
 
 
@@ -721,6 +739,10 @@ If ARG is not provided, copy from the second most recent '➜'."
 ;; https://github.com/golang/go/issues/54559#issuecomment-1352862969
 ;; Works perfectly otherwise
 ;; Flymake goes hand-in-hand with eglot (flycheck plays nice with lsp-mode)
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs '(php-mode . ("intelephense" "--stdio")))
+)
+(add-hook 'php-mode-hook 'eglot-ensure)
 (add-hook 'typescript-mode-hook 'eglot-ensure)
 (add-hook 'js-jsx-mode-hook 'eglot-ensure)
 (add-hook 'html-mode-hook 'eglot-ensure)
@@ -806,33 +828,7 @@ If ARG is not provided, copy from the second most recent '➜'."
 
 ;; (global-set-key (kbd "C-c n") 'next-theme) ;; sometimes tripped up by this, fun as it was
 
-
-;; ;; WIP: Codium, free alternative to copilot, installed via straight.el near top of this config
-;; (use-package codeium
-;;     :init
-;;     ;; use globally
-;;     (add-to-list 'completion-at-point-functions #'codeium-completion-at-point)
-;;     :defer t
-;;     :config
-;;     )
-;; ;; codium/company mode
-;; (use-package company
-;;     :defer 0.1
-;;     :config
-;;     (setq-default
-;;         company-idle-delay 0.05
-;;         company-require-match nile
-;;         company-minimum-prefix-length 0
-;;         ;; get only preview
-;;         company-frontends '(company-preview-frontend)
-;;         ;; also get a drop down
-;;         company-frontends '(company-pseudo-tooltip-frontend company-preview-frontend)
-;;         ))
-
-
-;; copilot, needs the dependencies dash, s, editorconfig, at least it did when I installed it acording to its github README
-(load-file "~/.emacs.d/copilot.el/dash.el")
-(load-file "~/.emacs.d/copilot.el/copilot.el")
+;; COPILOT
 (add-hook 'prog-mode-hook 'copilot-mode)
 (add-hook 'web-mode-hook 'copilot-mode)
 (add-hook 'dockerfile-mode-hook 'copilot-mode)
@@ -869,9 +865,6 @@ If ARG is not provided, copy from the second most recent '➜'."
   ;; Shortcuts for common go-test invocations.
   (let ((map go-mode-map))
     (define-key map (kbd "C-c p") 'gofmt)
-    (define-key map (kbd "C-c g t p") 'go-test-current-project) ;; current package, really
-    (define-key map (kbd "C-c g t f") 'go-test-current-file)
-    (define-key map (kbd "C-c g t t") 'go-test-current-test)
     (define-key go-mode-map (kbd "C-c B") 'break-up-golang-args)
     )
   ))
@@ -924,14 +917,7 @@ If ARG is not provided, copy from the second most recent '➜'."
     )
   )
 
-;; --- gptel --- chatgpt api client
-;; C-c RET to send query
-;; C-u C-c RET to open prefix menu
-
-;; Keybinding to call 'gptel' function interactively.
-;; This opens or switches to the gptel buffer.
-(global-set-key (kbd "C-c g") 'gptel)
-
+;; GP-TEL
 ;; Define a custom function 'gptel-clear' to clear the gptel buffer.
 ;; This function first calls 'gptel' interactively to ensure the buffer is open.
 ;; Then it switches to the gptel buffer and deletes all its contents.
@@ -961,3 +947,10 @@ If ARG is not provided, copy from the second most recent '➜'."
 
 ;; ============= EVIL - I keep it on hand for C-w H/J/K/L =============
 (global-set-key (kbd "C-c v") 'evil-mode)
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
