@@ -133,11 +133,15 @@ alias ,grfl='grf'
 alias ,gsh='git stash'
 alias ,gshp='git stash pop'
 
+alias ,pc='pbcopy'
+
+alias ,make='make'
+
 alias ,beep='osascript -e "beep 2"'
-alias ,b='beep'
-alias ,bb='beep; beep'
-alias ,bbb='beep; beep; beep'
-alias ,bx='beep; exit"'
+alias ,b=',beep'
+alias ,bb=',beep; ,beep'
+alias ,bbb=',beep; ,beep; ,beep'
+alias ,bx=',beep; exit"'
 
 alias ,gt='go test -v'
 alias ,gti='go test -v -tags=integration'
@@ -172,27 +176,33 @@ alias ,dspa='docker system prune -a'
 alias ,dspv='docker system prune --volumes'
 alias ,dvp='docker volume prune'
 alias ,di='docker images'
-alias ,dockernuke='dsa; drma; yes | dsp'
+alias ,dockernuke=',dsa; ,drma; yes | ,dspa'
 alias ,dn='dsa; drma; yes | dsp'
 drm() {
   docker rm "$@"
 }
 alias ,drma='docker rm $(docker ps -a -q)'
 alias ,dvrma='docker volume rm $(docker volume ls -q)'
-drmi() {
+,drmi() {
   docker rmi "$@"
 }
-function dl() {
+alias ,drmai='docker rmi $(docker images -a -q)'
+function ,dl() {
   docker logs --timestamps "$@"
 }
-function dlf() {
+function ,dlf() {
   docker logs -f --timestamps "$@"
 }
-function ds() {
+function ,ds() {
   docker stop "$@"
 }
+# exec into the first container listed by docker ps
+function ,de() {
+  docker exec -it $(docker ps -q | head -n 1) sh
+}
+
 alias ,dsa='docker stop $(docker ps -a -q)'
-function dl() {
+function ,dl() {
   docker logs "$1"
 }
 
@@ -205,6 +215,7 @@ function ,ch() {
 alias ,sp='cd ~/sandpit'
 
 alias ,sandpit='cd ~/sandpit'
+alias ,dotfiles='cd ~/dotfiles'
 
 alias ,td='vim ~/notes/todo.txt'
 alias ,tdl='vim ~/notes/todo_life.txt'

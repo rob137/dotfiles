@@ -1,5 +1,5 @@
 ;; ============= PACKAGE MANAGEMENT =============
-
+;;; Commentary: purely to suppress errors
 
 ;; Set up package.el to work with MELPA
 (require 'package)
@@ -336,6 +336,22 @@
 ;; smooth scrolling
 (pixel-scroll-precision-mode 1)
 
+;; M-3 to insert #
+;; Since using a British keyboard layout, I have to press Alt-3 to get a hash
+;; Note that C-3 achieves the same as M-3 (i.e. C-u 3)
+(global-set-key (kbd "M-3") (lambda () (interactive) (insert "#")))
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -352,6 +368,49 @@
 
 ;; ============= MAPPINGS / FUNCTIONS =============
 
+;; Utility function for creating a binding for a vterm buffer with a given name
+(defun open-custom-vterm (buffer-name command-list)
+  "Open a custom vterm with a given BUFFER-NAME and execute a list of COMMAND-LIST."
+  (let ((target-buffer (get-buffer buffer-name)))
+    (if target-buffer
+        ;; If the buffer exists, switch to it.
+        (switch-to-buffer target-buffer)
+      ;; Else, create a new vterm and rename the buffer.
+      (vterm)
+      (rename-buffer buffer-name t)))
+  ;; Iterate over the command list and send each command to the terminal.
+  (dolist (command command-list)
+    (vterm-send-string (concat command "\n"))
+    (vterm-send-return)))
+;; Example usage for a new function
+;; (defun open-logging-terminal ()
+;;   "Open a logging terminal for project A."
+;;   (interactive)
+;;   (open-custom-vterm "test-project-A-terminal"
+;;                      '("cd ~/path/to/project-a" "npm run test --watch")))
+;; then set to a keybinding
+;; (global-set-key (kbd "C-c L") 'open-logging-terminal)
+
+;; Load ssh terminal setup (deliberately not tracked in source control)
+(load "~/.ssh-command.el")  ;; Adjust the path to where you've saved ssh-command.el
+;; Use our util functions to create a function to open an ssh terminal
+(defun open-ssh-terminal ()
+  "Open an SSH terminal with a predefined SSH command loaded from a separate file."
+  (interactive)
+  (open-custom-vterm "ssh-terminal" (list ssh-command)))
+(global-set-key (kbd "C-c S") 'open-ssh-terminal)
+
+;; Run AICE in a specially named vterm
+(defun open-aice-server-terminal ()
+  "Open a vterm to run AICE."
+  (interactive)
+  (open-custom-vterm "aice-server-terminal"
+                     '("cd ~/g/aice" "make run")))
+(global-set-key (kbd "C-c A") 'open-aice-server-terminal)
+
+;; for convenient hiding
+(global-set-key (kbd "C-c h") 'hs-hide-level)
+
 ;; C-c o to open org mode file
 (defun open-todo ()
   (interactive)
@@ -363,9 +422,11 @@
 ;; Doing so allows you to open a new vterm buffer with C-c t
 (global-set-key (kbd "C-c t") 'vterm)
 
+
+
 ;; org mode add a day as header to next line, then move point under it, for logging activity
 (fset 'org-new-day
-      (kmacro-lambda-form [?\C-e return ?* ?* ?  ?\C-c ?. ?  return return] 0 "%d"))
+      (kmacro-lambda-form [?\M-< return ?\C-p ?* ?  ?\C-c ?. ?  return return] 0 "%d"))
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-c a d") 'org-new-day))
 
@@ -376,6 +437,8 @@
 (fset 'convert-typescript-class-function-to-arrow-function
    (kmacro-lambda-form [?\C-s ?\( return ?\C-b ?  ?= ?  ?\C-e ?\C-b ?= ?> ?  ?\C-a ?\C-n ?\S-\C-\M-s ?p ?r ?i ?v ?a ?t ?e ?\\ ?| ?p ?u ?b ?l ?i ?c return ?\C-a] 0 "%d"))
 
+
+
 ;; for autoformatting code with prettier
 ;; prettify highlighted text, or the whole file
 (defun prettify ()
@@ -385,7 +448,63 @@
     (prettier-prettify)))
 (global-set-key (kbd "C-c p") 'prettify) ;; probably shrould be a single binding for all formatters, which listens for correct file type...
 
+;; Python Black - similar to prettier
+;; Reformat buffer or region
+(defun python-black-format ()
+  (interactive)
+  (if (region-active-p)
+      (python-black-region)
+    (python-black-buffer)))
+
+;; PHP format on save ith intelliphense via eglot
+(add-hook 'php-mode-hook
+    (lambda ()
+      (add-hook 'before-save-hook 'eglot-format-buffer nil t)))
+(defalias 'add-php-opening-tag-to-current-file
+   (kmacro "C-x C-j C-n <return> M-< C-s F o r m R e q <return> C-a C-SPC C-e <backspace> <backspace> <backspace> C-a C-x C-s"))
+
+
+
+;; use text-mode in blade.php files
+(add-to-list 'auto-mode-alist '("\\.blade\\.php\\'" . text-mode))
+;; use php mode in blade.php files
+;; DISABLED because intelephense ain't all that with blade
+;; still ongoing thing: https://github.com/bmewburn/vscode-intelephense/issues/93#issuecomment-1940670756
+;; (add-to-list 'auto-mode-alist '("\\.blade\\.php\\'" . php-mode))
+
+;; Define a function to insert <?php at the start of the PHP buffer
+(defun insert-php-tag-at-start ()
+  "Insert <?php at the beginning of the buffer."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (insert "<?php\n\n")))
+(add-hook 'php-mode-hook
+  (lambda ()
+    (local-set-key (kbd "C-c P") 'insert-php-tag-at-start)))
+
+
+;; Python-specific keybindings
+(defun set-python-mode-keybindings ()
+  (local-set-key (kbd "C-c p") 'python-black-format))
+(add-hook 'python-mode-hook 'set-python-mode-keybindings)
+
 (global-set-key (kbd "C-c c o") 'compile)
+
+;; Php-specific keybindings
+(defun my-php-insert-php-tag ()
+  "Insert '<?php' at the start of the file, followed by two newlines, and return to the original cursor position."
+  (interactive)
+  (when (derived-mode-p 'php-mode) ;; Make sure this only runs in php-mode
+    (let ((current-point (point)))   ;; Save the current cursor position
+      (goto-char (point-min))        ;; Jump to the start of the file
+      (unless (looking-at-p "<?php") ;; Check if '<?php' isn't already at the start
+        (insert "<?php\n\n"))        ;; Insert '<?php' and two newlines
+      (goto-char current-point))))   ;; Return to the saved cursor position
+(add-hook 'php-mode-hook
+          (lambda ()
+            (local-set-key (kbd "C-c P") 'my-php-insert-php-tag)))
+
 
 ;; for mac os x https://www.emacswiki.org/emacs/FullScreen#h5o-27
 (defun toggle-fullscreen ()
@@ -460,8 +579,8 @@
 ;; C-c e  open ~/.emacs
 (global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/.emacs")))
 ;; override org-mode binding for C-c e
-(with-eval-after-load 'org
-  (define-key org-mode-map (kbd "C-c e") 'org-show-subtree))
+;; (define-key org-mode-map (kbd "C-c e")
+;;   (lambda () (interactive) (find-file d"~/.emacs")))
 
 ;; C-c s to open scratch buffer
 (global-set-key (kbd "C-c s") 'switch-to-scratch-buffer)
@@ -470,6 +589,9 @@
   "Switch to the scratch buffer."
   (interactive)
   (switch-to-buffer "*scratch*"))
+
+;; Org mode by default in scratch buffer
+(setq initial-major-mode 'org-mode)
 
 ;; display full file path in modeline
 (setq-default mode-line-buffer-identification
@@ -510,107 +632,31 @@
 
 (bind-key "C-c 3" #'split-window-thirds)
 
-;; Useful LLM prompting utils - put context about current file / dir structure in system clipboard
-(defun copy-file-path ()
-  "Copy the current buffer's file path to the clipboard."
-  (interactive)
-  (when buffer-file-name
-    (let* ((path (buffer-file-name)))
-      (kill-new path)
-      (message "File path copied to clipboard.")
-      path)))
-(global-set-key (kbd "C-c V") 'copy-file-path)
-(defun copy-file-path-and-contents ()
-  "Copy the current buffer's file path and its contents to the clipboard."
-  (interactive)
-  (when buffer-file-name
-    (let* ((path (copy-file-path))
-           (file-contents (buffer-string))
-           (combined (concat path "\n" file-contents)))
-      (kill-new combined)
-      (message "File path and contents copied to clipboard."))))
-(global-set-key (kbd "C-c C") 'copy-file-path-and-contents)
-(defun copy-all-file-paths-and-contents ()
-  "Copy the file paths and contents of all files in the current dired directory and its subdirectories to the clipboard."
-  (interactive)
-  (let* ((ignore-patterns '("node_modules" "\\.git" "dist" "outputs" "build" "\\.vscode" "\\.idea" "\\.DS_Store" "\\.log"
-                           "\\.cache" "\\.tmp" "venv" "\\.next" "\\.npm" "coverage" "bower_components" "\\.lock$"
-                           "\\.swp$" "\\.tmp$" "\\.gz$" "\\.zip$" "\\.tar$" "\\.rar$" "\\.jpg$" "\\.jpeg$" "\\.png$"
-                           "\\.gif$" "\\.bmp$")) ; the list of patterns to ignore
-         (all-paths-and-contents '()))
-    (dolist (file (directory-files-recursively default-directory ".*"))
-      (when (and (not (file-directory-p file)) ; skip directories
-                 (not (seq-some (lambda (pattern) ; check if file matches any ignore pattern
-                                  (string-match-p pattern file))
-                                ignore-patterns)))
-        (find-file file)
-        (setq all-paths-and-contents
-              (append all-paths-and-contents
-                      (list (concat file "\n" (buffer-string)))))
-        (kill-buffer)))
-    (kill-new (mapconcat 'identity all-paths-and-contents "\n\n")) ; join all file paths and contents
-    (message "All file paths and contents copied to clipboard.")))
-(global-set-key (kbd "C-c T") 'copy-all-file-paths-and-contents)
-(defun copy-current-line-to-clipboard ()
-  "Copy the current line to the system clipboard without newlines."
-  (interactive)
-  (let ((begin (line-beginning-position))
-        (end (line-end-position)))
-    (kill-ring-save begin end)
-    (with-temp-buffer
-      (yank)
-      (let ((copy (substring-no-properties (buffer-string) 0 -1))) ; remove newline
-        (kill-new copy)
-        (message "Line copied to clipboard: %s" copy)))))
-(global-set-key (kbd "C-c L") 'copy-current-line-to-clipboard)
 
-(defun copy-to-drag-n-drop-dir ()
-  "Copy the current file to ~/Desktop/drag-n-drop/."
-  (interactive)
-  (let* ((target-dir (expand-file-name "~/Desktop/drag-n-drop/"))
-         (current-file (buffer-file-name))
-         (target-file (concat target-dir (file-name-nondirectory current-file))))
-    ;; Ensure the target directory exists
-    (unless (file-exists-p target-dir)
-      (make-directory target-dir t))
-    ;; Copy the file
-    (copy-file current-file target-file t)
-    ;; Display confirmation
-    (message "File copied to %s" target-dir)))
-(global-set-key (kbd "C-c D") 'copy-to-drag-n-drop-dir)
 
-(defun wipe-drag-n-drop-dir ()
-  "Remove all files under ~/Desktop/drag-n-drop/."
-  (interactive)
-  (let* ((target-dir (expand-file-name "~/Desktop/drag-n-drop/"))
-         (files (directory-files target-dir t "\\w+")))
-    ;; Ensure the target directory exists
-    (if (file-exists-p target-dir)
-        (progn
-          ;; Delete each file in the directory
-          (mapc 'delete-file files)
-          ;; Display confirmation
-          (message "All files in %s removed" target-dir))
-      (message "Directory %s does not exist" target-dir))))
-(global-set-key (kbd "C-c W") 'wipe-drag-n-drop-dir)
 
+
+
+
+(defvar vterm-search-string "robert.kirby@ssg"
+  "String to search for in vterm buffer.")
 (defun vterm-copy-previous-output (arg)
-  "Copy from the ARG+2th most recent '➜' to the end of the buffer in vterm copy mode.
-If ARG is not provided, copy from the second most recent '➜'."
+  "Copy from the ARG+2th most recent occurrence of `vterm-search-string' to the end of the buffer in vterm copy mode.
+If ARG is not provided, copy from the second most recent occurrence."
   (interactive "p")
   (require 'vterm)
   ;; Enable vterm copy mode
   (vterm-copy-mode 1)
-  ;; Jump to the ARG+2th most recent '➜'
-  (let ((num-found (how-many "➜" (point-min) (point-max))))
+  ;; Jump to the ARG+2th most recent occurrence of `vterm-search-string'
+  (let ((num-found (how-many vterm-search-string (point-min) (point-max))))
     (when (> num-found (+ arg 1))
       (dotimes (_ (+ arg 1))
-        (re-search-backward "➜"))))
+        (re-search-backward vterm-search-string))))
   ;; Start marking
   (set-mark (point))
-  ;; Jump to the end of the line before the last '➜'
+  ;; Jump to the end of the line before the last occurrence
   (goto-char (point-max))
-  (re-search-backward "➜")
+  (re-search-backward vterm-search-string)
   (beginning-of-line)
   ;; Copy to clipboard
   (kill-ring-save (mark) (point))
@@ -619,6 +665,7 @@ If ARG is not provided, copy from the second most recent '➜'."
 ;; Bind the new function to the key sequence C-c O
 (with-eval-after-load 'vterm
   (define-key vterm-mode-map (kbd "C-c C") 'vterm-copy-previous-output))
+
 
 
 
@@ -649,11 +696,35 @@ If ARG is not provided, copy from the second most recent '➜'."
 
 (global-set-key (kbd "C-c w") 'toggle-word-wrap)
 
+;; SSG SPECIFIC STUFF
 
+(defun copy-aice-schema-and-notify ()
+  "Open vterm, run copy-aice-schema, and notify on completion."
+  (interactive)
+  ;; Open or switch to a vterm buffer.
+  (vterm)
+  ;; Clear any unsent commands. Note: Sending C-c C-u to clear the line.
+  (vterm-send-C-c)
+  (vterm-send-C-u)
+  ;; Run the copy-aice-schema command.
+  (vterm-send-string "copy-aice-schema")
+  (vterm-send-return)
+  ;; Wait briefly to ensure the command executes before switching buffers.
+  (sleep-for 2)  ;; Adjust the sleep duration as needed.
+  ;; Switch back to the previous buffer.
+  (previous-buffer)
+  ;; Display a message indicating success.
+  (message "copy-aice-schema command executed and output copied to clipboard!"))
 
+(global-set-key (kbd "C-c D") 'copy-aice-schema-and-notify)
 
-
-
+;; General purpose, for mucking about with local testing
+(defun yank-password ()
+  "Copy the string 'ABC!123abc' to the clipboard."
+  (interactive)
+  (let ((password "ABC!123abc"))
+    (kill-new password)
+    (message "Password copied to clipboard: %s" password)))
 
 
 
@@ -674,22 +745,19 @@ If ARG is not provided, copy from the second most recent '➜'."
 
 ;; ;; enable autocompletion, disable by exception
 (global-company-mode t)
-(add-hook 'eshell-mode-hook 'disable-company-mode)
-(add-hook 'shell-mode-hook 'disable-company-mode)
-(add-hook 'term-mode-hook 'disable-company-mode)
-(add-hook 'org-mode-hook 'disable-company-mode)
+(add-hook 'org-mode-hook 'company-mode)
 
 ;; trying prettier everywhere - note the package is prettier.el, not prettier-js.el
 (add-hook 'after-init-hook #'global-prettier-mode)
 ;; don't open  a new window when we detect syntax errors (it's annoying)
 (setq prettier-inline-errors-flag t)
 
+;; Similar to prettier - for python
+(add-hook 'python-mode-hook 'python-black-on-save-mode)
+
 ;; pop-up showing next possible key press - similar natively by '[keypress] ?'
 (which-key-mode)
 (setq which-key-idle-delay 0.5)
-
-
-
 
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -741,7 +809,8 @@ If ARG is not provided, copy from the second most recent '➜'."
 ;; Flymake goes hand-in-hand with eglot (flycheck plays nice with lsp-mode)
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs '(php-mode . ("intelephense" "--stdio")))
-)
+  )
+
 (add-hook 'php-mode-hook 'eglot-ensure)
 (add-hook 'typescript-mode-hook 'eglot-ensure)
 (add-hook 'js-jsx-mode-hook 'eglot-ensure)
@@ -829,10 +898,9 @@ If ARG is not provided, copy from the second most recent '➜'."
 ;; (global-set-key (kbd "C-c n") 'next-theme) ;; sometimes tripped up by this, fun as it was
 
 ;; COPILOT
-(add-hook 'prog-mode-hook 'copilot-mode)
-(add-hook 'web-mode-hook 'copilot-mode)
-(add-hook 'dockerfile-mode-hook 'copilot-mode)
-(global-set-key (kbd "TAB") 'copilot-accept-completion) ;; might clash?  experimenting
+(global-copilot-mode t)
+(setq copilot-max-char 200000)
+(global-set-key (kbd "C-<tab>") 'copilot-accept-completion) ;; might clash?  experimenting
 (global-set-key (kbd "C-c c a") 'copilot-accept-completion)
 (global-set-key (kbd "C-c c w") 'copilot-accept-completion-by-word)
 (global-set-key (kbd "C-c c l") 'copilot-accept-completion-by-line)
@@ -840,6 +908,7 @@ If ARG is not provided, copy from the second most recent '➜'."
 (global-set-key (kbd "C-c c p") 'copilot-previous-completion)
 (global-set-key (kbd "C-c c d") 'copilot-diagnose)
 (global-set-key (kbd "C-c c c") 'copilot-clear-overlay)
+(global-set-key (kbd "C-c c D") (lambda () (interactive) (copilot-mode -1) (copilot-mode 1) (copilot-diagnose)))
 
 ;; This will probably be included in a new version of emacs, in filenotify.el
 ;; https://www.blogbyben.com/2022/05/gotcha-emacs-on-mac-os-too-many-files.html
@@ -917,26 +986,26 @@ If ARG is not provided, copy from the second most recent '➜'."
     )
   )
 
-;; GP-TEL
-;; Define a custom function 'gptel-clear' to clear the gptel buffer.
-;; This function first calls 'gptel' interactively to ensure the buffer is open.
-;; Then it switches to the gptel buffer and deletes all its contents.
-(defun gptel-clear ()
-  "Open or switch to the gptel buffer and clear its contents."
-  (interactive)
-  (let ((gptel-buffer (call-interactively 'gptelG)))
-    (with-current-buffer gptel-buffer
-      (delete-region (point-min) (point-max)))))
-(global-set-key (kbd "C-c G") 'gptel-clear)
-
+;; LLM Enhancements
+;; Helpers for pulling text into GPTel chat windows
+(use-package corsair
+  :straight (:host github
+             :repo "rob137/corsair"
+             :files ("corsair.el")) ; Specify the exact file to load
+  :defer t ; Optional: Load lazily
+  :after gptel ; Ensure gptel is loaded before corsair
+  )
 ;; sets api key with (setq gptel-api-key "secret")
 (load-file "~/.emacs.d/openai-init.el")
+(load-file "~/.emacs.d/gemini-init.el")
 ;; --- end gptel ---
 
 ;; For very large files - offered as option in minibuffer when you go to open file over 10mb in size
 ;; Emacs barely usable for big files
 (require 'vlf-setup)
 
+;; Debugging!
+(setq dap-auto-configure-features '(sessions locals controls tooltip))
 
 
 
@@ -948,9 +1017,13 @@ If ARG is not provided, copy from the second most recent '➜'."
 ;; ============= EVIL - I keep it on hand for C-w H/J/K/L =============
 (global-set-key (kbd "C-c v") 'evil-mode)
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(provide '.emacs)
+;;; .emacs ends here
+
+
+
+
+
+
+
+
