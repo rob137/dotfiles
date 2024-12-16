@@ -314,7 +314,8 @@
 ;; and feels smart. Should almost certainly be using it elsewhere!
 (with-eval-after-load 'project
   (add-to-list 'project-switch-commands '(?t "vterm" vterm))
-  (add-to-list 'project-switch-commands '(?m "magit" magit))
+  (define-key project-prefix-map "m" #'magit-project-status)
+  (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
   )
 
 ;; Bigger scrollback
@@ -341,7 +342,9 @@
 ;; Note that C-3 achieves the same as M-3 (i.e. C-u 3)
 (global-set-key (kbd "M-3") (lambda () (interactive) (insert "#")))
 
-
+;; Use regexp search by default
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
 
 
@@ -633,11 +636,6 @@
 (bind-key "C-c 3" #'split-window-thirds)
 
 
-
-
-
-
-
 (defvar vterm-search-string "robert.kirby@ssg"
   "String to search for in vterm buffer.")
 (defun vterm-copy-previous-output (arg)
@@ -665,6 +663,20 @@ If ARG is not provided, copy from the second most recent occurrence."
 ;; Bind the new function to the key sequence C-c O
 (with-eval-after-load 'vterm
   (define-key vterm-mode-map (kbd "C-c C") 'vterm-copy-previous-output))
+
+(defun close-other-vterm-buffers ()
+  "Close all vterm buffers except the current one if it's a *vterm buffer, or close all but *vterm* otherwise.  Note that buffers that don't start with *vterm won't be deleted - such as 'ssh-terminal'."
+  (interactive)
+  (let ((current-buffer (current-buffer)))
+    (dolist (buffer (buffer-list))
+      (when (and (string-prefix-p "*vterm" (buffer-name buffer))
+                 (or (not (eq buffer current-buffer))
+                     (not (derived-mode-p 'vterm-mode)))
+                 (not (string= (buffer-name buffer) "*vterm*")))
+        (kill-buffer buffer)))))
+
+(global-set-key (kbd "C-c v 1") 'close-other-vterm-buffers)
+
 
 
 
@@ -725,6 +737,13 @@ If ARG is not provided, copy from the second most recent occurrence."
   (let ((password "ABC!123abc"))
     (kill-new password)
     (message "Password copied to clipboard: %s" password)))
+
+
+;; (defun insert-debug-comment ()
+;;   "Insert a debug comment indicating the code should not be committed."
+;;   (interactive)
+;;   (insert "// DO NOT COMMIT - JUST HERE FOR DEBUGGING PURPOSES"))
+;; (global-set-key (kbd "C-c D") 'insert-debug-comment)
 
 
 
@@ -988,16 +1007,23 @@ If ARG is not provided, copy from the second most recent occurrence."
 
 ;; LLM Enhancements
 ;; Helpers for pulling text into GPTel chat windows
-(use-package corsair
-  :straight (:host github
-             :repo "rob137/corsair"
-             :files ("corsair.el")) ; Specify the exact file to load
-  :defer t ; Optional: Load lazily
-  :after gptel ; Ensure gptel is loaded before corsair
-  )
-;; sets api key with (setq gptel-api-key "secret")
-(load-file "~/.emacs.d/openai-init.el")
-(load-file "~/.emacs.d/gemini-init.el")
+(require 'corsair)
+(global-set-key (kbd "C-c g c") 'corsair-open-chat-buffer)
+(global-set-key (kbd "C-c g a c") 'corsair-accumulate-file-path-and-contents)
+(global-set-key (kbd "C-c g a n") 'corsair-accumulate-file-name)
+(global-set-key (kbd "C-c g a v") 'corsair-accumulate-file-path)
+(global-set-key (kbd "C-c g a w") 'corsair-accumulate-selected-text)
+(global-set-key (kbd "C-c g a D") 'corsair-drop-accumulated-buffer)
+(global-set-key (kbd "C-c g f") 'corsair-insert-file-or-folder-contents)
+
+
+;; gptel default model gpt-4o
+(setq gptel-model "gpt-4o")
+;; Set the default GPTel session
+(setq gptel-default-session "Chat")
+(load-file "~/dotfiles/accumulate-text.el")
+(load-file "~/.emacs.d/openai-init.el") ;; sets api key with (setq gptel-api-key "secret")
+;; (load-file "~/.emacs.d/gemini-init.el") ;; Breaking on latest gptel as at 5 Dec 2024
 ;; --- end gptel ---
 
 ;; For very large files - offered as option in minibuffer when you go to open file over 10mb in size
@@ -1012,10 +1038,6 @@ If ARG is not provided, copy from the second most recent occurrence."
 
 
 
-
-
-;; ============= EVIL - I keep it on hand for C-w H/J/K/L =============
-(global-set-key (kbd "C-c v") 'evil-mode)
 
 (provide '.emacs)
 ;;; .emacs ends here

@@ -85,6 +85,7 @@ alias ,ml='make logs'
 alias ,ml='make logs'
 alias ,mcul='mcu && ml'
 alias ,ms='make setup'
+alias ,mfs='make fresh-stories'
 
 alias ,pip='pip3'
 
@@ -105,6 +106,8 @@ alias ,snid='sail npm install'
 alias ,snci='sail npm clean-install'
 alias ,sad='sail artisan db'
 alias ,sads='sail artisan db splat'
+alias ,sam='sail artisan migrate'
+alias ,samr='sail artisan migrate:rollback'
 alias ,sl='sail logs'
 alias ,sa='sail artisan'
 
@@ -203,9 +206,10 @@ alias ,stf='sail_test_filter'
 
 function clear_sail_test_filter() {
   clear;
-  sail_test_filter "$1"
+  sail_test_filter "$(IFS='|'; echo "$*")"
 }
 alias ,cstf='clear_sail_test_filter'
+
 
 function personal() {
   eval "$1 --author=\"Rob <robertaxelkirby@gmail.com>\""
@@ -236,3 +240,41 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 # Add typescript-language-server to path
 export PATH="$PATH:/Users/robert.kirby/.nvm/versions/node/v17.9.0/bin"
 
+
+# Go to ECS cluster in AWS Web UI -> service -> tasks and take the task ID from the task you want to connect to
+# Then use the below functions like this:
+# connect-to-content-dev $TASK_ID
+# E.g.
+# connect-to-content-dev c7ad93d5a93e40398ec8b38b7acd6491
+connect-to-cluster() {
+  if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Usage: connect-to-cluster <cluster-name> <task-id>"
+    return 1
+  fi
+
+  CLUSTER_NAME=$1
+  TASK_ID=$2
+  CONTAINER_NAME="aice"
+
+  aws ecs execute-command \
+    --cluster "$CLUSTER_NAME" \
+    --task "$TASK_ID" \
+    --container "$CONTAINER_NAME" \
+    --interactive \
+    --command "/bin/sh"
+}
+
+connect-to-dev() {
+  connect-to-cluster "splat-dev" "$1"
+}
+
+connect-to-content-dev() {
+  connect-to-cluster "splat-content-dev" "$1"
+}
+
+connect-to-prod() {
+  connect-to-cluster "prod-ecs" "$1"
+}
+
+# Created by `pipx` on 2024-12-16 14:37:40
+export PATH="$PATH:/Users/robert.kirby/.local/bin"

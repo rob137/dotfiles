@@ -147,6 +147,7 @@ alias ,gt='go test -v'
 alias ,gti='go test -v -tags=integration'
 
 alias ,cl='clear'
+alias ,clear='clear' # because I keep typing it
 
 function ,ff() {
   find "$1" -type f -iname "$2"
