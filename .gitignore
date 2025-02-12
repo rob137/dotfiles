@@ -1,3 +1,5 @@
 *.un
 *.un~
 .env # used by Aider
+.aider*
+.env

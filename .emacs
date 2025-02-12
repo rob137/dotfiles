@@ -626,16 +626,6 @@
 (with-eval-after-load 'go-mode
   (define-key go-mode-map (kbd "C-c T") 'toggle-go-source-and-test))
 
-(defun split-window-thirds ()
-  "Split a window into thirds."
-  (interactive)
-  (split-window-right)
-  (split-window-right)
-  (balance-windows))
-
-(bind-key "C-c 3" #'split-window-thirds)
-
-
 (defvar vterm-search-string "robert.kirby@ssg"
   "String to search for in vterm buffer.")
 (defun vterm-copy-previous-output (arg)
@@ -916,6 +906,17 @@ If ARG is not provided, copy from the second most recent occurrence."
 
 ;; (global-set-key (kbd "C-c n") 'next-theme) ;; sometimes tripped up by this, fun as it was
 
+
+(load "~/.emacs.d/api-keys.el")
+;; AIDER - as at 17th Dec 2024 I'm on the fence about this Aider emacs extension vs CLI
+(use-package aider
+  :straight (:host github :repo "tninja/aider.el" :files ("aider.el"))
+  :config
+  ;; Use claude-3-5-sonnet cause it is best in aider benchmark
+  (setq aider-args '("--model" "anthropic/claude-3-5-sonnet-20241022"))
+  (setenv "ANTHROPIC_API_KEY" anthropic-api-key)
+  (global-set-key (kbd "C-c 3") 'aider-transient-menu))
+
 ;; COPILOT
 (global-copilot-mode t)
 (setq copilot-max-char 200000)
@@ -1007,7 +1008,8 @@ If ARG is not provided, copy from the second most recent occurrence."
 
 ;; LLM Enhancements
 ;; Helpers for pulling text into GPTel chat windows
-(require 'corsair)
+(require 'corsair
+         )
 (global-set-key (kbd "C-c g c") 'corsair-open-chat-buffer)
 (global-set-key (kbd "C-c g a c") 'corsair-accumulate-file-path-and-contents)
 (global-set-key (kbd "C-c g a n") 'corsair-accumulate-file-name)
@@ -1022,7 +1024,6 @@ If ARG is not provided, copy from the second most recent occurrence."
 ;; Set the default GPTel session
 (setq gptel-default-session "Chat")
 (load-file "~/dotfiles/accumulate-text.el")
-(load-file "~/.emacs.d/openai-init.el") ;; sets api key with (setq gptel-api-key "secret")
 ;; (load-file "~/.emacs.d/gemini-init.el") ;; Breaking on latest gptel as at 5 Dec 2024
 ;; --- end gptel ---
 
