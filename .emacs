@@ -9,12 +9,13 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-;; for making the package exec-path-from-shell work
-;; this package allows lsp-mode to find npm when npm is at a non-standard
-;; directory - e.g. when npm is installed via nvm (and bit always should be)
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
-(setq exec-path (append exec-path '("/Users/robert.kirby/.n")))
+;; DISABLED FOR LAPTOP SETUP
+;; ;; for making the package exec-path-from-shell work
+;; ;; this package allows lsp-mode to find npm when npm is at a non-standard
+;; ;; directory - e.g. when npm is installed via nvm (and bit always should be)
+;; (when (memq window-system '(mac ns x))
+;;   (exec-path-from-shell-initialize))
+;; (setq exec-path (append exec-path '("/Users/robert.kirby/.n")))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -90,7 +91,6 @@
   (load bootstrap-file nil 'nomessage))
 ;; packages installed via straight.el
 (straight-use-package '(codeium :type git :host github :repo "Exafunction/codeium.el"))
-(straight-use-package '(copilot :type git :host github :repo "zerolfx/copilot.el" :files ("dist" "*.el")))
 
 
 
@@ -196,7 +196,8 @@
 (global-display-fill-column-indicator-mode t)
 
 ;; easier to find cursor
-(global-hl-line-mode 1)
+;; DISABLED FOR LAPTOP SETUP
+;; (global-hl-line-mode 1)
 
 ;; an alternative to the alt key to save fingers, as per Item 2 here:
 ;; https://sites.google.com/site/steveyegge2/effective-emacs
@@ -206,7 +207,7 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; make git gutter show for files in git repos
-(global-git-gutter-mode +1)
+;; (global-git-gutter-mode +1)
 
 ;; show bell icon (e.g. on C-g)...  I dislike the visual bell, but don't want a plugin yet
 (setq-default visible-bell 1)
@@ -298,10 +299,11 @@
 (setq set-mark-command-repeat-pop 1)
 
 ;; highlight TODO
-(add-hook 'prog-mode-hook 'hl-todo-mode)
-(add-hook 'web-mode-hook 'hl-todo-mode)
-(add-hook 'markdown-mode-hook 'hl-todo-mode)
-(add-hook 'fundamental-mode-hook 'hl-todo-mode)
+;; DISABLED FOR LAPTOP SETUP
+;; (add-hook 'prog-mode-hook 'hl-todo-mode)
+;; (add-hook 'web-mode-hook 'hl-todo-mode)
+;; (add-hook 'markdown-mode-hook 'hl-todo-mode)
+;; (add-hook 'fundamental-mode-hook 'hl-todo-mode)
 
 ;; word-wrap in markdown mode, text mode, etc
 (add-hook 'markdown-mode-hook 'visual-line-mode)
@@ -395,7 +397,8 @@
 ;; (global-set-key (kbd "C-c L") 'open-logging-terminal)
 
 ;; Load ssh terminal setup (deliberately not tracked in source control)
-(load "~/.ssh-command.el")  ;; Adjust the path to where you've saved ssh-command.el
+;; DISABLED FOR LAPTOP SETUP
+;; (load "~/.ssh-command.el")  ;; Adjust the path to where you've saved ssh-command.el
 ;; Use our util functions to create a function to open an ssh terminal
 (defun open-ssh-terminal ()
   "Open an SSH terminal with a predefined SSH command loaded from a separate file."
@@ -419,6 +422,13 @@
   (interactive)
   (find-file "~/notes/org.org"))
 (global-set-key (kbd "C-c o") 'open-todo)
+
+;; C-c r to open record file
+(defun open-record ()
+  (interactive)
+  (find-file "~/notes/record.org"))
+(global-set-key (kbd "C-c r") 'open-record)
+
 
 ;; vterm - creates / switches to buffer called 'vterm'
 ;; can rename each vterm buffer with incrementing suffix using C-x x u
@@ -750,13 +760,15 @@ If ARG is not provided, copy from the second most recent occurrence."
 ;; ============= PACKAGES / PLUGINS / EXTENSIONS =============
 
 ;; outsource autoindentation to dtrt-indent, as it's a pain
-(dtrt-indent-global-mode t)
+;; DISABLED FOR LAPTOP SETUP
+;; (dtrt-indent-global-mode t)
 
 ;; ;; enable autocompletion, disable by exception
-(global-company-mode t)
-(add-hook 'org-mode-hook 'company-mode)
+;; DISABLED FOR LAPTOP SETUP
+;; (global-company-mode t)
+;; (add-hook 'org-mode-hook 'company-mode)
 
-;; trying prettier everywhere - note the package is prettier.el, not prettier-js.el
+;; Trying prettier everywhere - note the package is prettier.el, not prettier-js.el
 (add-hook 'after-init-hook #'global-prettier-mode)
 ;; don't open  a new window when we detect syntax errors (it's annoying)
 (setq prettier-inline-errors-flag t)
@@ -765,8 +777,9 @@ If ARG is not provided, copy from the second most recent occurrence."
 (add-hook 'python-mode-hook 'python-black-on-save-mode)
 
 ;; pop-up showing next possible key press - similar natively by '[keypress] ?'
-(which-key-mode)
-(setq which-key-idle-delay 0.5)
+;; DISABLED FOR LAPTOP SETUP
+;; (which-key-mode)
+;; (setq which-key-idle-delay 0.5)
 
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -791,24 +804,25 @@ If ARG is not provided, copy from the second most recent occurrence."
 ;; For the below:
 ;; Note that this infers  workspaces based on presence of .git/ directory - which won't always do the trick!
 ;; See: https://emacs-lsp.github.io/lsp-mode/page/lsp-gopls/#working-with-nested-gomod-files
-(require 'lsp-mode)
-(add-hook 'go-mode-hook #'lsp-deferred)
-(setq lsp-enable-snippet nil)  ;; this prevents weird bug in company-mode, where company mode will insert arguments from function definitions as part of the completion - https://github.com/company-mode/company-mode/issues/943 - I only experienced this with golang
-;; Note that this might become unnecessary
-;; enable lsp-ui-mode
-(setq lsp-enable-symbol-highlighting t)
-(setq lsp-ui-doc-enable t)
-(setq lsp-ui-doc-show-with-cursor t)
-(setq lsp-ui-doc-show-with-mouse t)
-;; mimicking flymake
-;; flycheck next error M-n
-(global-set-key (kbd "M-n") 'flycheck-next-error)
-;;  flycheck previous error M-p
-(global-set-key (kbd "M-p") 'flycheck-previous-error)
-(global-set-key (kbd "C-c d") 'lsp-find-definition)
-(global-set-key (kbd "C-c r") 'lsp-find-references)
-(global-set-key (kbd "C-c i") 'lsp-find-implementation)
-(global-set-key (kbd "C-c R") 'lsp-rename)
+;; DISABLED FOR LAPTOP SETUP
+;; (require 'lsp-mode)
+;; (add-hook 'go-mode-hook #'lsp-deferred)
+;; (setq lsp-enable-snippet nil)  ;; this prevents weird bug in company-mode, where company mode will insert arguments from function definitions as part of the completion - https://github.com/company-mode/company-mode/issues/943 - I only experienced this with golang
+;; ;; Note that this might become unnecessary
+;; ;; enable lsp-ui-mode
+;; (setq lsp-enable-symbol-highlighting t)
+;; (setq lsp-ui-doc-enable t)
+;; (setq lsp-ui-doc-show-with-cursor t)
+;; (setq lsp-ui-doc-show-with-mouse t)
+;; ;; mimicking flymake
+;; ;; flycheck next error M-n
+;; (global-set-key (kbd "M-n") 'flycheck-next-error)
+;; ;;  flycheck previous error M-p
+;; (global-set-key (kbd "M-p") 'flycheck-previous-error)
+;; (global-set-key (kbd "C-c d") 'lsp-find-definition)
+;; (global-set-key (kbd "C-c r") 'lsp-find-references)
+;; (global-set-key (kbd "C-c i") 'lsp-find-implementation)
+;; (global-set-key (kbd "C-c R") 'lsp-rename)
 ;; END LSP MODE ------------------------
 
 ;; EGLOT MODE ----------------------------
@@ -899,36 +913,26 @@ If ARG is not provided, copy from the second most recent occurrence."
               auto-mode-alist))
 
 ;; Enable flashing mode-line on errors
-(doom-themes-visual-bell-config)
-
-(fset 'next-theme
-      (kmacro-lambda-form [?\C-x ?r ?b ?. ?e ?m ?a tab return ?\M-< ?\C-s ?d ?o ?o ?m ?- ?\C-s ?\C-s ?\M-d ?\C-/ ?\M-x ?z ?p backspace ?a ?p ?- ?u ?p ?- ?t ?o ?- ?c ?h ?h ?a ?r backspace backspace backspace ?a ?r return ?  ?\C-x ?\C-f ?~ ?/ ?s ?a ?n ?d ?p ?i ?t ?/ ?t ?h ?e ?m ?e ?s ?. ?t ?x ?t return ?\M-< ?\C-s ?\C-y return ?\C-n ?\C-a ?\C-s ?- return ?\C-k ?\C-/ ?\C-x ?b return ?\C-y ?\C-e ?\C-x ?\C-e] 0 "%d"))
-
-;; (global-set-key (kbd "C-c n") 'next-theme) ;; sometimes tripped up by this, fun as it was
+;; DISABLED FOR LAPTOP SETUP
+;; (doom-themes-visual-bell-config)
 
 
-(load "~/.emacs.d/api-keys.el")
-;; AIDER - as at 17th Dec 2024 I'm on the fence about this Aider emacs extension vs CLI
-(use-package aider
-  :straight (:host github :repo "tninja/aider.el" :files ("aider.el"))
-  :config
-  ;; Use claude-3-5-sonnet cause it is best in aider benchmark
-  (setq aider-args '("--model" "anthropic/claude-3-5-sonnet-20241022"))
-  (setenv "ANTHROPIC_API_KEY" anthropic-api-key)
-  (global-set-key (kbd "C-c 3") 'aider-transient-menu))
+;; DISABLED FOR LAPTOP SETUP
+;; (load "~/.emacs.d/api-keys.el")
 
 ;; COPILOT
-(global-copilot-mode t)
-(setq copilot-max-char 200000)
-(global-set-key (kbd "C-<tab>") 'copilot-accept-completion) ;; might clash?  experimenting
-(global-set-key (kbd "C-c c a") 'copilot-accept-completion)
-(global-set-key (kbd "C-c c w") 'copilot-accept-completion-by-word)
-(global-set-key (kbd "C-c c l") 'copilot-accept-completion-by-line)
-(global-set-key (kbd "C-c c n") 'copilot-next-completion)
-(global-set-key (kbd "C-c c p") 'copilot-previous-completion)
-(global-set-key (kbd "C-c c d") 'copilot-diagnose)
-(global-set-key (kbd "C-c c c") 'copilot-clear-overlay)
-(global-set-key (kbd "C-c c D") (lambda () (interactive) (copilot-mode -1) (copilot-mode 1) (copilot-diagnose)))
+;; DISABLED FOR LAPTOP SETUP
+;; (global-copilot-mode t)
+;; (setq copilot-max-char 200002)
+;; (global-set-key (kbd "C-<tab>") 'copilot-accept-completion) ;; might clash?  experimenting
+;; (global-set-key (kbd "C-c c a") 'copilot-accept-completion)
+;; (global-set-key (kbd "C-c c w") 'copilot-accept-completion-by-word)
+;; (global-set-key (kbd "C-c c l") 'copilot-accept-completion-by-line)
+;; (global-set-key (kbd "C-c c n") 'copilot-next-completion)
+;; (global-set-key (kbd "C-c c p") 'copilot-previous-completion)
+;; (global-set-key (kbd "C-c c d") 'copilot-diagnose)
+;; (global-set-key (kbd "C-c c c") 'copilot-clear-overlay)
+;; (global-set-key (kbd "C-c c D") (lambda () (interactive) (copilot-mode -1) (copilot-mode 1) (copilot-diagnose)))
 
 ;; This will probably be included in a new version of emacs, in filenotify.el
 ;; https://www.blogbyben.com/2022/05/gotcha-emacs-on-mac-os-too-many-files.html
