@@ -9,20 +9,21 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-;; DISABLED FOR LAPTOP SETUP
-;; ;; for making the package exec-path-from-shell work
-;; ;; this package allows lsp-mode to find npm when npm is at a non-standard
-;; ;; directory - e.g. when npm is installed via nvm (and bit always should be)
-;; (when (memq window-system '(mac ns x))
-;;   (exec-path-from-shell-initialize))
-;; (setq exec-path (append exec-path '("/Users/robert.kirby/.n")))
+;; for making the package exec-path-from-shell work
+;; this package allows lsp-mode to find npm when npm is at a non-standard
+;; directory - e.g. when npm is installed via nvm (and bit always should be)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+(when (memq window-system '(mac ns x))
+  ;; Ensure PATH-related vars are imported from the login shell (nvm setups, etc.)
+  (ignore-errors
+    (exec-path-from-shell-copy-envs '("PATH" "NVM_DIR" "NVM_BIN"))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(codeium/metadata/api_key "8e92b8d8-76d7-438c-968e-80f8719fb00b")
  '(custom-safe-themes
    '("46c65f6d9031e2f55b919b1486952cddcc8e3ee081ade7eb2ffb6a68a804d30e" "b64a60e69617b4348d0402fad2f0d08a694301132e7ab243dab4d6a65c3bf948" "02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644" "443e2c3c4dd44510f0ea8247b438e834188dc1c6fb80785d83ad3628eadf9294" "a44e2d1636a0114c5e407a748841f6723ed442dc3a0ed086542dc71b92a87aee" "7e068da4ba88162324d9773ec066d93c447c76e9f4ae711ddd0c5d3863489c52" "51c71bb27bdab69b505d9bf71c99864051b37ac3de531d91fdad1598ad247138" "2e05569868dc11a52b08926b4c1a27da77580daa9321773d92822f7a639956ce" "1a1ac598737d0fcdc4dfab3af3d6f46ab2d5048b8e72bc22f50271fd6d393a00" "afa47084cb0beb684281f480aa84dab7c9170b084423c7f87ba755b15f6776ef" default))
  '(git-gutter:update-interval 2)
@@ -76,25 +77,6 @@
 
 
 
-;; straight.el
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 6))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-;; packages installed via straight.el
-(straight-use-package '(codeium :type git :host github :repo "Exafunction/codeium.el"))
-
-
-
-
 
 
 
@@ -113,15 +95,11 @@
 
 ;; ============= Emacs NATIVE SETTINGS =============
 
-;; hide ui
+;; hide default ui / message stuff
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-
-;; Don't display the 'Welcome to GNU Emacs' buffer on startup
 (setq-default inhibit-startup-message t)
-
-;; don't show scratch buffer description text
 (setq initial-scratch-message nil)
 
 ;; dired-style buffer menu
@@ -141,8 +119,8 @@
 ;; Make emacs windows transparent
 (set-frame-parameter (selected-frame) 'alpha '(98 . 98))
 
-;; add a 5 line buffer between the point and the top / bottom of the window
-(setq scroll-margin 5)
+;; add a 3 line buffer between the point and the top / bottom of the window
+(setq scroll-margin 3)
 
 ;; scroll up with point when it reaches top / bottom of window
 (setq scroll-conservatively 101) ;; 101 just means it never recenters
@@ -196,8 +174,7 @@
 (global-display-fill-column-indicator-mode t)
 
 ;; easier to find cursor
-;; DISABLED FOR LAPTOP SETUP
-;; (global-hl-line-mode 1)
+(global-hl-line-mode 1)
 
 ;; an alternative to the alt key to save fingers, as per Item 2 here:
 ;; https://sites.google.com/site/steveyegge2/effective-emacs
@@ -205,9 +182,6 @@
 
 ;; to save typing out 'yes' or 'no'
 (defalias 'yes-or-no-p 'y-or-n-p)
-
-;; make git gutter show for files in git repos
-;; (global-git-gutter-mode +1)
 
 ;; show bell icon (e.g. on C-g)...  I dislike the visual bell, but don't want a plugin yet
 (setq-default visible-bell 1)
@@ -218,8 +192,13 @@
 ;; ... Don't delete trailing newlines (since opinions differ on this)
 (setq-default delete-trailing-lines nil)
 
-;; for node, which is needed for prettier
-(add-to-list 'exec-path "/usr/local/bin/node")
+;; Ensure Emacs can find Prettier and Node (used by Prettier shebang)
+(let* ((nvm-bin (expand-file-name "~/.nvm/versions/node/v22.14.0/bin"))
+       (usr-local-bin "/usr/local/bin"))
+  (dolist (p (list nvm-bin usr-local-bin))
+    (when (file-directory-p p)
+      (add-to-list 'exec-path p)
+      (setenv "PATH" (concat p ":" (getenv "PATH"))))))
 
 ;; modeline
 (line-number-mode t)
@@ -260,11 +239,11 @@
 (setq-default dired-listing-switches "-alh") ;; human readable file sizes in dired
 
 ;; Revert buffer to disk version if it has changed
-(global-auto-revert-mode)
-;; refresh dired when files change
-;; doesn't seem to have any effext - dired doesn't update
-;; might be redundant because of above line
-(setq-default dired-auto-revert-buffer t)
+(global-auto-revert-mode 1)
+;; And for dired
+(add-hook 'dired-mode-hook #'auto-revert-mode)
+(setq auto-revert-verbose nil   ; hide the echo‑area messages
+      auto-revert-interval 1)   ; poll every second if needed
 
 ;;; Preserve contents of system clipboard
 (setq save-interprogram-paste-before-kill t)
@@ -299,11 +278,10 @@
 (setq set-mark-command-repeat-pop 1)
 
 ;; highlight TODO
-;; DISABLED FOR LAPTOP SETUP
-;; (add-hook 'prog-mode-hook 'hl-todo-mode)
-;; (add-hook 'web-mode-hook 'hl-todo-mode)
-;; (add-hook 'markdown-mode-hook 'hl-todo-mode)
-;; (add-hook 'fundamental-mode-hook 'hl-todo-mode)
+(add-hook 'prog-mode-hook 'hl-todo-mode)
+(add-hook 'web-mode-hook 'hl-todo-mode)
+(add-hook 'markdown-mode-hook 'hl-todo-mode)
+(add-hook 'fundamental-mode-hook 'hl-todo-mode)
 
 ;; word-wrap in markdown mode, text mode, etc
 (add-hook 'markdown-mode-hook 'visual-line-mode)
@@ -329,7 +307,7 @@
      (add-to-list 'grep-find-ignored-directories "node_modules")
      (add-to-list 'grep-find-ignored-directories "dist")
      (add-to-list 'grep-find-ignored-directories "build")
-     (add-to-list 'grep-find-ignored-directories "package-lock.json")))
+     (add-to-list 'grep-find-ignored-files "package-lock.json")))
 ;; Truncate lines in grep results
 (add-hook 'grep-mode-hook (lambda () (toggle-truncate-lines 1)))
 
@@ -348,8 +326,10 @@
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
-
-
+;; Use ripgrep, not grep
+(setq grep-program "rg")
+(setq find-program "rg")
+(setq xref-search-program 'ripgrep) ;; Ensures `project-find-regexp` uses `rg`
 
 
 
@@ -372,6 +352,20 @@
 
 
 ;; ============= MAPPINGS / FUNCTIONS =============
+
+(with-eval-after-load 'org
+  ;; Define a function to jump to the next unchecked checkbox
+  (defun org-next-unchecked-checkbox ()
+    "Jump to the next unchecked checkbox at any level."
+    (interactive) ;; Make the function interactive
+    (re-search-forward "^[ \t]*- \\[ \\]" nil t)) ;; Search for next '- [ ]', accounting for nesting
+  (define-key org-mode-map (kbd "C-c C-n") 'org-next-unchecked-checkbox)
+  ;; Define a function to jump to the previous unchecked checkbox
+  (defun org-previous-unchecked-checkbox ()
+    "Jump to the previous unchecked checkbox at any level."
+    (interactive) ;; Make the function interactive
+    (re-search-backward "^[ \t]*- \\[ \\]" nil t)) ;; Search for previous '- [ ]', accounting for nesting
+  (define-key org-mode-map (kbd "C-c C-p") 'org-previous-unchecked-checkbox))
 
 ;; Utility function for creating a binding for a vterm buffer with a given name
 (defun open-custom-vterm (buffer-name command-list)
@@ -396,9 +390,6 @@
 ;; then set to a keybinding
 ;; (global-set-key (kbd "C-c L") 'open-logging-terminal)
 
-;; Load ssh terminal setup (deliberately not tracked in source control)
-;; DISABLED FOR LAPTOP SETUP
-;; (load "~/.ssh-command.el")  ;; Adjust the path to where you've saved ssh-command.el
 ;; Use our util functions to create a function to open an ssh terminal
 (defun open-ssh-terminal ()
   "Open an SSH terminal with a predefined SSH command loaded from a separate file."
@@ -413,6 +404,13 @@
   (open-custom-vterm "aice-server-terminal"
                      '("cd ~/g/aice" "make run")))
 (global-set-key (kbd "C-c A") 'open-aice-server-terminal)
+
+;; Run nchat in a specially named vterm
+(defun open-nchat-terminal ()
+  "Open a vterm to run nchat."
+  (interactive)
+  (open-custom-vterm "nchat" '("nchat")))
+(global-set-key (kbd "C-c n") 'open-nchat-terminal)
 
 ;; for convenient hiding
 (global-set-key (kbd "C-c h") 'hs-hide-level)
@@ -477,13 +475,6 @@
    (kmacro "C-x C-j C-n <return> M-< C-s F o r m R e q <return> C-a C-SPC C-e <backspace> <backspace> <backspace> C-a C-x C-s"))
 
 
-
-;; use text-mode in blade.php files
-(add-to-list 'auto-mode-alist '("\\.blade\\.php\\'" . text-mode))
-;; use php mode in blade.php files
-;; DISABLED because intelephense ain't all that with blade
-;; still ongoing thing: https://github.com/bmewburn/vscode-intelephense/issues/93#issuecomment-1940670756
-;; (add-to-list 'auto-mode-alist '("\\.blade\\.php\\'" . php-mode))
 
 ;; Define a function to insert <?php at the start of the PHP buffer
 (defun insert-php-tag-at-start ()
@@ -663,20 +654,61 @@ If ARG is not provided, copy from the second most recent occurrence."
 ;; Bind the new function to the key sequence C-c O
 (with-eval-after-load 'vterm
   (define-key vterm-mode-map (kbd "C-c C") 'vterm-copy-previous-output))
+(defun my/switch-to-vterm (num)
+  "Switch to vterm buffer NUM or create it if it doesn't exist."
+  (let* ((buffer-name (format "*vterm*<%d>" num))
+         (buffer (get-buffer buffer-name)))
+    (if buffer
+        (switch-to-buffer buffer)
+      (vterm num))))
+(defun my/rename-vterm-buffer (num)
+  "Rename current vterm buffer to *vterm*<NUM>."
+  (interactive "nRename vterm buffer to number: ")
+  (let ((new-name (format "*vterm*<%d>" num)))
+    (rename-buffer new-name t)
+    (message "Buffer renamed to %s" new-name)))
+;; Bind C-c v 1..9 to switch/create vterm buffers
+(dotimes (i 9)
+  (let ((n (1+ i)))
+    (global-set-key (kbd (format "C-c v %d" n))
+                    `(lambda () (interactive) (my/switch-to-vterm ,n)))))
+;; Bind C-c v r to rename current vterm buffer to a number
+(global-set-key (kbd "C-c v r") #'my/rename-vterm-buffer)
+(defun my/vterm-buffer-numbers ()
+  "Return sorted list of existing numbered vterm buffers."
+  (sort (delq nil
+              (mapcar (lambda (buf)
+                        (when (string-match "\\*vterm\\*<\\([0-9]+\\)>" (buffer-name buf))
+                          (string-to-number (match-string 1 (buffer-name buf)))))
+                      (buffer-list)))
+        #'<))
 
-(defun close-other-vterm-buffers ()
-  "Close all vterm buffers except the current one if it's a *vterm buffer, or close all but *vterm* otherwise.  Note that buffers that don't start with *vterm won't be deleted - such as 'ssh-terminal'."
+(defun my/vterm-next-buffer ()
+  "Switch to the next numbered vterm buffer, skipping gaps."
   (interactive)
-  (let ((current-buffer (current-buffer)))
-    (dolist (buffer (buffer-list))
-      (when (and (string-prefix-p "*vterm" (buffer-name buffer))
-                 (or (not (eq buffer current-buffer))
-                     (not (derived-mode-p 'vterm-mode)))
-                 (not (string= (buffer-name buffer) "*vterm*")))
-        (kill-buffer buffer)))))
+  (let* ((numbers (my/vterm-buffer-numbers)))
+    (if numbers
+        (let* ((current (when (string-match "\\*vterm\\*<\\([0-9]+\\)>" (buffer-name))
+                          (string-to-number (match-string 1 (buffer-name)))))
+               (next (or (seq-find (lambda (n) (and current (> n current))) numbers)
+                         (car numbers))))
+          (switch-to-buffer (format "*vterm*<%d>" next)))
+      (message "No numbered vterm buffers available"))))
 
-(global-set-key (kbd "C-c v 1") 'close-other-vterm-buffers)
-
+(defun my/vterm-prev-buffer ()
+  "Switch to the previous numbered vterm buffer, skipping gaps."
+  (interactive)
+  (let* ((numbers (reverse (my/vterm-buffer-numbers))))
+    (if numbers
+        (let* ((current (when (string-match "\\*vterm\\*<\\([0-9]+\\)>" (buffer-name))
+                          (string-to-number (match-string 1 (buffer-name)))))
+               (prev (or (seq-find (lambda (n) (and current (< n current))) numbers)
+                         (car numbers))))
+          (switch-to-buffer (format "*vterm*<%d>" prev)))
+      (message "No numbered vterm buffers available"))))
+;; Alias bindings for convenience
+(global-set-key (kbd "C-c >") #'my/vterm-next-buffer)
+(global-set-key (kbd "C-c <") #'my/vterm-prev-buffer)
 
 
 
@@ -730,14 +762,6 @@ If ARG is not provided, copy from the second most recent occurrence."
 
 (global-set-key (kbd "C-c D") 'copy-aice-schema-and-notify)
 
-;; General purpose, for mucking about with local testing
-(defun yank-password ()
-  "Copy the string 'ABC!123abc' to the clipboard."
-  (interactive)
-  (let ((password "ABC!123abc"))
-    (kill-new password)
-    (message "Password copied to clipboard: %s" password)))
-
 
 ;; (defun insert-debug-comment ()
 ;;   "Insert a debug comment indicating the code should not be committed."
@@ -747,6 +771,41 @@ If ARG is not provided, copy from the second most recent occurrence."
 
 
 
+;; --- Investigation helpers for LLM harnesses -------------------------------
+
+(defun rk/--maybe-send-or-insert (text)
+  "If in a vterm buffer, bracket-paste TEXT; otherwise insert it."
+  (if (derived-mode-p 'vterm-mode)
+      (vterm-send-string text t)        ; t ⇒ use bracketed paste
+    (insert text)))
+
+(defun rk/insert-investigation-full ()
+  "Insert the full investigation / implementation-plan template."
+  (interactive)
+  (let ((snippet
+         (string-join
+          '("Investigate the matter, and pull together a list of all relevant files you can"
+            "find; send the paths with full file contents and the problem statement up to Zen"
+            "MCP; then, save this prompt in local-context/$appropriately-named-subdir/1-initial-prompt.md, then create a second file 2-implementation-plan.md that"
+            "explains the situation and lays out what to do, making sure you pay attention to"
+            "validation steps and test cases; then implement, taking special care to"
+            "actually *run tests* to validate things.")
+          " ")))
+    (rk/--maybe-send-or-insert (concat snippet "\n"))))
+
+(defun rk/insert-investigation-short ()
+  "Insert the investigation template that stops after the Zen MCP hand-off."
+  (interactive)
+  (let ((snippet
+         (string-join
+          '("Investigate the matter, and pull together a list of all relevant files you can find;"
+            "send the paths with full file contents and the problem statement up to Zen MCP.")
+          " ")))
+    (rk/--maybe-send-or-insert (concat snippet "\n"))))
+
+;; Global keybindings
+(global-set-key (kbd "C-c Z") #'rk/insert-investigation-full)   ; Full template
+(global-set-key (kbd "C-c z") #'rk/insert-investigation-short)  ; Short template
 
 
 
@@ -759,14 +818,28 @@ If ARG is not provided, copy from the second most recent occurrence."
 
 ;; ============= PACKAGES / PLUGINS / EXTENSIONS =============
 
+;; Load Efrit - AI-powered natural language commands for Emacs
+;; Load API key from your custom env file BEFORE requiring efrit
+(when (file-exists-p "~/.efrit.env")
+  (load "~/.efrit.env"))
+;; Load efrit directly instead of adding to load-path
+(load-file "~/.emacs.d/efrit.el")
+;; Force efrit-api-key to refresh from environment after loading
+(setq efrit-api-key (or (getenv "ANTHROPIC_API_KEY") ""))
+;; Disable confirmation prompts - run all commands without asking
+(setq efrit-confirm-execution nil)
+;; Set up keybindings for Efrit
+(global-set-key (kbd "C-c a d") 'efrit-do)
+(global-set-key (kbd "C-c a c") 'efrit-chat)
+(global-set-key (kbd "C-c a r") 'efrit-repeat)
+(global-set-key (kbd "C-c a s") 'efrit-configure)
+
 ;; outsource autoindentation to dtrt-indent, as it's a pain
-;; DISABLED FOR LAPTOP SETUP
-;; (dtrt-indent-global-mode t)
+(dtrt-indent-global-mode t)
 
 ;; ;; enable autocompletion, disable by exception
-;; DISABLED FOR LAPTOP SETUP
-;; (global-company-mode t)
-;; (add-hook 'org-mode-hook 'company-mode)
+(global-company-mode t)
+(add-hook 'org-mode-hook 'company-mode)
 
 ;; Trying prettier everywhere - note the package is prettier.el, not prettier-js.el
 (add-hook 'after-init-hook #'global-prettier-mode)
@@ -777,9 +850,8 @@ If ARG is not provided, copy from the second most recent occurrence."
 (add-hook 'python-mode-hook 'python-black-on-save-mode)
 
 ;; pop-up showing next possible key press - similar natively by '[keypress] ?'
-;; DISABLED FOR LAPTOP SETUP
-;; (which-key-mode)
-;; (setq which-key-idle-delay 0.5)
+(which-key-mode)
+(setq which-key-idle-delay 0.5)
 
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -804,25 +876,24 @@ If ARG is not provided, copy from the second most recent occurrence."
 ;; For the below:
 ;; Note that this infers  workspaces based on presence of .git/ directory - which won't always do the trick!
 ;; See: https://emacs-lsp.github.io/lsp-mode/page/lsp-gopls/#working-with-nested-gomod-files
-;; DISABLED FOR LAPTOP SETUP
-;; (require 'lsp-mode)
-;; (add-hook 'go-mode-hook #'lsp-deferred)
-;; (setq lsp-enable-snippet nil)  ;; this prevents weird bug in company-mode, where company mode will insert arguments from function definitions as part of the completion - https://github.com/company-mode/company-mode/issues/943 - I only experienced this with golang
-;; ;; Note that this might become unnecessary
-;; ;; enable lsp-ui-mode
-;; (setq lsp-enable-symbol-highlighting t)
-;; (setq lsp-ui-doc-enable t)
-;; (setq lsp-ui-doc-show-with-cursor t)
-;; (setq lsp-ui-doc-show-with-mouse t)
-;; ;; mimicking flymake
-;; ;; flycheck next error M-n
-;; (global-set-key (kbd "M-n") 'flycheck-next-error)
-;; ;;  flycheck previous error M-p
-;; (global-set-key (kbd "M-p") 'flycheck-previous-error)
-;; (global-set-key (kbd "C-c d") 'lsp-find-definition)
-;; (global-set-key (kbd "C-c r") 'lsp-find-references)
-;; (global-set-key (kbd "C-c i") 'lsp-find-implementation)
-;; (global-set-key (kbd "C-c R") 'lsp-rename)
+(require 'lsp-mode)
+(add-hook 'go-mode-hook #'lsp-deferred)
+(setq lsp-enable-snippet nil)  ;; this prevents weird bug in company-mode, where company mode will insert arguments from function definitions as part of the completion - https://github.com/company-mode/company-mode/issues/943 - I only experienced this with golang
+;; Note that this might become unnecessary
+;; enable lsp-ui-mode
+(setq lsp-enable-symbol-highlighting t)
+(setq lsp-ui-doc-enable t)
+(setq lsp-ui-doc-show-with-cursor t)
+(setq lsp-ui-doc-show-with-mouse t)
+;; mimicking flymake
+;; flycheck next error M-n
+(global-set-key (kbd "M-n") 'flycheck-next-error)
+;;  flycheck previous error M-p
+(global-set-key (kbd "M-p") 'flycheck-previous-error)
+(global-set-key (kbd "C-c d") 'lsp-find-definition)
+(global-set-key (kbd "C-c r") 'lsp-find-references)
+(global-set-key (kbd "C-c i") 'lsp-find-implementation)
+(global-set-key (kbd "C-c R") 'lsp-rename)
 ;; END LSP MODE ------------------------
 
 ;; EGLOT MODE ----------------------------
@@ -913,12 +984,8 @@ If ARG is not provided, copy from the second most recent occurrence."
               auto-mode-alist))
 
 ;; Enable flashing mode-line on errors
-;; DISABLED FOR LAPTOP SETUP
-;; (doom-themes-visual-bell-config)
+(doom-themes-visual-bell-config)
 
-
-;; DISABLED FOR LAPTOP SETUP
-;; (load "~/.emacs.d/api-keys.el")
 
 ;; COPILOT
 ;; DISABLED FOR LAPTOP SETUP
@@ -1023,13 +1090,65 @@ If ARG is not provided, copy from the second most recent occurrence."
 (global-set-key (kbd "C-c g f") 'corsair-insert-file-or-folder-contents)
 
 
-;; gptel default model gpt-4o
-(setq gptel-model "gpt-4o")
-;; Set the default GPTel session
-(setq gptel-default-session "Chat")
 (load-file "~/dotfiles/accumulate-text.el")
-;; (load-file "~/.emacs.d/gemini-init.el") ;; Breaking on latest gptel as at 5 Dec 2024
-;; --- end gptel ---
+
+;; ---- GPTEL START ----
+;; Load API key from your custom env file (adjust path if needed)
+(when (file-exists-p "~/.gptel.env")
+  (load "~/.gptel.env"))
+;; Define the OpenRouter backend with your full model list
+(setq gptel-backend
+      (gptel-make-openai "OpenRouter"
+        :host "openrouter.ai"
+        :endpoint "/api/v1/chat/completions"
+        :stream t
+        :key (getenv "OPENROUTER_API_KEY")
+        :models '(
+          openai/gpt-4.1
+          openai/gpt-4.1-mini
+          openai/gpt-4.1-nano
+          openai/o1-pro
+          openai/gpt-4o-mini-search-preview
+          openai/gpt-4o-search-preview
+          openai/gpt-4.5-preview
+          openai/o3-mini-high
+          openai/o3-mini
+          openai/o1
+          x-ai/grok-3-mini-beta
+          x-ai/grok-3-beta
+          x-ai/grok-2-vision-1212
+          x-ai/grok-2-1212
+          x-ai/grok-vision-beta
+          x-ai/grok-beta
+          x-ai/grok-2-mini
+          x-ai/grok-2
+          anthropic/claude-2.1
+          anthropic/claude-2.0
+          anthropic/claude-instant-1.1
+          anthropic/claude-instant-1
+          anthropic/claude-1
+          anthropic/claude-1.2
+          anthropic/claude-instant-1.0
+          google/palm-2-chat-bison-32k
+          google/palm-2-codechat-bison
+          google/palm-2-chat-bison
+          google/gemini-experimental-1121
+          google/gemini-experimental-1114
+          google/gemini-1.5-flash-experimental
+          google/gemini-1.5-pro-experimental
+          google/gemma-7b
+          deepseek/r1-distill-llama-70b:free
+          deepseek/r1-distill-llama-70b
+          deepseek/r1:free
+          deepseek/r1
+          deepseek/deepseek-v3:free
+          deepseek/deepseek-v3
+          deepseek/deepseek-v2.5
+          deepseek/deepseek-coder-v2
+        )))
+
+
+;; ---- GPTEL END ----
 
 ;; For very large files - offered as option in minibuffer when you go to open file over 10mb in size
 ;; Emacs barely usable for big files
@@ -1046,7 +1165,6 @@ If ARG is not provided, copy from the second most recent occurrence."
 
 (provide '.emacs)
 ;;; .emacs ends here
-
 
 
 
