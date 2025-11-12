@@ -1,5 +1,4 @@
 ;; ============= PACKAGE MANAGEMENT =============
-;;; Commentary: purely to suppress errors
 
 ;; Set up package.el to work with MELPA
 (require 'package)
@@ -9,15 +8,8 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-;; for making the package exec-path-from-shell work
-;; this package allows lsp-mode to find npm when npm is at a non-standard
-;; directory - e.g. when npm is installed via nvm (and bit always should be)
-(when (memq window-system '(mac ns x))
+(when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
-(when (memq window-system '(mac ns x))
-  ;; Ensure PATH-related vars are imported from the login shell (nvm setups, etc.)
-  (ignore-errors
-    (exec-path-from-shell-copy-envs '("PATH" "NVM_DIR" "NVM_BIN"))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -25,47 +17,62 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("46c65f6d9031e2f55b919b1486952cddcc8e3ee081ade7eb2ffb6a68a804d30e" "b64a60e69617b4348d0402fad2f0d08a694301132e7ab243dab4d6a65c3bf948" "02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644" "443e2c3c4dd44510f0ea8247b438e834188dc1c6fb80785d83ad3628eadf9294" "a44e2d1636a0114c5e407a748841f6723ed442dc3a0ed086542dc71b92a87aee" "7e068da4ba88162324d9773ec066d93c447c76e9f4ae711ddd0c5d3863489c52" "51c71bb27bdab69b505d9bf71c99864051b37ac3de531d91fdad1598ad247138" "2e05569868dc11a52b08926b4c1a27da77580daa9321773d92822f7a639956ce" "1a1ac598737d0fcdc4dfab3af3d6f46ab2d5048b8e72bc22f50271fd6d393a00" "afa47084cb0beb684281f480aa84dab7c9170b084423c7f87ba755b15f6776ef" default))
+   '("46c65f6d9031e2f55b919b1486952cddcc8e3ee081ade7eb2ffb6a68a804d30e"
+     "b64a60e69617b4348d0402fad2f0d08a694301132e7ab243dab4d6a65c3bf948"
+     "02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644"
+     "443e2c3c4dd44510f0ea8247b438e834188dc1c6fb80785d83ad3628eadf9294"
+     "a44e2d1636a0114c5e407a748841f6723ed442dc3a0ed086542dc71b92a87aee"
+     "7e068da4ba88162324d9773ec066d93c447c76e9f4ae711ddd0c5d3863489c52"
+     "51c71bb27bdab69b505d9bf71c99864051b37ac3de531d91fdad1598ad247138"
+     "2e05569868dc11a52b08926b4c1a27da77580daa9321773d92822f7a639956ce"
+     "1a1ac598737d0fcdc4dfab3af3d6f46ab2d5048b8e72bc22f50271fd6d393a00"
+     "afa47084cb0beb684281f480aa84dab7c9170b084423c7f87ba755b15f6776ef"
+     default))
  '(git-gutter:update-interval 2)
  '(grep-files-aliases
-   '(("all" . "* .*")
-     ("el" . "*.el")
-     ("ch" . "*.[ch]")
-     ("c" . "*.c")
+   '(("all" . "* .*") ("el" . "*.el") ("ch" . "*.[ch]") ("c" . "*.c")
      ("cc" . "*.cc *.cxx *.cpp *.C *.CC *.c++")
      ("cchh" . "*.cc *.[ch]xx *.[ch]pp *.[CHh] *.CC *.HH *.[ch]++")
-     ("hh" . "*.hxx *.hpp *.[Hh] *.HH *.h++")
-     ("h" . "*.h")
+     ("hh" . "*.hxx *.hpp *.[Hh] *.HH *.h++") ("h" . "*.h")
      ("l" . "[Cc]hange[Ll]og*")
-     ("am" . "Makefile.am GNUmakefile *.mk")
-     ("m" . "[Mm]akefile*")
-     ("tex" . "*.tex")
-     ("texi" . "*.texi")
-     ("asm" . "*.[sS]")
-     ("go" . "*.go")
-     ("php" . "*.php")
-     ("py" . "*.py")
-     ("ts" . "*.ts")
-     ("js" . "*.js")
-     ("css" . "*.css")
-     ("html" . "*.html")
-     ("json" . "*.json")
-     ("jsonl" . "*.jsonl")
-     ("jsonld" . "*.jsonld")
-     ("sh" . "*.sh")))
+     ("am" . "Makefile.am GNUmakefile *.mk") ("m" . "[Mm]akefile*")
+     ("tex" . "*.tex") ("texi" . "*.texi") ("asm" . "*.[sS]")
+     ("py" . "*.py") ("ts" . "*.ts") ("js" . "*.js") ("css" . "*.css")
+     ("html" . "*.html") ("json" . "*.json") ("jsonl" . "*.jsonl")
+     ("jsonld" . "*.jsonld") ("sh" . "*.sh")))
  '(org-agenda-files '("~/notes/todo.org"))
  '(package-selected-packages
-   '(hl-todo magit sass-mode chatgpt epc ctable concurrent deferred quelpa-use-package quelpa php-mode json-mode jsfmt which-key web-mode vterm typescript-mode tree-sitter-langs scss-mode rjsx-mode restclient prettier-rc prettier lsp-ui jenkinsfile-mode indium highlight grip-mode gotest git-gutter fzf flycheck expand-region exec-path-from-shell evil-collection eslint-rc dtrt-indent doom-themes dockerfile-mode docker-compose-mode coverage cov company-quickhelp auto-org-md))
+   '(auto-org-md chatgpt company-quickhelp concurrent cov coverage
+                 csv-mode ctable deferred docker-compose-mode
+                 dockerfile-mode doom-themes dtrt-indent ef-themes epc
+                 eslint-rc evil-collection exec-path-from-shell
+                 expand-region flymake-eslint flymake-ruff fzf
+                 git-gutter git-modes grip-mode highlight hl-todo
+                 jenkinsfile-mode json-mode magit markdown-mode
+                 markdown-preview-mode prettier-js prettier-rc
+                 python-mode quelpa quelpa-use-package rainbow-csv
+                 restclient sass-mode scss-mode tree-sitter
+                 tree-sitter-langs treesit-auto typescript-mode vterm
+                 web-mode which-key))
+ '(package-vc-selected-packages
+   '((rainbow-csv :vc-backend Git :url
+                  "https://github.com/NivWeisman/rainbow-csv")))
  '(safe-local-variable-values
    '((eval add-to-list 'grep-find-ignored-files "*.json")
      (vc-prepare-patches-separately)
      (diff-add-log-use-relative-names . t)
      (vc-git-annotate-switches . "-w")
-     (cov-lcov-file-name . "/Users/robert.kirby/g/aff-services-mono/apps/bookmaker-aliases-servicex/coverage/unit/lcov.info")
-     (cov-lcov-file-name . "/Users/robert.kirby/g/aff-services-mono/apps/bookmaker-aliases-service/coverage/unit/lcov.info")
-     (cov-lcov-file-name . "/Users/robert.kirby/g/events-service/coverage/unit/lcov.info")
-     (cov-lcov-file-name . "/Users/robert.kirby/g/events-service/coverage/lcov.info")
-     (lcov-file-name . "/Users/robert.kirby/g/events-service/coverage/lcov.info"))))
+     (cov-lcov-file-name
+      . "/Users/robert.kirby/g/aff-services-mono/apps/bookmaker-aliases-servicex/coverage/unit/lcov.info")
+     (cov-lcov-file-name
+      . "/Users/robert.kirby/g/aff-services-mono/apps/bookmaker-aliases-service/coverage/unit/lcov.info")
+     (cov-lcov-file-name
+      . "/Users/robert.kirby/g/events-service/coverage/unit/lcov.info")
+     (cov-lcov-file-name
+      . "/Users/robert.kirby/g/events-service/coverage/lcov.info")
+     (lcov-file-name
+      . "/Users/robert.kirby/g/events-service/coverage/lcov.info"))))
+
 
 
 
@@ -118,6 +125,7 @@
 
 ;; Make emacs windows transparent
 (set-frame-parameter (selected-frame) 'alpha '(98 . 98))
+(add-to-list 'default-frame-alist '(alpha . (98 . 98)))
 
 ;; add a 3 line buffer between the point and the top / bottom of the window
 (setq scroll-margin 3)
@@ -169,9 +177,10 @@
                                  space-after-tab ;; doesn't seem to work
                                  ))
 
-;; vertical line on 80 char column
-(setq-default display-fill-column-indicator-column 79)
-(global-display-fill-column-indicator-mode t)
+;; Thinking I'll remove, just trying life without it for a while - 11 Nov 2025
+;; ;; vertical line on 80 char column
+;; (setq-default display-fill-column-indicator-column 79)
+;; (global-display-fill-column-indicator-mode t)
 
 ;; easier to find cursor
 (global-hl-line-mode 1)
@@ -184,7 +193,7 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; show bell icon (e.g. on C-g)...  I dislike the visual bell, but don't want a plugin yet
-(setq-default visible-bell 1)
+(setq-default visible-bell t)
 
 ;; Delete trailing whitespaces, but...
 (add-hook 'before-save-hook
@@ -192,25 +201,24 @@
 ;; ... Don't delete trailing newlines (since opinions differ on this)
 (setq-default delete-trailing-lines nil)
 
-;; Ensure Emacs can find Prettier and Node (used by Prettier shebang)
-(let* ((nvm-bin (expand-file-name "~/.nvm/versions/node/v22.14.0/bin"))
-       (usr-local-bin "/usr/local/bin"))
-  (dolist (p (list nvm-bin usr-local-bin))
-    (when (file-directory-p p)
-      (add-to-list 'exec-path p)
-      (setenv "PATH" (concat p ":" (getenv "PATH"))))))
-
 ;; modeline
 (line-number-mode t)
 (column-number-mode t)
 
-;; show line numbers in left column when editing code
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(add-hook 'markdown-mode-hook 'display-line-numbers-mode)
-(add-hook 'org-mode-hook 'display-line-numbers-mode)
-(add-hook 'text-mode-hook 'display-line-numbers-mode)
-(add-hook 'yml-mode-hook 'display-line-numbers-mode)
-(add-hook 'docker-compose-mode-hook 'display-line-numbers-mode)
+;; show line numbers in buffers where we're editing text or code
+(defvar rk/display-line-numbers-excluded-modes
+  '(term-mode ansi-term-mode eshell-mode shell-mode vterm-mode treemacs-mode help-mode
+              compilation-mode)
+  "Major modes where line numbers stay disabled.")
+
+(defun rk/enable-line-numbers-when-editing ()
+  "Turn on `display-line-numbers-mode' for buffers derived from `prog-mode' or `text-mode'."
+  (when (and (not (minibufferp))
+             (derived-mode-p 'prog-mode 'text-mode)
+             (not (memq major-mode rk/display-line-numbers-excluded-modes)))
+    (display-line-numbers-mode 1)))
+
+(add-hook 'after-change-major-mode-hook #'rk/enable-line-numbers-when-editing)
 
 ;; trunate lines and wrap words in org mode
 (add-hook 'org-mode-hook 'visual-line-mode)
@@ -243,7 +251,8 @@
 ;; And for dired
 (add-hook 'dired-mode-hook #'auto-revert-mode)
 (setq auto-revert-verbose nil   ; hide the echo‑area messages
-      auto-revert-interval 1)   ; poll every second if needed
+      global-auto-revert-non-file-buffers t
+      auto-revert-use-notify t)
 
 ;;; Preserve contents of system clipboard
 (setq save-interprogram-paste-before-kill t)
@@ -261,7 +270,7 @@
 (add-hook 'prog-mode-hook 'subword-mode)
 (add-hook 'gptel-mode-hook 'subword-mode)
 (add-hook 'typescript-mode-hook 'subword-mode)
-(add-hook 'go-mode-hook 'subword-mode)
+(add-hook 'typescript-ts-mode-hook 'subword-mode)
 (add-hook 'magit-mode-hook 'subword-mode)
 
 ;; Hide ugly newline arrows in fringe
@@ -299,7 +308,7 @@
   )
 
 ;; Bigger scrollback
-(setq vterm-max-scrollback 100000000)
+(setq vterm-max-scrollback 200000)
 
 ;; ignore directories when grepping in a project - doesn't work for C-u C-x p g
 (eval-after-load 'grep
@@ -312,7 +321,6 @@
 (add-hook 'grep-mode-hook (lambda () (toggle-truncate-lines 1)))
 
 (add-hook 'prog-mode-hook 'hs-minor-mode)
-(global-set-key (kbd "C-c @ @") 'hs-toggle-hiding)
 
 ;; smooth scrolling
 (pixel-scroll-precision-mode 1)
@@ -328,8 +336,9 @@
 
 ;; Use ripgrep, not grep
 (setq grep-program "rg")
-(setq find-program "rg")
 (setq xref-search-program 'ripgrep) ;; Ensures `project-find-regexp` uses `rg`
+
+
 
 
 
@@ -379,7 +388,7 @@
       (rename-buffer buffer-name t)))
   ;; Iterate over the command list and send each command to the terminal.
   (dolist (command command-list)
-    (vterm-send-string (concat command "\n"))
+    (vterm-send-string command)
     (vterm-send-return)))
 ;; Example usage for a new function
 ;; (defun open-logging-terminal ()
@@ -394,16 +403,9 @@
 (defun open-ssh-terminal ()
   "Open an SSH terminal with a predefined SSH command loaded from a separate file."
   (interactive)
-  (open-custom-vterm "ssh-terminal" (list ssh-command)))
+  (let ((cmd (when (boundp 'ssh-command) ssh-command)))
+    (open-custom-vterm "ssh-terminal" (list (or cmd "ssh user@host")))))
 (global-set-key (kbd "C-c S") 'open-ssh-terminal)
-
-;; Run AICE in a specially named vterm
-(defun open-aice-server-terminal ()
-  "Open a vterm to run AICE."
-  (interactive)
-  (open-custom-vterm "aice-server-terminal"
-                     '("cd ~/g/aice" "make run")))
-(global-set-key (kbd "C-c A") 'open-aice-server-terminal)
 
 ;; Run nchat in a specially named vterm
 (defun open-nchat-terminal ()
@@ -415,11 +417,15 @@
 ;; for convenient hiding
 (global-set-key (kbd "C-c h") 'hs-hide-level)
 
-;; C-c o to open org mode file
-(defun open-todo ()
+
+(defun open-org-file ()
   (interactive)
   (find-file "~/notes/org.org"))
-(global-set-key (kbd "C-c o") 'open-todo)
+(global-set-key (kbd "C-c o") 'open-org-file)
+(defun open-corg-file ()
+  (interactive)
+  (find-file "~/notes/corg.org"))
+(global-set-key (kbd "C-c O") 'open-corg-file)
 
 ;; C-c r to open record file
 (defun open-record ()
@@ -448,66 +454,6 @@
 (fset 'convert-typescript-class-function-to-arrow-function
    (kmacro-lambda-form [?\C-s ?\( return ?\C-b ?  ?= ?  ?\C-e ?\C-b ?= ?> ?  ?\C-a ?\C-n ?\S-\C-\M-s ?p ?r ?i ?v ?a ?t ?e ?\\ ?| ?p ?u ?b ?l ?i ?c return ?\C-a] 0 "%d"))
 
-
-
-;; for autoformatting code with prettier
-;; prettify highlighted text, or the whole file
-(defun prettify ()
-  (interactive)
-  (if (region-active-p)
-      (prettier-prettify-region)
-    (prettier-prettify)))
-(global-set-key (kbd "C-c p") 'prettify) ;; probably shrould be a single binding for all formatters, which listens for correct file type...
-
-;; Python Black - similar to prettier
-;; Reformat buffer or region
-(defun python-black-format ()
-  (interactive)
-  (if (region-active-p)
-      (python-black-region)
-    (python-black-buffer)))
-
-;; PHP format on save ith intelliphense via eglot
-(add-hook 'php-mode-hook
-    (lambda ()
-      (add-hook 'before-save-hook 'eglot-format-buffer nil t)))
-(defalias 'add-php-opening-tag-to-current-file
-   (kmacro "C-x C-j C-n <return> M-< C-s F o r m R e q <return> C-a C-SPC C-e <backspace> <backspace> <backspace> C-a C-x C-s"))
-
-
-
-;; Define a function to insert <?php at the start of the PHP buffer
-(defun insert-php-tag-at-start ()
-  "Insert <?php at the beginning of the buffer."
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (insert "<?php\n\n")))
-(add-hook 'php-mode-hook
-  (lambda ()
-    (local-set-key (kbd "C-c P") 'insert-php-tag-at-start)))
-
-
-;; Python-specific keybindings
-(defun set-python-mode-keybindings ()
-  (local-set-key (kbd "C-c p") 'python-black-format))
-(add-hook 'python-mode-hook 'set-python-mode-keybindings)
-
-(global-set-key (kbd "C-c c o") 'compile)
-
-;; Php-specific keybindings
-(defun my-php-insert-php-tag ()
-  "Insert '<?php' at the start of the file, followed by two newlines, and return to the original cursor position."
-  (interactive)
-  (when (derived-mode-p 'php-mode) ;; Make sure this only runs in php-mode
-    (let ((current-point (point)))   ;; Save the current cursor position
-      (goto-char (point-min))        ;; Jump to the start of the file
-      (unless (looking-at-p "<?php") ;; Check if '<?php' isn't already at the start
-        (insert "<?php\n\n"))        ;; Insert '<?php' and two newlines
-      (goto-char current-point))))   ;; Return to the saved cursor position
-(add-hook 'php-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-c P") 'my-php-insert-php-tag)))
 
 
 ;; for mac os x https://www.emacswiki.org/emacs/FullScreen#h5o-27
@@ -571,7 +517,7 @@
     (switch-to-buffer current-buffer)))
 (global-set-key (kbd "C-c M") 'copy-last-message-to-clipboard)
 
-;; C-c l to load-file ~/.emacs
+;; C-c L to load-file ~/.emacs
 (defun load-emacs ()
   (interactive)
   (load-file "~/.emacs"))
@@ -603,30 +549,6 @@
                           (abbreviate-file-name buffer-file-name)
                         "%b")))
 
-(defun toggle-typescript-source-and-spec ()
-  "Toggle between TypeScript source file and its corresponding .spec file."
-  (interactive)
-  (let* ((current-file (buffer-file-name))
-         (spec-file (replace-regexp-in-string "\.ts$" ".spec.ts" current-file))
-         (source-file (replace-regexp-in-string "\.spec\.ts$" ".ts" current-file)))
-    (if (string= current-file source-file)
-        (find-file spec-file)
-      (find-file source-file))))
-(with-eval-after-load 'typescript-mode
-  (define-key typescript-mode-map (kbd "C-c T") 'toggle-typescript-source-and-spec))
-
-(defun toggle-go-source-and-test ()
-  "Toggle between Go source file and its corresponding _test.go file."
-  (interactive)
-  (let* ((current-file (buffer-file-name))
-         (test-file (replace-regexp-in-string "\\.go$" "_test.go" current-file))
-         (source-file (replace-regexp-in-string "_test\\.go$" ".go" current-file)))
-    (if (string= current-file source-file)
-        (find-file test-file)
-      (find-file source-file))))
-(with-eval-after-load 'go-mode
-  (define-key go-mode-map (kbd "C-c T") 'toggle-go-source-and-test))
-
 (defvar vterm-search-string "robert.kirby@ssg"
   "String to search for in vterm buffer.")
 (defun vterm-copy-previous-output (arg)
@@ -651,16 +573,17 @@ If ARG is not provided, copy from the second most recent occurrence."
   (kill-ring-save (mark) (point))
   ;; Exit vterm copy mode
   (vterm-copy-mode -1))
-;; Bind the new function to the key sequence C-c O
+;; Bind the new function to the key sequence C-c O (O for Output)
 (with-eval-after-load 'vterm
-  (define-key vterm-mode-map (kbd "C-c C") 'vterm-copy-previous-output))
+  (define-key vterm-mode-map (kbd "C-c O") 'vterm-copy-previous-output))
 (defun my/switch-to-vterm (num)
   "Switch to vterm buffer NUM or create it if it doesn't exist."
   (let* ((buffer-name (format "*vterm*<%d>" num))
          (buffer (get-buffer buffer-name)))
     (if buffer
         (switch-to-buffer buffer)
-      (vterm num))))
+      (vterm)
+      (rename-buffer buffer-name t))))
 (defun my/rename-vterm-buffer (num)
   "Rename current vterm buffer to *vterm*<NUM>."
   (interactive "nRename vterm buffer to number: ")
@@ -740,36 +663,19 @@ If ARG is not provided, copy from the second most recent occurrence."
 
 (global-set-key (kbd "C-c w") 'toggle-word-wrap)
 
-;; SSG SPECIFIC STUFF
-
-(defun copy-aice-schema-and-notify ()
-  "Open vterm, run copy-aice-schema, and notify on completion."
-  (interactive)
-  ;; Open or switch to a vterm buffer.
-  (vterm)
-  ;; Clear any unsent commands. Note: Sending C-c C-u to clear the line.
-  (vterm-send-C-c)
-  (vterm-send-C-u)
-  ;; Run the copy-aice-schema command.
-  (vterm-send-string "copy-aice-schema")
-  (vterm-send-return)
-  ;; Wait briefly to ensure the command executes before switching buffers.
-  (sleep-for 2)  ;; Adjust the sleep duration as needed.
-  ;; Switch back to the previous buffer.
-  (previous-buffer)
-  ;; Display a message indicating success.
-  (message "copy-aice-schema command executed and output copied to clipboard!"))
-
-(global-set-key (kbd "C-c D") 'copy-aice-schema-and-notify)
-
-
-;; (defun insert-debug-comment ()
-;;   "Insert a debug comment indicating the code should not be committed."
-;;   (interactive)
-;;   (insert "// DO NOT COMMIT - JUST HERE FOR DEBUGGING PURPOSES"))
-;; (global-set-key (kbd "C-c D") 'insert-debug-comment)
-
-
+(with-eval-after-load 'org
+  (defun rk/org-toggle-then-next ()
+    "Toggle the checkbox on this line (via `org-toggle-checkbox`), then
+move to the next line and place point at the first non-whitespace char."
+    (interactive)
+    (save-excursion
+      (beginning-of-line)
+      (when (org-at-item-checkbox-p)
+        (org-toggle-checkbox)))
+    (forward-line 1)
+    (back-to-indentation))
+  ;; Org-only binding for quick checkbox toggle + advance
+  (define-key org-mode-map (kbd "C-c c") #'rk/org-toggle-then-next))
 
 ;; --- Investigation helpers for LLM harnesses -------------------------------
 
@@ -778,35 +684,6 @@ If ARG is not provided, copy from the second most recent occurrence."
   (if (derived-mode-p 'vterm-mode)
       (vterm-send-string text t)        ; t ⇒ use bracketed paste
     (insert text)))
-
-(defun rk/insert-investigation-full ()
-  "Insert the full investigation / implementation-plan template."
-  (interactive)
-  (let ((snippet
-         (string-join
-          '("Investigate the matter, and pull together a list of all relevant files you can"
-            "find; send the paths with full file contents and the problem statement up to Zen"
-            "MCP; then, save this prompt in local-context/$appropriately-named-subdir/1-initial-prompt.md, then create a second file 2-implementation-plan.md that"
-            "explains the situation and lays out what to do, making sure you pay attention to"
-            "validation steps and test cases; then implement, taking special care to"
-            "actually *run tests* to validate things.")
-          " ")))
-    (rk/--maybe-send-or-insert (concat snippet "\n"))))
-
-(defun rk/insert-investigation-short ()
-  "Insert the investigation template that stops after the Zen MCP hand-off."
-  (interactive)
-  (let ((snippet
-         (string-join
-          '("Investigate the matter, and pull together a list of all relevant files you can find;"
-            "send the paths with full file contents and the problem statement up to Zen MCP.")
-          " ")))
-    (rk/--maybe-send-or-insert (concat snippet "\n"))))
-
-;; Global keybindings
-(global-set-key (kbd "C-c Z") #'rk/insert-investigation-full)   ; Full template
-(global-set-key (kbd "C-c z") #'rk/insert-investigation-short)  ; Short template
-
 
 
 
@@ -818,47 +695,19 @@ If ARG is not provided, copy from the second most recent occurrence."
 
 ;; ============= PACKAGES / PLUGINS / EXTENSIONS =============
 
-;; Load Efrit - AI-powered natural language commands for Emacs
-;; Load API key from your custom env file BEFORE requiring efrit
-(when (file-exists-p "~/.efrit.env")
-  (load "~/.efrit.env"))
-;; Load efrit directly instead of adding to load-path
-(load-file "~/.emacs.d/efrit.el")
-;; Force efrit-api-key to refresh from environment after loading
-(setq efrit-api-key (or (getenv "ANTHROPIC_API_KEY") ""))
-;; Disable confirmation prompts - run all commands without asking
-(setq efrit-confirm-execution nil)
-;; Set up keybindings for Efrit
-(global-set-key (kbd "C-c a d") 'efrit-do)
-(global-set-key (kbd "C-c a c") 'efrit-chat)
-(global-set-key (kbd "C-c a r") 'efrit-repeat)
-(global-set-key (kbd "C-c a s") 'efrit-configure)
+;; Use Homebrew's GNU ls (gls)
+;; On a mac you'll need to run `brew install coreutils` in the terminal first
+(when (executable-find "gls")
+  (setq insert-directory-program (executable-find "gls")
+        dired-use-ls-dired t
+        dired-listing-switches "-alh --group-directories-first"))
 
 ;; outsource autoindentation to dtrt-indent, as it's a pain
 (dtrt-indent-global-mode t)
 
-;; ;; enable autocompletion, disable by exception
-(global-company-mode t)
-(add-hook 'org-mode-hook 'company-mode)
-
-;; Trying prettier everywhere - note the package is prettier.el, not prettier-js.el
-(add-hook 'after-init-hook #'global-prettier-mode)
-;; don't open  a new window when we detect syntax errors (it's annoying)
-(setq prettier-inline-errors-flag t)
-
-;; Similar to prettier - for python
-(add-hook 'python-mode-hook 'python-black-on-save-mode)
-
 ;; pop-up showing next possible key press - similar natively by '[keypress] ?'
 (which-key-mode)
 (setq which-key-idle-delay 0.5)
-
-;; flycheck
-(add-hook 'after-init-hook #'global-flycheck-mode)
-(setq flycheck-javascript-eslint-executable "eslint_d"
-      scss-stylelint "stylelint")
-(global-set-key (kbd "C-c g n") 'git-gutter:next-hunk)
-(global-set-key (kbd "C-c g p") 'git-gutter:previous-hunk)
 
 (global-set-key (kbd "C-c f") 'ffap)
 
@@ -868,108 +717,9 @@ If ARG is not provided, copy from the second most recent occurrence."
 ;; always use dired
 (global-set-key (kbd "C-x C-d") 'dired)
 
-;; LSP MODE ---------------------------- Using for now because of eglot mode issues with Gopls, to be fixed in Emacs 29
-;; (add-hook 'typescript-mode-hook #'lsp)
-;; (add-hook 'js-jsx-mode-hook #'lsp)
-;; (add-hook 'html-mode-hook #'lsp)
-;; (add-hook 'css-mode-hook #'lsp)
-;; For the below:
-;; Note that this infers  workspaces based on presence of .git/ directory - which won't always do the trick!
-;; See: https://emacs-lsp.github.io/lsp-mode/page/lsp-gopls/#working-with-nested-gomod-files
-(require 'lsp-mode)
-(add-hook 'go-mode-hook #'lsp-deferred)
-(setq lsp-enable-snippet nil)  ;; this prevents weird bug in company-mode, where company mode will insert arguments from function definitions as part of the completion - https://github.com/company-mode/company-mode/issues/943 - I only experienced this with golang
-;; Note that this might become unnecessary
-;; enable lsp-ui-mode
-(setq lsp-enable-symbol-highlighting t)
-(setq lsp-ui-doc-enable t)
-(setq lsp-ui-doc-show-with-cursor t)
-(setq lsp-ui-doc-show-with-mouse t)
-;; mimicking flymake
-;; flycheck next error M-n
-(global-set-key (kbd "M-n") 'flycheck-next-error)
-;;  flycheck previous error M-p
-(global-set-key (kbd "M-p") 'flycheck-previous-error)
-(global-set-key (kbd "C-c d") 'lsp-find-definition)
-(global-set-key (kbd "C-c r") 'lsp-find-references)
-(global-set-key (kbd "C-c i") 'lsp-find-implementation)
-(global-set-key (kbd "C-c R") 'lsp-rename)
-;; END LSP MODE ------------------------
-
-;; EGLOT MODE ----------------------------
-;; NOTE Golang / emacs bug due to be fixed in Emacs 29 (probably already fixed in prerelease.. could compile from source)
-;; https://github.com/golang/go/issues/54559#issuecomment-1352862969
-;; Works perfectly otherwise
-;; Flymake goes hand-in-hand with eglot (flycheck plays nice with lsp-mode)
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs '(php-mode . ("intelephense" "--stdio")))
-  )
-
-(add-hook 'php-mode-hook 'eglot-ensure)
-(add-hook 'typescript-mode-hook 'eglot-ensure)
-(add-hook 'js-jsx-mode-hook 'eglot-ensure)
-(add-hook 'html-mode-hook 'eglot-ensure)
-(add-hook 'css-mode-hook 'eglot-ensure)
-(add-hook 'sass-mode-hook 'eglot-ensure)
-(add-hook 'sass-mode-hook 'flymake-sass-load)
-(add-hook 'rust-mode-hook 'eglot-ensure)
-(add-hook 'python-mode-hook 'eglot-ensure)
-;; (add-hook 'go-mode-hook 'eglot-ensure) ;; disabled because using lsp-mode
-(add-hook 'eglot--managed-mode-hook
-          (lambda ()
-            (define-key eglot-mode-map (kbd "C-c d") 'xref-find-definitions)
-            (define-key eglot-mode-map (kbd "C-c i") 'eglot-find-implementation)
-            (define-key eglot-mode-map (kbd "C-c r") 'xref-find-references)
-            (define-key eglot-mode-map (kbd "C-c R") 'eglot-rename)
-            )
-          )
-;; ;; * NOT USED because LSP-mode standing in for now *
-;; ;; setup eglot with gopls - from gopls docs https://github.com/golang/tools/blob/master/gopls/doc/emacs.md
-;; (require 'project)
-;; (defun project-find-go-module (dir)
-;;   (when-let ((root (locate-dominating-file dir "go.mod")))
-;;     (cons 'go-module root)))
-;; (cl-defmethod project-root ((project (head go-module)))
-;;   (cdr project))
-;; (add-hook 'project-find-functions #'project-find-go-module)
-;; ;; setup gopls for integratioln build tags - might not be needed if dir_locals.el does it's job in pickwise-beffe
-;; (setq eglot-workspace-configuration
-;;       '((gopls . ((usePlaceholders . t)
-;;                   (completeUnimported . t)
-;;                   (staticcheck . t)
-;;                   (buildFlags . ["-tags=integration"])))))
-
-;; NOT WORKING Set up eslint to play nice with flymake
-;; This might actually be ok - flycheck does the trick happily enough via C-c ! n and C-c ! p
-(add-hook 'web-mode-hook
-  (lambda ()
-    (flymake-eslint-enable)))
-(add-hook 'typescript-mode-hook
-  (lambda ()
-    (flymake-eslint-enable)))
-(add-hook 'js-jsx-mode-hook
-  (lambda ()
-    (flymake-eslint-enable)))
-(add-hook 'flymake-mode-hook
-          (lambda ()
-            (define-key flymake-mode-map (kbd "M-n") 'flymake-goto-next-error)
-            (define-key flymake-mode-map (kbd "M-p") 'flymake-goto-prev-error)
-            ;; don't make unnecessary imports invisible - suspect doom zenburn will fix this themselves when eglot is merged into emacs
-            ;; (set-face-foreground 'eglot-diagnostic-tag-unnecessary-face "#F18C96") ;; not needed in light mode
-            ))
-;; END EGLOT MODE ------------------------
-
 (setq auto-mode-alist
       (append '(
-                ("\\.js\\'" . typescript-mode)
-                ("\\.ts\\'" . typescript-mode)
-                ("\\.tsx\\'" . js-jsx-mode)
-                ("\\.jsx\\'" . js-jsx-mode)
-
-                ;; Wrap words, truncate lines
-                ("\\.txt\\'" . visual-line-mode)
-
-                ("\\.go\\'" . go-mode)
+                ("\\.txt\\'" . text-mode)
 
                 ("\\.mk\\'" . makefile-mode)
                 ("Makefile\\'" . makefile-mode)
@@ -978,28 +728,14 @@ If ARG is not provided, copy from the second most recent occurrence."
                 ("\\.trivyignore\\'" . shell-script-mode)
                 ("\\.zshrc.rob-universal\\'" . shell-script-mode)
                 ("\\.env\\(\\..*\\)?\\'" . shell-script-mode)
-                ("\\.\.*ignore\\'" . shell-script-mode)
+                ("\\..*ignore\\'" . shell-script-mode)
                 ("\\.nvmrc\\'" . shell-script-mode)
                 )
               auto-mode-alist))
 
 ;; Enable flashing mode-line on errors
-(doom-themes-visual-bell-config)
-
-
-;; COPILOT
-;; DISABLED FOR LAPTOP SETUP
-;; (global-copilot-mode t)
-;; (setq copilot-max-char 200002)
-;; (global-set-key (kbd "C-<tab>") 'copilot-accept-completion) ;; might clash?  experimenting
-;; (global-set-key (kbd "C-c c a") 'copilot-accept-completion)
-;; (global-set-key (kbd "C-c c w") 'copilot-accept-completion-by-word)
-;; (global-set-key (kbd "C-c c l") 'copilot-accept-completion-by-line)
-;; (global-set-key (kbd "C-c c n") 'copilot-next-completion)
-;; (global-set-key (kbd "C-c c p") 'copilot-previous-completion)
-;; (global-set-key (kbd "C-c c d") 'copilot-diagnose)
-;; (global-set-key (kbd "C-c c c") 'copilot-clear-overlay)
-;; (global-set-key (kbd "C-c c D") (lambda () (interactive) (copilot-mode -1) (copilot-mode 1) (copilot-diagnose)))
+(with-eval-after-load 'doom-themes
+  (doom-themes-visual-bell-config))
 
 ;; This will probably be included in a new version of emacs, in filenotify.el
 ;; https://www.blogbyben.com/2022/05/gotcha-emacs-on-mac-os-too-many-files.html
@@ -1012,60 +748,9 @@ If ARG is not provided, copy from the second most recent occurrence."
      (file-notify-rm-watch key))
    file-notify-descriptors))
 
-;; Shortcuts for common go-test invocations.
-(add-hook 'go-mode-hook (lambda ()
-  (company-mode) ; enable company upon activating go
-
-  (add-hook 'before-save-hook 'gofmt-before-save)
-
-  ;; Code layout.
-  (setq tab-width 2 indent-tabs-mode 1) ; std go whitespace configuration
-  (add-hook 'before-save-hook 'gofmt-before-save) ; run gofmt on each save
-
-  ;; Shortcuts for common go-test invocations.
-  (let ((map go-mode-map))
-    (define-key map (kbd "C-c p") 'gofmt)
-    (define-key go-mode-map (kbd "C-c B") 'break-up-golang-args)
-    )
-  ))
-
-;; C-c B in go-mode to break up next single line arg list in current file
-;; Gofmt doesn't break up long lines; typically result of long function arg lists
-(defun break-up-golang-args ()
-  "Break up long argument lists in Go function calls and apply gofmt."
-  (interactive)
-  (if (not (eq major-mode 'go-mode))
-      (message "Not in Go mode")
-    (let ((current-line (line-number-at-pos))
-          (start nil)
-          (end nil))
-      (save-excursion
-        (beginning-of-line)
-        (when (setq start (search-forward "(" (line-end-position) t))
-          (when (setq end (scan-sexps (1- start) 1))
-            (if (not (= current-line (line-number-at-pos end)))
-                (message "Brackets not on the same line")
-              (let ((arg-string (buffer-substring-no-properties start (- end 1)))
-                    (new-arg-string "")
-                    (stack '())
-                    (in-string nil))
-                (dolist (char (string-to-list arg-string))
-                  (cond ((= char ?\")
-                         (setq in-string (not in-string)))
-                        ((and (not in-string) (= char ?\())
-                         (push "(" stack))
-                        ((and (not in-string) (= char ?\)))
-                         (pop stack)))
-                  (setq new-arg-string (concat new-arg-string (string char)))
-                  (when (and (not in-string) (null stack) (= char ?,))
-                    (setq new-arg-string (concat new-arg-string "\n"))))
-                (delete-region (1- start) end)
-                (insert (concat "(\n" new-arg-string ",\n)"))
-                (if (fboundp 'gofmt)
-                    (gofmt)
-                  (message "gofmt not found. Make sure the Go Emacs package is installed."))))))))))
-
 ;; Color theme
+(unless (package-installed-p 'ef-themes)
+  (package-install 'ef-themes))
 (load-theme 'ef-light t)
 
 ;; Alias for grip-mode, which toggles in-browser md previews - since I can never remember the name
@@ -1077,98 +762,78 @@ If ARG is not provided, copy from the second most recent occurrence."
     )
   )
 
-;; LLM Enhancements
-;; Helpers for pulling text into GPTel chat windows
-(require 'corsair
-         )
-(global-set-key (kbd "C-c g c") 'corsair-open-chat-buffer)
-(global-set-key (kbd "C-c g a c") 'corsair-accumulate-file-path-and-contents)
-(global-set-key (kbd "C-c g a n") 'corsair-accumulate-file-name)
-(global-set-key (kbd "C-c g a v") 'corsair-accumulate-file-path)
-(global-set-key (kbd "C-c g a w") 'corsair-accumulate-selected-text)
-(global-set-key (kbd "C-c g a D") 'corsair-drop-accumulated-buffer)
-(global-set-key (kbd "C-c g f") 'corsair-insert-file-or-folder-contents)
-
-
 (load-file "~/dotfiles/accumulate-text.el")
 
-;; ---- GPTEL START ----
-;; Load API key from your custom env file (adjust path if needed)
-(when (file-exists-p "~/.gptel.env")
-  (load "~/.gptel.env"))
-;; Define the OpenRouter backend with your full model list
-(setq gptel-backend
-      (gptel-make-openai "OpenRouter"
-        :host "openrouter.ai"
-        :endpoint "/api/v1/chat/completions"
-        :stream t
-        :key (getenv "OPENROUTER_API_KEY")
-        :models '(
-          openai/gpt-4.1
-          openai/gpt-4.1-mini
-          openai/gpt-4.1-nano
-          openai/o1-pro
-          openai/gpt-4o-mini-search-preview
-          openai/gpt-4o-search-preview
-          openai/gpt-4.5-preview
-          openai/o3-mini-high
-          openai/o3-mini
-          openai/o1
-          x-ai/grok-3-mini-beta
-          x-ai/grok-3-beta
-          x-ai/grok-2-vision-1212
-          x-ai/grok-2-1212
-          x-ai/grok-vision-beta
-          x-ai/grok-beta
-          x-ai/grok-2-mini
-          x-ai/grok-2
-          anthropic/claude-2.1
-          anthropic/claude-2.0
-          anthropic/claude-instant-1.1
-          anthropic/claude-instant-1
-          anthropic/claude-1
-          anthropic/claude-1.2
-          anthropic/claude-instant-1.0
-          google/palm-2-chat-bison-32k
-          google/palm-2-codechat-bison
-          google/palm-2-chat-bison
-          google/gemini-experimental-1121
-          google/gemini-experimental-1114
-          google/gemini-1.5-flash-experimental
-          google/gemini-1.5-pro-experimental
-          google/gemma-7b
-          deepseek/r1-distill-llama-70b:free
-          deepseek/r1-distill-llama-70b
-          deepseek/r1:free
-          deepseek/r1
-          deepseek/deepseek-v3:free
-          deepseek/deepseek-v3
-          deepseek/deepseek-v2.5
-          deepseek/deepseek-coder-v2
-        )))
-
-
-;; ---- GPTEL END ----
-
-;; For very large files - offered as option in minibuffer when you go to open file over 10mb in size
-;; Emacs barely usable for big files
-(require 'vlf-setup)
-
-;; Debugging!
-(setq dap-auto-configure-features '(sessions locals controls tooltip))
 
 
 
 
+;; --- START OF LANGUAGE SERVER STUFF ----
+;; Useful defaults - eglot stuff via xref:
+;; M-. for go to def
+;; M-, travel back in time through def jumps (akin to C-x C-space)
+;; Also, custom flymake:
+;; M-n go to next error in file
+;; M-p go to prev error in file
+;; Start Eglot automatically in TS/TSX
+;; 1) Sources (keep this so future installs/updates work)
+(setq treesit-language-source-alist
+      '((javascript "https://github.com/tree-sitter/tree-sitter-javascript")
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" nil "typescript/src")
+        (tsx         "https://github.com/tree-sitter/tree-sitter-typescript" nil "tsx/src")
+        (csv "https://github.com/tree-sitter-grammars/tree-sitter-csv" nil "csv/src")
+        (json "https://github.com/tree-sitter/tree-sitter-json")
+        (python "https://github.com/tree-sitter/tree-sitter-python")
+        (html "https://github.com/tree-sitter/tree-sitter-html")
+        (css  "https://github.com/tree-sitter/tree-sitter-css")
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml")
+        (bash "https://github.com/tree-sitter/tree-sitter-bash")))
+
+;; 2) Prefer Tree-sitter modes and file associations
+(add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode))
+(add-to-list 'major-mode-remap-alist '(js-jsx-mode     . tsx-ts-mode))
+(add-to-list 'major-mode-remap-alist '(js-mode         . js-ts-mode))
+(add-to-list 'major-mode-remap-alist '(javascript-mode . js-ts-mode))
+(add-to-list 'major-mode-remap-alist '(python-mode     . python-ts-mode))
+(add-to-list 'major-mode-remap-alist '(json-mode       . json-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.ts\\'"   . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'"  . tsx-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'"   . js-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx\\'"  . js-jsx-mode))
+(add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.py\\'"   . python-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.csv\\'"  . csv-mode))
+
+;; 3) Auto-start Eglot in modes backed by tsserver (TS/TSX/JS/JSON)
+(dolist (mode '(typescript-ts-mode
+                tsx-ts-mode
+                js-ts-mode
+                json-ts-mode))
+  (add-hook (intern (format "%s-hook" mode)) #'eglot-ensure))
+
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((bash-ts-mode sh-mode) . ("bash-language-server" "start"))))
+
+(setq major-mode-remap-alist
+      '((html-mode       . html-ts-mode)
+        (typescript-mode . typescript-ts-mode)
+        (js-jsx-mode     . tsx-ts-mode)
+        (python-mode     . python-ts-mode)
+        (css-mode        . css-ts-mode)
+        (json-mode       . json-ts-mode)
+        (yaml-mode       . yaml-ts-mode)))
+
+(with-eval-after-load 'flymake
+  (define-key flymake-mode-map (kbd "M-n") #'flymake-goto-next-error)
+  (define-key flymake-mode-map (kbd "M-p") #'flymake-goto-prev-error))
+;; --- END OF LANGUAGE SERVER STUFF ----
 
 
-
-(provide '.emacs)
 ;;; .emacs ends here
-
-
-
-
-
-
-
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

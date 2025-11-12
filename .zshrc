@@ -190,7 +190,8 @@ export PATH="/Users/robertkirby/.codeium/windsurf/bin:$PATH"
 alias ,cfa='codex --full-auto'
 
 alias ,claude='claude --dangerously-skip-permissions'
-alias codex='command codex --yolo --search --model=gpt-5-codex -c model_reasoning_effort="high"'
+# alias codex='command codex --yolo --search --model=gpt-5-codex -c model_reasoning_effort="high"'
+alias codex='command codex --yolo --enable web_search_request'
 alias ,c='codex'
 alias ,cc=',c'
 alias ,cdsp='claude --dangerously-skip-permissions'
@@ -272,6 +273,10 @@ alias gt='/Users/robertkirby/sandpit/youtube-transcript-tool/get_transcript.py'
 alias get-youtube='/Users/robertkirby/sandpit/youtube-transcript-tool/get-youtube'
 
 alias ,qctat='q chat --trust-all-tools'
+
+# Toggle Azure MCP prompt helpers
+alias ,toggleazuremcp='codex exec "$(cat ~/prompts/toggle-azure-mcp.md)"'
+alias ,tam=',toggleazuremcp'
 
 # Always initialize nvm (instead of lazy loading)
 export NVM_DIR="$HOME/.nvm"
