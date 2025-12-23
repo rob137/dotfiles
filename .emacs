@@ -11,6 +11,10 @@
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
+;; Make sure Emacs can find gopls even when launched from GUI
+(add-to-list 'exec-path "/Users/robertkirby/go/bin")
+(setenv "PATH" (concat (getenv "PATH") ":/Users/robertkirby/go/bin"))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -61,44 +65,7 @@
    '((eval add-to-list 'grep-find-ignored-files "*.json")
      (vc-prepare-patches-separately)
      (diff-add-log-use-relative-names . t)
-     (vc-git-annotate-switches . "-w")
-     (cov-lcov-file-name
-      . "/Users/robert.kirby/g/aff-services-mono/apps/bookmaker-aliases-servicex/coverage/unit/lcov.info")
-     (cov-lcov-file-name
-      . "/Users/robert.kirby/g/aff-services-mono/apps/bookmaker-aliases-service/coverage/unit/lcov.info")
-     (cov-lcov-file-name
-      . "/Users/robert.kirby/g/events-service/coverage/unit/lcov.info")
-     (cov-lcov-file-name
-      . "/Users/robert.kirby/g/events-service/coverage/lcov.info")
-     (lcov-file-name
-      . "/Users/robert.kirby/g/events-service/coverage/lcov.info"))))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+     (vc-git-annotate-switches . "-w"))))
 
 ;; ============= Emacs NATIVE SETTINGS =============
 
@@ -308,7 +275,7 @@
   )
 
 ;; Bigger scrollback
-(setq vterm-max-scrollback 200000)
+(setq vterm-max-scrollback 900000)
 
 ;; ignore directories when grepping in a project - doesn't work for C-u C-x p g
 (eval-after-load 'grep
@@ -337,28 +304,6 @@
 ;; Use ripgrep, not grep
 (setq grep-program "rg")
 (setq xref-search-program 'ripgrep) ;; Ensures `project-find-regexp` uses `rg`
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ;; ============= MAPPINGS / FUNCTIONS =============
 
@@ -399,13 +344,12 @@
 ;; then set to a keybinding
 ;; (global-set-key (kbd "C-c L") 'open-logging-terminal)
 
-;; Use our util functions to create a function to open an ssh terminal
-(defun open-ssh-terminal ()
-  "Open an SSH terminal with a predefined SSH command loaded from a separate file."
+;; C-c S to open LLM scratch file
+(defun open-llm-scratch ()
+  "Open the LLM scratch file."
   (interactive)
-  (let ((cmd (when (boundp 'ssh-command) ssh-command)))
-    (open-custom-vterm "ssh-terminal" (list (or cmd "ssh user@host")))))
-(global-set-key (kbd "C-c S") 'open-ssh-terminal)
+  (find-file "~/llm-scratch"))
+(global-set-key (kbd "C-c S") 'open-llm-scratch)
 
 ;; Run nchat in a specially named vterm
 (defun open-nchat-terminal ()
@@ -418,10 +362,10 @@
 (global-set-key (kbd "C-c h") 'hs-hide-level)
 
 
-(defun open-org-file ()
+(defun open-organiser-file ()
   (interactive)
-  (find-file "~/notes/org.org"))
-(global-set-key (kbd "C-c o") 'open-org-file)
+  (find-file "~/notes/organiser.org"))
+(global-set-key (kbd "C-c o") 'open-organiser-file)
 (defun open-corg-file ()
   (interactive)
   (find-file "~/notes/corg.org"))
@@ -439,8 +383,6 @@
 ;; Doing so allows you to open a new vterm buffer with C-c t
 (global-set-key (kbd "C-c t") 'vterm)
 
-
-
 ;; org mode add a day as header to next line, then move point under it, for logging activity
 (fset 'org-new-day
       (kmacro-lambda-form [?\M-< return ?\C-p ?* ?  ?\C-c ?. ?  return return] 0 "%d"))
@@ -453,8 +395,6 @@
 
 (fset 'convert-typescript-class-function-to-arrow-function
    (kmacro-lambda-form [?\C-s ?\( return ?\C-b ?  ?= ?  ?\C-e ?\C-b ?= ?> ?  ?\C-a ?\C-n ?\S-\C-\M-s ?p ?r ?i ?v ?a ?t ?e ?\\ ?| ?p ?u ?b ?l ?i ?c return ?\C-a] 0 "%d"))
-
-
 
 ;; for mac os x https://www.emacswiki.org/emacs/FullScreen#h5o-27
 (defun toggle-fullscreen ()
@@ -549,8 +489,8 @@
                           (abbreviate-file-name buffer-file-name)
                         "%b")))
 
-(defvar vterm-search-string "robert.kirby@ssg"
-  "String to search for in vterm buffer.")
+(defvar vterm-search-string "robertkirby"
+  "String to search for in vterm buffer. Update to match your terminal prompt.")
 (defun vterm-copy-previous-output (arg)
   "Copy from the ARG+2th most recent occurrence of `vterm-search-string' to the end of the buffer in vterm copy mode.
 If ARG is not provided, copy from the second most recent occurrence."
@@ -633,9 +573,6 @@ If ARG is not provided, copy from the second most recent occurrence."
 (global-set-key (kbd "C-c >") #'my/vterm-next-buffer)
 (global-set-key (kbd "C-c <") #'my/vterm-prev-buffer)
 
-
-
-
 ;; Compilation mode
 (defun universal-test-command ()
   "Run tests based on the project type."
@@ -685,14 +622,6 @@ move to the next line and place point at the first non-whitespace char."
       (vterm-send-string text t)        ; t ⇒ use bracketed paste
     (insert text)))
 
-
-
-
-
-
-
-
-
 ;; ============= PACKAGES / PLUGINS / EXTENSIONS =============
 
 ;; Use Homebrew's GNU ls (gls)
@@ -726,7 +655,6 @@ move to the next line and place point at the first non-whitespace char."
 
                 ("\\.sh\\'" . shell-script-mode)
                 ("\\.trivyignore\\'" . shell-script-mode)
-                ("\\.zshrc.rob-universal\\'" . shell-script-mode)
                 ("\\.env\\(\\..*\\)?\\'" . shell-script-mode)
                 ("\\..*ignore\\'" . shell-script-mode)
                 ("\\.nvmrc\\'" . shell-script-mode)
@@ -764,10 +692,6 @@ move to the next line and place point at the first non-whitespace char."
 
 (load-file "~/dotfiles/accumulate-text.el")
 
-
-
-
-
 ;; --- START OF LANGUAGE SERVER STUFF ----
 ;; Useful defaults - eglot stuff via xref:
 ;; M-. for go to def
@@ -787,15 +711,11 @@ move to the next line and place point at the first non-whitespace char."
         (html "https://github.com/tree-sitter/tree-sitter-html")
         (css  "https://github.com/tree-sitter/tree-sitter-css")
         (yaml "https://github.com/ikatyang/tree-sitter-yaml")
-        (bash "https://github.com/tree-sitter/tree-sitter-bash")))
+        (bash "https://github.com/tree-sitter/tree-sitter-bash")
+        (go "https://github.com/tree-sitter/tree-sitter-go")
+        (gomod "https://github.com/camdencheek/tree-sitter-go-mod")))
 
 ;; 2) Prefer Tree-sitter modes and file associations
-(add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode))
-(add-to-list 'major-mode-remap-alist '(js-jsx-mode     . tsx-ts-mode))
-(add-to-list 'major-mode-remap-alist '(js-mode         . js-ts-mode))
-(add-to-list 'major-mode-remap-alist '(javascript-mode . js-ts-mode))
-(add-to-list 'major-mode-remap-alist '(python-mode     . python-ts-mode))
-(add-to-list 'major-mode-remap-alist '(json-mode       . json-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'"   . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'"  . tsx-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.js\\'"   . js-ts-mode))
@@ -803,17 +723,24 @@ move to the next line and place point at the first non-whitespace char."
 (add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.py\\'"   . python-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.csv\\'"  . csv-mode))
+(add-to-list 'auto-mode-alist '("\\.go\\'"   . go-ts-mode))
+(when (fboundp 'go-mod-ts-mode)
+  (add-to-list 'auto-mode-alist '("go\\.mod\\'"  . go-mod-ts-mode))
+  (add-to-list 'auto-mode-alist '("go\\.work\\'" . go-mod-ts-mode)))
 
 ;; 3) Auto-start Eglot in modes backed by tsserver (TS/TSX/JS/JSON)
 (dolist (mode '(typescript-ts-mode
                 tsx-ts-mode
                 js-ts-mode
-                json-ts-mode))
+                json-ts-mode
+                go-ts-mode))
   (add-hook (intern (format "%s-hook" mode)) #'eglot-ensure))
 
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
-               '((bash-ts-mode sh-mode) . ("bash-language-server" "start"))))
+               '((bash-ts-mode sh-mode) . ("bash-language-server" "start")))
+  (add-to-list 'eglot-server-programs
+               '((go-mode go-ts-mode) . ("gopls"))))
 
 (setq major-mode-remap-alist
       '((html-mode       . html-ts-mode)
@@ -823,10 +750,18 @@ move to the next line and place point at the first non-whitespace char."
         (css-mode        . css-ts-mode)
         (json-mode       . json-ts-mode)
         (yaml-mode       . yaml-ts-mode)))
+(add-to-list 'major-mode-remap-alist '(js-mode         . js-ts-mode))
+(add-to-list 'major-mode-remap-alist '(javascript-mode . js-ts-mode))
+(add-to-list 'major-mode-remap-alist '(go-mode         . go-ts-mode))
 
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map (kbd "M-n") #'flymake-goto-next-error)
   (define-key flymake-mode-map (kbd "M-p") #'flymake-goto-prev-error))
+(defun rk/go-before-save ()
+  (when (derived-mode-p 'go-ts-mode)
+    (eglot-format-buffer)
+    (eglot-code-actions nil nil "source.organizeImports" t)))
+(add-hook 'before-save-hook #'rk/go-before-save)
 ;; --- END OF LANGUAGE SERVER STUFF ----
 
 

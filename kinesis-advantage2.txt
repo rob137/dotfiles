@@ -1,0 +1,14 @@
+LLM prompt / reference for setting up keyboard config on a new machine.
+
+# Kinesis Advantage 2 - remappings for new computer
+
+[caps]>[lalt]
+[lalt]>[rwin]
+[rctrl]>[lalt]
+[prtscr]>[mute]
+[scroll]>[vol-]
+[pause]>[vol+]
+
+# Karabiner Elements - for laptop keyboard and Kinesis
+
+Double-tap Alt/Option triggers Cmd+Shift+= which opens Super Whisper.

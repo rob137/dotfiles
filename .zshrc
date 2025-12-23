@@ -1,12 +1,11 @@
-# Amazon Q pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
-# Enablen Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Kiro CLI pre block. Keep at the top of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-export PS1="▶ %F{blue}%~%f ❯ "
 
 SAVEHIST=100000
 export EDITOR="vim"
@@ -45,9 +44,9 @@ alias ,beep='osascript -e "beep 2"'
 alias ,b=',beep'
 alias ,bb=',beep; ,beep'
 alias ,bbb=',beep; ,beep; ,beep'
-alias ,bx=',beep; exit"'
+alias ,bx=',beep; exit'
 
-# Function to feed a file from ./prompts/ to ,c (claude code)
+# Function to feed a file from ./prompts/ to ,c (codex)
 pc() {
   local prompt_file="./prompts/$1"
   echo "$prompt_file"
@@ -84,7 +83,7 @@ alias ,dspv='docker system prune --volumes'
 alias ,dvp='docker volume prune'
 alias ,di='docker images'
 alias ,dockernuke=',dsa; ,drma; yes | ,dspa'
-alias ,dn='dsa; drma; yes | dsp'
+alias ,dn=',dsa; ,drma; yes | ,dspa'
 drm() {
   docker rm "$@"
 }
@@ -133,7 +132,7 @@ PROMPT='%F{cyan}%~%f ❯ '
 
 
 # Created by `pipx` on 2025-02-24 14:09:13
-export PATH="$PATH:/Users/robertkirby/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 # nvm initialization moved to bottom of file
 # Lazy load PyEnv
@@ -181,27 +180,27 @@ alias ,kp='kill-port'
 
 
 # not committed to source control
-source ~/.zshrc-local
-source ~/.aider-env
+[[ -f ~/.zshrc-local ]] && source ~/.zshrc-local
+[[ -f ~/.aider-env ]] && source ~/.aider-env
 
 # Added by Windsurf
-export PATH="/Users/robertkirby/.codeium/windsurf/bin:$PATH"
+export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 
 alias ,cfa='codex --full-auto'
 
-alias ,claude='claude --dangerously-skip-permissions'
+alias claude='claude --dangerously-skip-permissions --chrome'
 # alias codex='command codex --yolo --search --model=gpt-5-codex -c model_reasoning_effort="high"'
-alias codex='command codex --yolo --enable web_search_request'
+alias codex='command codex --yolo --enable web_search_request --model gpt-5.2'
 alias ,c='codex'
 alias ,cc=',c'
 alias ,cdsp='claude --dangerously-skip-permissions'
+alias gemini='command gemini --approval-mode yolo --model gemini-3-pro-preview'
 
 alias ,q='q' # butter fingers
 
 codex_full_auto_with_notes() {
   if [[ -z "$1" ]]; then
     echo "Usage: cfaplan <path_to_plan_file>"
-    echo "Example: cfaplan /Users/robertkirby/g/Legal-Document-Analysis/agent-notes/multi-upload-pipeline-plan.org"
     return 1
   fi
 
@@ -268,9 +267,6 @@ sdk() {
     sdk "$@"
 }
 
-# YouTube Transcript Tool
-alias gt='/Users/robertkirby/sandpit/youtube-transcript-tool/get_transcript.py'
-alias get-youtube='/Users/robertkirby/sandpit/youtube-transcript-tool/get-youtube'
 
 alias ,qctat='q chat --trust-all-tools'
 
@@ -285,8 +281,9 @@ export NVM_DIR="$HOME/.nvm"
 
 
 # opencode
-export PATH=/Users/robertkirby/.opencode/bin:$PATH
+export PATH=$HOME/.opencode/bin:$PATH
 export COLORTERM=truecolor
+export PATH=$PATH:$HOME/go/bin
 
-# Amazon Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+# Kiro CLI post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
