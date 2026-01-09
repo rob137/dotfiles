@@ -1,0 +1,10 @@
+#!/bin/bash
+# Restore clipboard after pasting Super Whisper transcription
+
+TEMP_FILE="/tmp/superwhisper-clipboard-backup"
+
+sleep 0.15
+if [ -f "$TEMP_FILE" ]; then
+  pbcopy < "$TEMP_FILE"
+  rm -f "$TEMP_FILE"
+fi

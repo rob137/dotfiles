@@ -1,0 +1,12 @@
+#!/bin/bash
+# Prepare clipboard with last Super Whisper transcription
+# Karabiner will send Cmd+V, then restore script runs
+
+TEMP_FILE="/tmp/superwhisper-clipboard-backup"
+
+# Save current clipboard
+pbpaste > "$TEMP_FILE"
+
+# Get latest transcription and put in clipboard
+sqlite3 ~/Library/Application\ Support/superwhisper/database/superwhisper.sqlite \
+  "SELECT c2 FROM recording_fts_content ORDER BY id DESC LIMIT 1;" | pbcopy
