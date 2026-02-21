@@ -189,8 +189,7 @@ export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 alias ,cfa='codex --full-auto'
 
 alias claude='claude --dangerously-skip-permissions --chrome'
-# alias codex='command codex --yolo --search --model=gpt-5-codex -c model_reasoning_effort="high"'
-alias codex='command codex --yolo --enable web_search_request --model gpt-5.2'
+alias ,cr='claude -r'
 alias ,c='codex'
 alias ,cc=',c'
 alias ,cdsp='claude --dangerously-skip-permissions'
@@ -287,3 +286,6 @@ export PATH=$PATH:$HOME/go/bin
 
 # Kiro CLI post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
+export PATH="$HOME/bin:$PATH"
+alias ,tai=',taip'
+export PATH=$PATH:$HOME/.maestro/bin

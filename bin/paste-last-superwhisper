@@ -7,6 +7,7 @@ TEMP_FILE="/tmp/superwhisper-clipboard-backup"
 # Save current clipboard
 pbpaste > "$TEMP_FILE"
 
-# Get latest transcription and put in clipboard
+# Get latest transcription, trim whitespace, put in clipboard
 sqlite3 ~/Library/Application\ Support/superwhisper/database/superwhisper.sqlite \
-  "SELECT c2 FROM recording_fts_content ORDER BY id DESC LIMIT 1;" | pbcopy
+  "SELECT c2 FROM recording_fts_content ORDER BY id DESC LIMIT 1;" \
+  | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | pbcopy

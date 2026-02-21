@@ -90,10 +90,6 @@
 ;; Better performance with v long lines (noticeable)
 (global-so-long-mode)
 
-;; Make emacs windows transparent
-(set-frame-parameter (selected-frame) 'alpha '(98 . 98))
-(add-to-list 'default-frame-alist '(alpha . (98 . 98)))
-
 ;; add a 3 line buffer between the point and the top / bottom of the window
 (setq scroll-margin 3)
 
