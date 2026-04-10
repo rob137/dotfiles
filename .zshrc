@@ -24,6 +24,7 @@ alias cd..='cd ..'
 alias cd-='cd -'
 
 alias ,g='cd ~/g'
+alias ,z='cd ~/g/zonal'
 
 alias ,sv='source venv/bin/activate'
 
