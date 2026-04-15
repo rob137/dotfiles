@@ -52,12 +52,10 @@
                  eslint-rc evil-collection exec-path-from-shell
                  expand-region flymake-eslint flymake-ruff fzf
                  git-gutter git-modes grip-mode highlight hl-todo
-                 jenkinsfile-mode json-mode magit markdown-mode
-                 markdown-preview-mode prettier-js prettier-rc
-                 python-mode quelpa quelpa-use-package rainbow-csv
-                 restclient sass-mode scss-mode tree-sitter
-                 tree-sitter-langs treesit-auto typescript-mode vterm
-                 web-mode which-key))
+                 jenkinsfile-mode magit markdown-mode
+                 markdown-preview-mode prettier-js prettier-rc quelpa
+                 quelpa-use-package rainbow-csv restclient sass-mode
+                 scss-mode vterm web-mode which-key))
  '(package-vc-selected-packages
    '((rainbow-csv :vc-backend Git :url
                   "https://github.com/NivWeisman/rainbow-csv")))
@@ -232,8 +230,9 @@
 ;; Treat wordsSeparatedByCapitalLetters as separate words
 (add-hook 'prog-mode-hook 'subword-mode)
 (add-hook 'gptel-mode-hook 'subword-mode)
-(add-hook 'typescript-mode-hook 'subword-mode)
 (add-hook 'typescript-ts-mode-hook 'subword-mode)
+(add-hook 'tsx-ts-mode-hook 'subword-mode)
+(add-hook 'js-ts-mode-hook 'subword-mode)
 (add-hook 'magit-mode-hook 'subword-mode)
 
 ;; Hide ugly newline arrows in fringe
