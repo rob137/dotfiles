@@ -11,12 +11,8 @@ SAVEHIST=100000
 export EDITOR="vim"
 export VISUAL="$EDITOR"
 
-export ZSH="$HOME/.oh-my-zsh"
-
-source $ZSH/oh-my-zsh.sh
-# pretty sure not needed
-# ZSH_DISABLE_COMPFIX=true
-# plugins=(git)
+autoload -Uz compinit
+compinit -i -d "${ZDOTDIR:-$HOME}/.zcompdump-${HOST%%.*}-${ZSH_VERSION}"
 
 alias ,.z='. ~/.zshrc'
 
@@ -263,7 +259,7 @@ alias ,acc=amp_compact_continue
 export SDKMAN_DIR="$HOME/.sdkman"
 sdk() {
     unset -f sdk
-    [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+    [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
     sdk "$@"
 }
 
@@ -274,10 +270,18 @@ alias ,qctat='q chat --trust-all-tools'
 alias ,toggleazuremcp='codex exec "$(cat ~/prompts/toggle-azure-mcp.md)"'
 alias ,tam=',toggleazuremcp'
 
-# Always initialize nvm (instead of lazy loading)
+# Lazy load nvm (same pattern as PyEnv above)
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+nvm() {
+    unset -f nvm node npm npx corepack
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+    nvm "$@"
+}
+node()     { nvm >/dev/null 2>&1; unset -f node 2>/dev/null; node "$@"; }
+npm()      { nvm >/dev/null 2>&1; unset -f npm 2>/dev/null; npm "$@"; }
+npx()      { nvm >/dev/null 2>&1; unset -f npx 2>/dev/null; npx "$@"; }
+corepack() { nvm >/dev/null 2>&1; unset -f corepack 2>/dev/null; corepack "$@"; }
 
 
 # opencode
@@ -290,3 +294,6 @@ export PATH=$PATH:$HOME/go/bin
 export PATH="$HOME/bin:$PATH"
 alias ,tai=',taip'
 export PATH=$PATH:$HOME/.maestro/bin
+
+# Machine-local secrets and overrides (NOT in ~/dotfiles repo).
+[ -f ~/.zshrc.local ] && . ~/.zshrc.local
