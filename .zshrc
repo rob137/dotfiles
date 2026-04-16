@@ -270,18 +270,10 @@ alias ,qctat='q chat --trust-all-tools'
 alias ,toggleazuremcp='codex exec "$(cat ~/prompts/toggle-azure-mcp.md)"'
 alias ,tam=',toggleazuremcp'
 
-# Lazy load nvm (same pattern as PyEnv above)
+# Load nvm normally so Node CLIs are available in every new shell.
 export NVM_DIR="$HOME/.nvm"
-nvm() {
-    unset -f nvm node npm npx corepack
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-    nvm "$@"
-}
-node()     { nvm >/dev/null 2>&1; unset -f node 2>/dev/null; node "$@"; }
-npm()      { nvm >/dev/null 2>&1; unset -f npm 2>/dev/null; npm "$@"; }
-npx()      { nvm >/dev/null 2>&1; unset -f npx 2>/dev/null; npx "$@"; }
-corepack() { nvm >/dev/null 2>&1; unset -f corepack 2>/dev/null; corepack "$@"; }
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 
 # opencode
