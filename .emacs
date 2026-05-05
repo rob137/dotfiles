@@ -53,12 +53,12 @@
      ("jsonld" . "*.jsonld") ("sh" . "*.sh")))
  '(org-agenda-files '("~/notes/todo.org"))
  '(package-selected-packages
-   '(auto-org-md chatgpt company-quickhelp concurrent cov coverage
+   '(auto-org-md chatgpt company-quickhelp concurrent corsair cov coverage
                  csv-mode ctable deferred docker-compose-mode
                  dockerfile-mode doom-themes dtrt-indent ef-themes epc
                  eslint-rc evil-collection exec-path-from-shell
                  expand-region flymake-eslint flymake-ruff fzf
-                 git-gutter git-modes grip-mode highlight hl-todo
+                 git-gutter git-modes gptel grip-mode highlight hl-todo
                  jenkinsfile-mode magit markdown-mode
                  markdown-preview-mode prettier-js prettier-rc quelpa
                  quelpa-use-package rainbow-csv restclient sass-mode
@@ -274,7 +274,17 @@
 ;; Add vterm / magit to project switch modeline
 ;; Wrapped like this to prevent things breaking - this pattern was new to me
 ;; and feels smart. Should almost certainly be using it elsewhere!
+(defun rk/remember-projects-under (dir)
+  "Remember immediate child projects under DIR."
+  (when (file-directory-p dir)
+    (dolist (candidate (directory-files dir t directory-files-no-dot-files-regexp))
+      (when (file-directory-p candidate)
+        (let ((default-directory (file-name-as-directory candidate)))
+          (when-let ((project (project-current nil)))
+            (project-remember-project project)))))))
+
 (with-eval-after-load 'project
+  (rk/remember-projects-under (expand-file-name "~/work"))
   (add-to-list 'project-switch-commands '(?t "vterm" vterm))
   (define-key project-prefix-map "m" #'magit-project-status)
   (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
@@ -654,6 +664,16 @@ move to the next line and place point at the first non-whitespace char."
 ;; magit ease-of-use bindings
 (global-set-key (kbd "C-c g d") 'magit-diff-buffer-file) ;; diff current buffer
 
+;; Corsair / GPTel accumulation workflow
+(require 'corsair)
+(global-set-key (kbd "C-c g c") #'corsair-open-chat-buffer)
+(global-set-key (kbd "C-c g a c") #'corsair-accumulate-file-path-and-contents)
+(global-set-key (kbd "C-c g a n") #'corsair-accumulate-file-name)
+(global-set-key (kbd "C-c g a v") #'corsair-accumulate-file-path)
+(global-set-key (kbd "C-c g a w") #'corsair-accumulate-selected-text)
+(global-set-key (kbd "C-c g a D") #'corsair-drop-accumulated-buffer)
+(global-set-key (kbd "C-c g f") #'corsair-insert-file-or-folder-contents)
+
 ;; always use dired
 (global-set-key (kbd "C-x C-d") 'dired)
 
@@ -700,7 +720,7 @@ move to the next line and place point at the first non-whitespace char."
     )
   )
 
-(load-file (expand-file-name "accumulate-text.el" rk/dotfiles-dir))
+;; (load-file (expand-file-name "accumulate-text.el" rk/dotfiles-dir))
 
 ;; --- START OF LANGUAGE SERVER STUFF ----
 ;; Useful defaults - eglot stuff via xref:

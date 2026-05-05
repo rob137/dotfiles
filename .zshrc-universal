@@ -206,8 +206,6 @@ kill-port() { lsof -ti tcp:$1 | xargs -r kill -9; }
 alias ,kp='kill-port'
 
 
-# not committed to source control
-[[ -f ~/.zshrc-local ]] && source ~/.zshrc-local
 [[ -f ~/.aider-env ]] && source ~/.aider-env
 
 # Added by Windsurf
@@ -317,5 +315,3 @@ export PATH="$HOME/bin:$PATH"
 alias ,tai=',taip'
 export PATH=$PATH:$HOME/.maestro/bin
 
-# Machine-local secrets and overrides (NOT in ~/dotfiles repo).
-[ -f ~/.zshrc.local ] && . ~/.zshrc.local
