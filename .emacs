@@ -5,15 +5,22 @@
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
-(unless package-archive-contents
-  (package-refresh-contents))
+;; Refresh package archives manually with M-x package-refresh-contents when
+;; setting up packages; startup should not depend on network access.
+
+(defconst rk/dotfiles-dir
+  (file-name-directory (or load-file-name buffer-file-name))
+  "Directory containing this Emacs config.")
 
 (when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize))
+  (when (require 'exec-path-from-shell nil t)
+    (exec-path-from-shell-initialize)))
 
 ;; Make sure Emacs can find gopls even when launched from GUI
-(add-to-list 'exec-path "/Users/robertkirby/go/bin")
-(setenv "PATH" (concat (getenv "PATH") ":/Users/robertkirby/go/bin"))
+(let ((go-bin (expand-file-name "~/go/bin")))
+  (when (file-directory-p go-bin)
+    (add-to-list 'exec-path go-bin)
+    (setenv "PATH" (concat (getenv "PATH") path-separator go-bin))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -249,10 +256,14 @@
 (setq set-mark-command-repeat-pop 1)
 
 ;; highlight TODO
-(add-hook 'prog-mode-hook 'hl-todo-mode)
-(add-hook 'web-mode-hook 'hl-todo-mode)
-(add-hook 'markdown-mode-hook 'hl-todo-mode)
-(add-hook 'fundamental-mode-hook 'hl-todo-mode)
+(defun rk/enable-hl-todo-mode ()
+  "Enable `hl-todo-mode' when the package is available."
+  (when (fboundp 'hl-todo-mode)
+    (hl-todo-mode 1)))
+(add-hook 'prog-mode-hook #'rk/enable-hl-todo-mode)
+(add-hook 'web-mode-hook #'rk/enable-hl-todo-mode)
+(add-hook 'markdown-mode-hook #'rk/enable-hl-todo-mode)
+(add-hook 'fundamental-mode-hook #'rk/enable-hl-todo-mode)
 
 ;; word-wrap in markdown mode, text mode, etc
 (add-hook 'markdown-mode-hook 'visual-line-mode)
@@ -297,8 +308,9 @@
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
 ;; Use ripgrep, not grep
-(setq grep-program "rg")
-(setq xref-search-program 'ripgrep) ;; Ensures `project-find-regexp` uses `rg`
+(when (executable-find "rg")
+  (setq grep-program "rg")
+  (setq xref-search-program 'ripgrep)) ;; Ensures `project-find-regexp` uses `rg`
 
 ;; ============= MAPPINGS / FUNCTIONS =============
 
@@ -400,6 +412,8 @@
      (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 
 ;; backup / autosave / lock files - don't litter directories
+(dolist (dir '("~/.emacs.d/backups" "~/.emacs.d/autosaves"))
+  (make-directory (expand-file-name dir) t))
 (setq backup-directory-alist `(("." . "~/.emacs.d/backups")))
 (setq auto-save-file-name-transforms `((".*" "~/.emacs.d/autosaves" t)))
 (setq create-lockfiles nil)
@@ -484,7 +498,7 @@
                           (abbreviate-file-name buffer-file-name)
                         "%b")))
 
-(defvar vterm-search-string "robertkirby"
+(defvar vterm-search-string (user-login-name)
   "String to search for in vterm buffer. Update to match your terminal prompt.")
 (defun vterm-copy-previous-output (arg)
   "Copy from the ARG+2th most recent occurrence of `vterm-search-string' to the end of the buffer in vterm copy mode.
@@ -627,11 +641,13 @@ move to the next line and place point at the first non-whitespace char."
         dired-listing-switches "-alh --group-directories-first"))
 
 ;; outsource autoindentation to dtrt-indent, as it's a pain
-(dtrt-indent-global-mode t)
+(when (require 'dtrt-indent nil t)
+  (dtrt-indent-global-mode t))
 
 ;; pop-up showing next possible key press - similar natively by '[keypress] ?'
-(which-key-mode)
-(setq which-key-idle-delay 0.5)
+(when (require 'which-key nil t)
+  (which-key-mode)
+  (setq which-key-idle-delay 0.5))
 
 (global-set-key (kbd "C-c f") 'ffap)
 
@@ -672,9 +688,8 @@ move to the next line and place point at the first non-whitespace char."
    file-notify-descriptors))
 
 ;; Color theme
-(unless (package-installed-p 'ef-themes)
-  (package-install 'ef-themes))
-(load-theme 'ef-light t)
+(when (require 'ef-themes nil t)
+  (load-theme 'ef-light t))
 
 ;; Alias for grip-mode, which toggles in-browser md previews - since I can never remember the name
 (defun preview-markdown ()
@@ -685,7 +700,7 @@ move to the next line and place point at the first non-whitespace char."
     )
   )
 
-(load-file "~/dotfiles/accumulate-text.el")
+(load-file (expand-file-name "accumulate-text.el" rk/dotfiles-dir))
 
 ;; --- START OF LANGUAGE SERVER STUFF ----
 ;; Useful defaults - eglot stuff via xref:
