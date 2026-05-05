@@ -11,6 +11,31 @@ SAVEHIST=100000
 export EDITOR="vim"
 export VISUAL="$EDITOR"
 
+rk_uname="$(uname -s 2>/dev/null || echo unknown)"
+
+rk_copy() {
+  if command -v pbcopy >/dev/null 2>&1; then
+    pbcopy
+  elif command -v wl-copy >/dev/null 2>&1; then
+    wl-copy
+  elif command -v xclip >/dev/null 2>&1; then
+    xclip -selection clipboard
+  elif command -v xsel >/dev/null 2>&1; then
+    xsel --clipboard --input
+  else
+    echo "No clipboard command found: install wl-clipboard, xclip, or xsel." >&2
+    return 1
+  fi
+}
+
+rk_beep() {
+  if [[ "$rk_uname" == "Darwin" ]] && command -v osascript >/dev/null 2>&1; then
+    osascript -e "beep 2"
+  else
+    printf '\a'
+  fi
+}
+
 autoload -Uz compinit
 compinit -i -d "${ZDOTDIR:-$HOME}/.zcompdump-${HOST%%.*}-${ZSH_VERSION}"
 
@@ -19,13 +44,18 @@ alias ,.z='. ~/.zshrc'
 alias cd..='cd ..'
 alias cd-='cd -'
 
-alias ,g='cd ~/g'
-alias ,z='cd ~/g/zonal'
+if [[ -d "$HOME/g" ]]; then
+  alias ,g='cd ~/g'
+elif [[ -d "$HOME/work" ]]; then
+  alias ,g='cd ~/work'
+fi
+
+[[ -d "$HOME/g/zonal" ]] && alias ,z='cd ~/g/zonal'
 
 alias ,sv='source venv/bin/activate'
 
-alias ,tp='tree | pbcopy'
-alias ,hp='history | pbcopy'
+alias ,tp='tree | rk_copy'
+alias ,hp='history | rk_copy'
 alias ,ht='history | tail'
 
 alias ,pt='pytest'
@@ -37,7 +67,7 @@ alias ,nuci='nvm use && npm clean-install'
 alias ,nuni='nvm use && npm install'
 alias ,ni='npm install'
 
-alias ,beep='osascript -e "beep 2"'
+alias ,beep='rk_beep'
 alias ,b=',beep'
 alias ,bb=',beep; ,beep'
 alias ,bbb=',beep; ,beep; ,beep'
@@ -153,7 +183,7 @@ treecopy() {
         -print | while read -r file; do
             echo "===== $file ====="
             cat "$file"
-        done | pbcopy
+        done | rk_copy
     echo "Copied all file contents with paths to clipboard."
 }
 alias ,treecopy=treecopy
@@ -167,7 +197,7 @@ rgcopy() {
         --glob '!package.json' \
         --glob '!package-lock.json' \
         --glob '!*.md' | \
-    xargs -I {} sh -c 'echo "===== {} ====="; cat "{}"' | pbcopy
+    xargs -I {} sh -c 'echo "===== {} ====="; cat "{}"' | rk_copy
     echo "Copied matching file contents to clipboard."
 }
 alias ,rgcopy='rgcopy'
