@@ -200,6 +200,9 @@
 ;; Delete selected text if you type while it is highlighted
 (delete-selection-mode t)
 
+;; Disable Insert key toggling overwrite-mode
+(global-set-key (kbd "<insert>") 'ignore)
+
 ;; no thanks to intrusive emacs project pop-ups
 (defalias 'view-emacs-news 'ignore)
 (defalias 'describe-gnu-project 'ignore)
@@ -485,6 +488,12 @@
 ;; C-c b to bury buffer
 (global-set-key (kbd "C-c b") 'bury-buffer)
 
+;; ffap everywhere — degrades to find-file when nothing useful at point
+(global-set-key (kbd "C-x f")   'ffap)
+(global-set-key (kbd "C-x C-f") 'ffap)
+(global-set-key (kbd "C-c f")   'ffap)
+(global-set-key (kbd "C-c C-f") 'ffap)
+
 ;; C-c e  open ~/.emacs
 (global-set-key (kbd "C-c e") (lambda () (interactive) (find-file "~/.emacs")))
 ;; override org-mode binding for C-c e
@@ -549,13 +558,7 @@ If ARG is not provided, copy from the second most recent occurrence."
   (let ((new-name (format "*vterm*<%d>" num)))
     (rename-buffer new-name t)
     (message "Buffer renamed to %s" new-name)))
-;; Bind C-c v 1..9 to switch/create vterm buffers
-(dotimes (i 9)
-  (let ((n (1+ i)))
-    (global-set-key (kbd (format "C-c v %d" n))
-                    `(lambda () (interactive) (my/switch-to-vterm ,n)))))
-;; Bind C-c v r to rename current vterm buffer to a number
-(global-set-key (kbd "C-c v r") #'my/rename-vterm-buffer)
+(global-set-key (kbd "C-c v") #'visual-line-mode)
 (defun my/vterm-buffer-numbers ()
   "Return sorted list of existing numbered vterm buffers."
   (sort (delq nil
@@ -659,20 +662,81 @@ move to the next line and place point at the first non-whitespace char."
   (which-key-mode)
   (setq which-key-idle-delay 0.5))
 
-(global-set-key (kbd "C-c f") 'ffap)
+
 
 ;; magit ease-of-use bindings
 (global-set-key (kbd "C-c g d") 'magit-diff-buffer-file) ;; diff current buffer
 
-;; Corsair / GPTel accumulation workflow
+;; Corsair / GPTel accumulation workflow  (loading from local clone)
+(add-to-list 'load-path (expand-file-name "~/personal/Corsair"))
 (require 'corsair)
-(global-set-key (kbd "C-c g c") #'corsair-open-chat-buffer)
-(global-set-key (kbd "C-c g a c") #'corsair-accumulate-file-path-and-contents)
-(global-set-key (kbd "C-c g a n") #'corsair-accumulate-file-name)
-(global-set-key (kbd "C-c g a v") #'corsair-accumulate-file-path)
-(global-set-key (kbd "C-c g a w") #'corsair-accumulate-selected-text)
-(global-set-key (kbd "C-c g a D") #'corsair-drop-accumulated-buffer)
-(global-set-key (kbd "C-c g f") #'corsair-insert-file-or-folder-contents)
+(global-set-key (kbd "C-c a o") #'corsair-open-chat-buffer)
+(global-set-key (kbd "C-c a c") #'corsair-accumulate-file-path-and-contents)
+(global-set-key (kbd "C-c a n") #'corsair-accumulate-file-name)
+(global-set-key (kbd "C-c a v") #'corsair-accumulate-file-path)
+(global-set-key (kbd "C-c a w") #'corsair-accumulate-selected-text)
+(global-set-key (kbd "C-c a D") #'corsair-drop-accumulated-buffer)
+(global-set-key (kbd "C-c a f") #'corsair-insert-file-or-folder-contents)
+(defun rk/corsair-copy-to-clipboard ()
+  "Copy the contents of the GPTel Chat buffer to the system clipboard."
+  (interactive)
+  (let ((buf (get-buffer corsair-chat-buffer-name)))
+    (if buf
+        (progn
+          (kill-new (with-current-buffer buf (buffer-string)))
+          (message "Corsair: chat buffer copied to clipboard"))
+      (message "Corsair: no chat buffer found"))))
+(global-set-key (kbd "C-c a a") #'rk/corsair-copy-to-clipboard)
+
+;; Copy current buffer's file path to clipboard (C-c V)
+(defun copy-file-path ()
+  "Copy the current buffer's file path to the clipboard."
+  (interactive)
+  (when buffer-file-name
+    (let ((path (buffer-file-name)))
+      (kill-new path)
+      (message "File path copied to clipboard.")
+      path)))
+(global-set-key (kbd "C-c V") 'copy-file-path)
+
+;; Copy current buffer's file path + contents to clipboard (C-c C)
+(defun copy-file-path-and-contents ()
+  "Copy the current buffer's file path and its contents to the clipboard."
+  (interactive)
+  (when buffer-file-name
+    (let* ((path (copy-file-path))
+           (combined (concat path "\n" (buffer-string))))
+      (kill-new combined)
+      (message "File path and contents copied to clipboard."))))
+(global-set-key (kbd "C-c C") 'copy-file-path-and-contents)
+
+;; Copy current line to clipboard without trailing newline (C-c L)
+(defun copy-current-line-to-clipboard ()
+  "Copy the current line to the system clipboard without newlines."
+  (interactive)
+  (let ((line (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+    (kill-new line)
+    (message "Line copied to clipboard: %s" line)))
+(global-set-key (kbd "C-c L") 'copy-current-line-to-clipboard)
+
+;; Copy file paths and contents of all files in dired directory recursively (C-c T)
+(defun copy-all-file-paths-and-contents ()
+  "Copy the file paths and contents of all files in the current dired directory and its subdirectories to the clipboard."
+  (interactive)
+  (let* ((ignore-patterns '("node_modules" "\\.git" "dist" "outputs" "build" "\\.vscode" "\\.idea" "\\.DS_Store" "\\.log"
+                            "\\.cache" "\\.tmp" "venv" "\\.next" "\\.npm" "coverage" "bower_components" "\\.lock$"
+                            "\\.swp$" "\\.tmp$" "\\.gz$" "\\.zip$" "\\.tar$" "\\.rar$" "\\.jpg$" "\\.jpeg$" "\\.png$"
+                            "\\.gif$" "\\.bmp$"))
+         (all-parts '()))
+    (dolist (file (directory-files-recursively default-directory ".*"))
+      (when (and (not (file-directory-p file))
+                 (not (seq-some (lambda (pattern) (string-match-p pattern file)) ignore-patterns)))
+        (find-file file)
+        (setq all-parts (append all-parts (list (concat file "\n" (buffer-string)))))
+        (kill-buffer)))
+    (kill-new (mapconcat 'identity all-parts "\n\n"))
+    (message "All file paths and contents copied to clipboard.")))
+(global-set-key (kbd "C-c T") 'copy-all-file-paths-and-contents)
 
 ;; always use dired
 (global-set-key (kbd "C-x C-d") 'dired)
