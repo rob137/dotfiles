@@ -8,7 +8,16 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=200000
 SAVEHIST=100000
+setopt EXTENDED_HISTORY       # timestamp + duration per entry
+setopt INC_APPEND_HISTORY     # write each command as it's run, not on shell exit
+setopt SHARE_HISTORY          # pull in commands from other live shells
+setopt HIST_IGNORE_DUPS       # skip consecutive duplicates
+setopt HIST_REDUCE_BLANKS     # collapse internal whitespace before saving
+setopt HIST_VERIFY            # show !expansion before executing
+
 export EDITOR="vim"
 export VISUAL="$EDITOR"
 
@@ -53,9 +62,13 @@ fi
 
 [[ -d "$HOME/g/zonal" ]] && alias ,z='cd ~/g/zonal'
 
+[[ -d "$HOME/work" ]]     && alias ,w='cd ~/work'
+[[ -d "$HOME/personal" ]] && alias ,p='cd ~/personal'
+
 alias ,sv='source venv/bin/activate'
 
 alias ,tp='tree | rk_copy'
+alias ,h='history -i 1'
 alias ,hp='history | rk_copy'
 alias ,ht='history | tail'
 
@@ -74,30 +87,7 @@ alias ,bb=',beep; ,beep'
 alias ,bbb=',beep; ,beep; ,beep'
 alias ,bx=',beep; exit'
 
-# Function to feed a file from ./prompts/ to ,c (codex)
-pc() {
-  local prompt_file="./prompts/$1"
-  echo "$prompt_file"
-  if [ -f "$prompt_file" ]; then
-    cat "$prompt_file" | ,c
-  else
-    echo "Error: File $prompt_file does not exist."
-  fi
-}
-# Custom completion function for pc
-_pc_complete() {
-  # Use the current working directory's ./prompts/ folder
-  local prompt_dir="$PWD/prompts"
-  # Reply with files in ./prompts/ matching *.org
-  _files -W "$prompt_dir" -g "*.org"
-}
-# Bind the completion function to pc
-compdef _pc_complete pc
-
-alias ,pc='pc'
-
-alias ,cl='clear'
-alias ,clear='clear' # because I keep typing it
+alias ,clear='clear'
 
 alias ,d='docker'
 alias ,dcu='docker-compose up'
@@ -162,6 +152,9 @@ PROMPT='%F{cyan}%~%f ❯ '
 # Created by `pipx` on 2025-02-24 14:09:13
 export PATH="$PATH:$HOME/.local/bin"
 
+[[ -d "$HOME/.dotnet" ]] && export DOTNET_ROOT="$HOME/.dotnet" && export PATH="$DOTNET_ROOT:$PATH"
+[[ -d "$HOME/.dotnet/tools" ]] && export PATH="$PATH:$HOME/.dotnet/tools"
+
 # nvm initialization moved to bottom of file
 # Lazy load PyEnv
 export PYENV_ROOT="$HOME/.pyenv"
@@ -212,36 +205,23 @@ alias ,kp='kill-port'
 # Added by Windsurf
 export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 
-alias ,cfa='codex --full-auto'
-
 alias claude='claude --dangerously-skip-permissions --chrome'
-alias ,cr='claude -r'
-alias ,c='codex'
-alias ,cc=',c'
-alias ,cdsp='claude --dangerously-skip-permissions'
+alias ,cl='claude'
+alias ,co='codex'
+# claude uses --resume (flag), codex uses resume (subcommand); these spell it out so I stop mixing them up
+alias ',claude-resume'='claude --resume'
+alias ',codex-resume'='codex resume'
+alias ',codex-resume-all'='codex resume --include-non-interactive --all'
+alias ',clr'=',claude-resume'
+alias ',cor'=',codex-resume'
+alias ',cora'=',codex-resume-all'
+
+# Easily / cheaply kick LLM models to start the clock on token limits
+alias ',hicl'='claude --safe-mode -p --model haiku --effort low --max-turns 1 "just say hi"'
+
 alias gemini='command gemini --approval-mode yolo --model gemini-3-pro-preview'
 
 alias ,q='q' # butter fingers
-
-codex_full_auto_with_notes() {
-  if [[ -z "$1" ]]; then
-    echo "Usage: cfaplan <path_to_plan_file>"
-    return 1
-  fi
-
-  local plan_file="$1"
-
-  if [[ ! -f "$plan_file" ]]; then
-    echo "Error: Plan file not found at '$plan_file'"
-    return 1
-  fi
-
-  # The actual command
-  ,cfa "see $plan_file - implement, checking off completed items as you go"
-}
-alias ,cfan='codex_full_auto_with_notes'
-
-
 
 # ─────────────────────────────────────────────────────────────────
 #   - Usage: ,afp <path/to/your/plan.org>
@@ -316,4 +296,3 @@ export PATH="$HOME/bin:$PATH"
 alias ,tai='tmux new-session -s AI'
 alias ,t='tmux attach-session -t AI'
 export PATH=$PATH:$HOME/.maestro/bin
-

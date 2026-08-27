@@ -12,9 +12,15 @@
   (file-name-directory (or load-file-name buffer-file-name))
   "Directory containing this Emacs config.")
 
-(when (memq window-system '(mac ns))
+(when (memq window-system '(mac ns x pgtk))
   (when (require 'exec-path-from-shell nil t)
     (exec-path-from-shell-initialize)))
+
+(dolist (dir '("~/.dotnet" "~/.dotnet/tools"))
+  (let ((expanded-dir (expand-file-name dir)))
+    (when (file-directory-p expanded-dir)
+      (add-to-list 'exec-path expanded-dir)
+      (setenv "PATH" (concat expanded-dir path-separator (getenv "PATH"))))))
 
 ;; Make sure Emacs can find gopls even when launched from GUI
 (let ((go-bin (expand-file-name "~/go/bin")))
@@ -53,16 +59,15 @@
      ("jsonld" . "*.jsonld") ("sh" . "*.sh")))
  '(org-agenda-files '("~/notes/todo.org"))
  '(package-selected-packages
-   '(auto-org-md chatgpt company-quickhelp concurrent corsair cov coverage
-                 csv-mode ctable deferred docker-compose-mode
+   '(auto-org-md chatgpt company-quickhelp concurrent corsair cov
+                 coverage csv-mode ctable deferred docker-compose-mode
                  dockerfile-mode doom-themes dtrt-indent ef-themes epc
                  eslint-rc evil-collection exec-path-from-shell
                  expand-region flymake-eslint flymake-ruff fzf
-                 git-gutter git-modes gptel grip-mode highlight hl-todo
-                 jenkinsfile-mode magit markdown-mode
-                 markdown-preview-mode prettier-js prettier-rc quelpa
-                 quelpa-use-package rainbow-csv restclient sass-mode
-                 scss-mode vterm web-mode which-key))
+                 git-gutter git-modes gptel highlight hl-todo
+                 jenkinsfile-mode magit markdown-mode prettier-js
+                 prettier-rc quelpa quelpa-use-package rainbow-csv
+                 restclient sass-mode scss-mode vterm web-mode))
  '(package-vc-selected-packages
    '((rainbow-csv :vc-backend Git :url
                   "https://github.com/NivWeisman/rainbow-csv")))
@@ -134,8 +139,21 @@
 ;; display results in vertical list
 (fido-vertical-mode t)
 
-;; ;; show tabs, spaces, newlines etc
-(global-whitespace-mode t)
+
+;; Show selected whitespace issues globally, except in terminal buffers.
+(setq-default whitespace-style
+              '(face
+                trailing
+                space-after-tab))
+
+(setq whitespace-global-modes
+      '(not vterm-mode
+            term-mode
+            ansi-term
+            shell-mode
+            eshell-mode))
+
+
 ;; Some of these are noisy, so I've disabled them.
 ;; Others are worse on certain color themes.
 ;; Can edit these on the fly with M-x globall-whitespace-toggle-options - follow up with ? to see options and bindings
@@ -202,6 +220,9 @@
 
 ;; Disable Insert key toggling overwrite-mode
 (global-set-key (kbd "<insert>") 'ignore)
+
+;; Disable C-x C-q toggling read-only-mode -- almost always hit by accident
+(global-set-key (kbd "C-x C-q") 'ignore)
 
 ;; no thanks to intrusive emacs project pop-ups
 (defalias 'view-emacs-news 'ignore)
@@ -775,14 +796,16 @@ move to the next line and place point at the first non-whitespace char."
 (when (require 'ef-themes nil t)
   (load-theme 'ef-light t))
 
-;; Alias for grip-mode, which toggles in-browser md previews - since I can never remember the name
+;; Open the current file in VS Code so its markdown preview can render mermaid
+;; (grip-mode via the GitHub /markdown API can't — that runs client-side on github.com).
+;; First open: hit C-k v in VS Code to pop side preview; it'll restore that on subsequent opens.
 (defun preview-markdown ()
+  "Open the current file in VS Code for markdown preview."
   (interactive)
-  (if (bound-and-true-p grip-mode)
-      (grip-mode -1)
-    (grip-mode 1)
-    )
-  )
+  (unless buffer-file-name
+    (user-error "Buffer is not visiting a file"))
+  (when (buffer-modified-p) (save-buffer))
+  (start-process "code-preview" nil "code" "-r" buffer-file-name))
 
 ;; (load-file (expand-file-name "accumulate-text.el" rk/dotfiles-dir))
 
@@ -793,12 +816,15 @@ move to the next line and place point at the first non-whitespace char."
 ;; Also, custom flymake:
 ;; M-n go to next error in file
 ;; M-p go to prev error in file
-;; Start Eglot automatically in TS/TSX
-;; 1) Sources (keep this so future installs/updates work)
+;; 1) Tree-sitter grammar sources.
+(setq python-indent-offset 4)
+(setq python-indent-guess-indent-offset nil)
+
 (setq treesit-language-source-alist
       '((javascript "https://github.com/tree-sitter/tree-sitter-javascript")
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" nil "typescript/src")
         (tsx         "https://github.com/tree-sitter/tree-sitter-typescript" nil "tsx/src")
+        (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
         (csv "https://github.com/tree-sitter-grammars/tree-sitter-csv" nil "csv/src")
         (json "https://github.com/tree-sitter/tree-sitter-json")
         (python "https://github.com/tree-sitter/tree-sitter-python")
@@ -809,55 +835,103 @@ move to the next line and place point at the first non-whitespace char."
         (go "https://github.com/tree-sitter/tree-sitter-go")
         (gomod "https://github.com/camdencheek/tree-sitter-go-mod")))
 
-;; 2) Prefer Tree-sitter modes and file associations
-(add-to-list 'auto-mode-alist '("\\.ts\\'"   . typescript-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'"  . tsx-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.js\\'"   . js-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.jsx\\'"  . js-jsx-mode))
-(add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.py\\'"   . python-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.csv\\'"  . csv-mode))
-(add-to-list 'auto-mode-alist '("\\.go\\'"   . go-ts-mode))
-(when (fboundp 'go-mod-ts-mode)
-  (add-to-list 'auto-mode-alist '("go\\.mod\\'"  . go-mod-ts-mode))
+(defun rk/treesit-language-ready-p (language)
+  "Return non-nil when LANGUAGE's grammar can be loaded by this Emacs."
+  (and (fboundp 'treesit-language-available-p)
+       (ignore-errors (treesit-language-available-p language))))
+
+(defun rk/add-mode-remap-when-treesit-ready (base-mode language ts-mode)
+  "Remap BASE-MODE to TS-MODE only when LANGUAGE's grammar is available."
+  (setq major-mode-remap-alist
+        (assq-delete-all base-mode major-mode-remap-alist))
+  (when (and (fboundp ts-mode)
+             (rk/treesit-language-ready-p language))
+    (add-to-list 'major-mode-remap-alist (cons base-mode ts-mode))))
+
+;; 2) Prefer built-in Tree-sitter modes when their grammars are installed.
+;; Otherwise let Emacs and installed packages use their normal fallback modes.
+(dolist (remap '((html-mode       html       html-ts-mode)
+                 (typescript-mode typescript typescript-ts-mode)
+                 (js-json-mode    json       json-ts-mode)
+                 (js-jsx-mode     tsx        tsx-ts-mode)
+                 (python-mode     python     python-ts-mode)
+                 (css-mode        css        css-ts-mode)
+                 (yaml-mode       yaml       yaml-ts-mode)
+                 (js-mode         javascript js-ts-mode)
+                 (javascript-mode javascript js-ts-mode)
+                 (go-mode         go         go-ts-mode)
+                 (csharp-mode     c-sharp    csharp-ts-mode)))
+  (apply #'rk/add-mode-remap-when-treesit-ready remap))
+
+(when (rk/treesit-language-ready-p 'typescript)
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode)))
+(when (rk/treesit-language-ready-p 'tsx)
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode)))
+(add-to-list 'auto-mode-alist '("\\.csv\\'" . csv-mode))
+(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.csx\\'" . csharp-mode))
+(when (rk/treesit-language-ready-p 'go)
+  (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode)))
+(when (rk/treesit-language-ready-p 'gomod)
+  (add-to-list 'auto-mode-alist '("go\\.mod\\'" . go-mod-ts-mode))
   (add-to-list 'auto-mode-alist '("go\\.work\\'" . go-mod-ts-mode)))
 
-;; 3) Auto-start Eglot in modes backed by tsserver (TS/TSX/JS/JSON)
-(dolist (mode '(typescript-ts-mode
-                tsx-ts-mode
-                js-ts-mode
-                json-ts-mode
-                go-ts-mode))
-  (add-hook (intern (format "%s-hook" mode)) #'eglot-ensure))
+;; 3) Auto-start Eglot only when the relevant server binary is present.
+;; Eglot already knows the default commands for these languages.
+(defun rk/add-eglot-hook-when-executable-found (executable modes)
+  "Add `eglot-ensure' to MODES when EXECUTABLE is on PATH."
+  (when (executable-find executable)
+    (dolist (mode modes)
+      (add-hook (intern (format "%s-hook" mode)) #'eglot-ensure))))
+
+(rk/add-eglot-hook-when-executable-found
+ "typescript-language-server"
+ '(typescript-ts-mode tsx-ts-mode js-ts-mode))
+(rk/add-eglot-hook-when-executable-found
+ "vscode-json-language-server"
+ '(json-ts-mode))
+(rk/add-eglot-hook-when-executable-found
+ "gopls"
+ '(go-ts-mode go-mode))
+
+(defun rk/csharp-eglot-ensure ()
+  "Start Eglot for C# buffers when a C# language server is installed."
+  (when (and (derived-mode-p 'csharp-mode 'csharp-ts-mode)
+             (or (executable-find "csharp-ls")
+                 (executable-find "omnisharp")
+                 (executable-find "OmniSharp")))
+    (eglot-ensure)))
 
 (with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '((bash-ts-mode sh-mode) . ("bash-language-server" "start")))
-  (add-to-list 'eglot-server-programs
-               '((go-mode go-ts-mode) . ("gopls"))))
+  ;; Older Eglot builds may not know about C#; modern ones already do.
+  (unless (assoc '(csharp-mode csharp-ts-mode) eglot-server-programs)
+    (add-to-list 'eglot-server-programs
+                 '((csharp-mode csharp-ts-mode) . ("csharp-ls")))))
 
-(setq major-mode-remap-alist
-      '((html-mode       . html-ts-mode)
-        (typescript-mode . typescript-ts-mode)
-        (js-jsx-mode     . tsx-ts-mode)
-        (python-mode     . python-ts-mode)
-        (css-mode        . css-ts-mode)
-        (json-mode       . json-ts-mode)
-        (yaml-mode       . yaml-ts-mode)))
-(add-to-list 'major-mode-remap-alist '(js-mode         . js-ts-mode))
-(add-to-list 'major-mode-remap-alist '(javascript-mode . js-ts-mode))
-(add-to-list 'major-mode-remap-alist '(go-mode         . go-ts-mode))
+(dolist (mode '(csharp-mode csharp-ts-mode))
+  (add-hook (intern (format "%s-hook" mode)) #'rk/csharp-eglot-ensure))
 
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map (kbd "M-n") #'flymake-goto-next-error)
   (define-key flymake-mode-map (kbd "M-p") #'flymake-goto-prev-error))
 (defun rk/go-before-save ()
-  (when (derived-mode-p 'go-ts-mode)
+  (when (and (derived-mode-p 'go-ts-mode)
+             (fboundp 'eglot-managed-p)
+             (eglot-managed-p))
     (eglot-format-buffer)
     (eglot-code-actions nil nil "source.organizeImports" t)))
 (add-hook 'before-save-hook #'rk/go-before-save)
 ;; --- END OF LANGUAGE SERVER STUFF ----
 
+;; Browser openers — mirror the shape of built-in `browse-url-chrome'.
+(defun browse-url-edge (url &optional _new-window)
+  "Ask Microsoft Edge to load URL."
+  (interactive (browse-url-interactive-arg "URL: "))
+  (start-process (concat "microsoft-edge " url) nil
+                 "microsoft-edge-stable" url))
+(global-set-key (kbd "C-c E") #'browse-url-edge)
+;; C-c G opens URL in Google Chrome (G = Google); browse-url-chrome is built-in.
+(global-set-key (kbd "C-c G") #'browse-url-chrome)
 
 ;;; .emacs ends here
 (custom-set-faces
